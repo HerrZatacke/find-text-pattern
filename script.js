@@ -5,10 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttons = document.getElementById('buttons');
 
   const init = () => {
-    charMap.forEach(({ value }) => {
+    charMap.forEach(({ code, value, special }) => {
       const button = document.createElement('button');
+      const hex = document.createElement('span');
       button.innerText = value;
+      hex.innerText = `0x${code.toString(16).toUpperCase().padStart(2, '0')}`;
       buttons.appendChild(button);
+      special && button.classList.add('special');
+      button.appendChild(hex);
       button.addEventListener('click', () => {
         input.value = input.value + value;
         update();
