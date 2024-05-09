@@ -45,7 +45,7 @@
       font-weight: normal;
     }
     button.special-1 {
-      background-color: #ff6767;
+      background-color: #ffdada;
     }
     button.special-2 {
       background-color: #fff4c1;
@@ -88,17 +88,28 @@
     }
 
     #rendered {
-      width: 560px;
+      width: 1142px;
       display: grid;
-      grid-template-columns: repeat(14, 40px);
+      grid-template-columns: repeat(14, 40px) 60px repeat(13, 40px);
       grid-column-gap: 0;
       grid-row-gap: 0;
       margin: 24px 0;
       border: 1px solid #eee;
-      background-color: #ffe9e9;
+      background-color: #f2f2f2;
+    }
+
+    .term {
+      background-color: #ffdada;
+      grid-column-start: 1;
+      grid-column-end: 29;
+      height: 4px;
     }
 
     .rendered {
+      display: block;
+      height: 40px;
+      width: 40px;
+      margin: 0 0 0 auto;
       font-size: 28px;
       line-height: 40px;
       border: 1px solid #ddd;
@@ -120,13 +131,6 @@
     }
     .rendered.space {
       color: #e0e0e0;
-    }
-
-    .rendered.term {
-      background-color: #ffdaee;
-      grid-column-start: 1;
-      grid-column-end: 15;
-      height: 4px;
     }
 
     .rendered.error {
