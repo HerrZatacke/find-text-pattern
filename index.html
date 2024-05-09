@@ -31,6 +31,34 @@
       gap: 8px;
       margin: 20px 0;
     }
+    .rom-function {
+      display: flex;
+      gap: 4px;
+      position: fixed;
+      bottom: 0;
+      flex-direction: column;
+      right: 0;
+      width: 270px;
+    }
+    #romfile, #rom-offset {
+      flex: 40px 0 0;
+      background-color: #dddddd;
+      border: none;
+      line-height: 40px;
+      padding: 0 10px;
+      font-size: 16px;
+    }
+    .rom-function-buttons {
+      display: flex;
+      gap: 4px;
+      align-content: stretch;
+    }
+    #rom-next-page, #rom-prev-page {
+      flex-basis: 50%;
+    }
+    #rom-offset {
+      text-align: center;
+    }
     button {
       flex-basis: 50px;
       height: 50px;
@@ -105,6 +133,10 @@
       height: 4px;
     }
 
+    .term + .term {
+      height: 0.25px;
+    }
+
     .rendered {
       display: block;
       height: 40px;
@@ -145,5 +177,13 @@
   <pre id="output"></pre>
   <div id="buttons"></div>
   <div id="rendered"></div>
+  <div class="rom-function">
+    <input id="romfile" type="file"/>
+    <code id="rom-offset">Page: ----/---- 0x------</code>
+    <div class="rom-function-buttons">
+      <button id="rom-next-page">&lt;</button>
+      <button id="rom-prev-page">&gt;</button>
+    </div>
+  </div>
 </body>
 </html>
