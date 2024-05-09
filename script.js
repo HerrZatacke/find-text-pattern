@@ -131,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
               return;
             case 'term':
               charNode.classList.add('term');
+              loopClass = 'norm';
               break;
           }
         } else {
