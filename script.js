@@ -123,7 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
     romOffset.title = romPage * pageSize;
     romOffset.innerText = `Page: ${romPage}/${maxPage} 0x${(romPage * pageSize).toString(16).padStart(6, '0')}`;
     update();
-    window.scrollTo(0, window.innerHeight);
+    window.setTimeout(() => {
+      window.scrollTo(0, document.body.clientHeight);
+    }, 20);
   }
 
   const copySelection = async () => {
