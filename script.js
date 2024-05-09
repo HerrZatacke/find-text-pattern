@@ -1,3 +1,26 @@
+const intlSplit = (str) => {
+  const itr = new Intl.Segmenter("en", {granularity: 'grapheme'}).segment(str);
+  return Array.from(itr, ({segment}) => segment);
+}
+
+const specialTitle = (value) => {
+  switch (value) {
+    case 1:
+      return 'String terminator';
+    case 2:
+      return 'Graphic';
+    case 3:
+      return '0x86 = blank space';
+    case 4:
+      return 'replaced with digit values';
+    case 5:
+      return 'font change';
+    case 6:
+    case 7:
+    case 8:
+      return 'unknown';
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('input');
@@ -7,11 +30,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const init = () => {
     charMap.forEach(({ code, value, special }) => {
       const button = document.createElement('button');
+
+      const char = document.createElement('span');
+      char.classList.add('char');
+      char.innerText = value;
+
       const hex = document.createElement('span');
-      button.innerText = value;
+      hex.classList.add('hex');
       hex.innerText = `0x${code.toString(16).toUpperCase().padStart(2, '0')}`;
+
       buttons.appendChild(button);
-      special && button.classList.add('special');
+      if (special) {
+        button.classList.add(`special-${special}`);
+        button.title = specialTitle(special);
+      }
+      button.appendChild(char);
       button.appendChild(hex);
       button.addEventListener('click', () => {
         input.value = input.value + value;
@@ -27,10 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = '';
       update();
     })
+
+    const fromHexButton = document.createElement('button');
+    fromHexButton.innerText = 'code';
+    buttons.appendChild(fromHexButton);
+    fromHexButton.classList.add('clear');
+    fromHexButton.addEventListener('click', () => {
+      const code = window.prompt('your hex code');
+      const hexed = code.split(' ').map((hex) => parseInt(hex, 16));
+      input.value = reverse(hexed);
+      update();
+    })
   }
 
   const update = () => {
-    output.innerText = (input.value || input.placeholder).split('').map((char) => {
+    output.innerText = intlSplit(input.value || input.placeholder).map((char) => {
+      console.log(char);
       return charMap.find(({value}) => char === value)?.code.toString(16).padStart(2, '0') || '####'
     }).join(' ');
   };
