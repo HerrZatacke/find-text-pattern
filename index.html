@@ -53,8 +53,8 @@
       gap: 4px;
       align-content: stretch;
     }
-    #rom-next-page, #rom-prev-page {
-      flex-basis: 50%;
+    #rom-next-page, #rom-goto-page,#rom-prev-page {
+      flex-basis: 33%;
     }
     #rom-offset {
       text-align: center;
@@ -182,6 +182,7 @@
     <code id="rom-offset">Page: ----/---- 0x------</code>
     <div class="rom-function-buttons">
       <button id="rom-next-page">&lt;</button>
+      <button id="rom-goto-page">GoTo</button>
       <button id="rom-prev-page">&gt;</button>
     </div>
   </div>

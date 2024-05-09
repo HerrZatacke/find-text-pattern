@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const renderedInput = document.getElementById('rendered');
   const romfile = document.getElementById('romfile');
   const romNext = document.getElementById('rom-next-page');
+  const romGoto = document.getElementById('rom-goto-page');
   const romPrev = document.getElementById('rom-prev-page');
   const romOffset = document.getElementById('rom-offset');
 
@@ -136,8 +137,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const prevRomPage = () => { romPage = Math.max(romPage - 1, 0); showCurrentRomPage(); }
-  const nextRomPage = () => { romPage = Math.min(romPage + 1, maxPage); showCurrentRomPage(); }
+  const prevRomPage = () => {
+    romPage = Math.max(romPage - 1, 0);
+    showCurrentRomPage();
+  }
+
+  const gotoRomPage = () => {
+    const goTo = window.prompt('GoTo Page?');
+    if (goTo !== null && goTo.length) {
+      romPage = parseInt(goTo, 10);
+      showCurrentRomPage();
+    }
+  }
+
+  const nextRomPage = () => {
+    romPage = Math.min(romPage + 1, maxPage);
+    showCurrentRomPage();
+  }
+
 
   const update = () => {
     const chars = intlSplit(input.value || input.placeholder)
@@ -223,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
   romNext.addEventListener('click', prevRomPage);
+  romGoto.addEventListener('click', gotoRomPage);
   romPrev.addEventListener('click', nextRomPage);
 
   document.addEventListener('selectionchange', updateSelect);
