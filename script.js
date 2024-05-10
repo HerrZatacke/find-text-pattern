@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     input.value = reverse([...view]);
     romOffset.title = romPage * pageSize;
     romOffset.innerText = `Page: ${romPage}/${maxPage} 0x${(romPage * pageSize).toString(16).padStart(6, '0')}`;
-    update();
+    update(true);
     window.setTimeout(() => {
       window.scrollTo(0, document.body.clientHeight);
     }, 20);
@@ -151,12 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const nextRomPage = () => {
-    romPage = Math.min(romPage + 1, maxPage);
+    romPage = Math.min(romPage + 1, maxPage - 1);
     showCurrentRomPage();
   }
 
 
-  const update = () => {
+  const update = (addAddressInfo = false) => {
     const chars = intlSplit(input.value || input.placeholder)
 
     const mapped = chars.map((char) => {
@@ -177,9 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderedInput.innerHTML = '';
     let loopClass = 'norm';
-    mapped.forEach((mappedChar) => {
+    mapped.forEach((mappedChar, index) => {
       const cellNode = document.createElement('div');
       const charNode = document.createElement('div');
+
+      if (addAddressInfo) {
+        cellNode.title = `0x${(index + (romPage * pageSize)).toString(16).padStart(6, '0')}`;
+      }
 
       if (mappedChar !== null) {
         if (mappedChar.task) {
