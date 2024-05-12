@@ -4,7 +4,8 @@
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-gap: 0;
-    margin: 24px auto;
+    margin: 6px auto;
+    padding: 12px 0;
   }
 
   &__col {

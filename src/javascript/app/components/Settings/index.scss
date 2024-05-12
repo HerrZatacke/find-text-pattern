@@ -1,4 +1,9 @@
 .settings {
+  position: sticky;
+  background: #fff;
+  top: 0;
+  box-shadow: 0 6px 6px #fff;
+
   &__grid {
     display: flex;
     gap: 24px;

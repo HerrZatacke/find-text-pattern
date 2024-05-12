@@ -110,7 +110,7 @@ export function Settings() {
       </div>
       <div className="grid__col grid__col--7">
         <span className="settings__label">
-          { `Found: ${currentFound + 1}/${found.length}` }
+          { found.length ? `Found: ${currentFound + 1}/${found.length}` : 'nothing found' }
         </span>
         <div className="settings__group">
           <button

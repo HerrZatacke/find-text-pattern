@@ -86,10 +86,10 @@ const useRomStore = create(
 
       find: (rawPattern: Uint8Array) => {
         const needle = rawPattern.join(',');
-        const { romContent } = getState();
+        const { romContent, gotoLocation } = getState();
         const contentArray = new Uint8Array(romContent);
 
-        return contentArray.reduce((acc: number[], value: number, index: number) => {
+        const locations = contentArray.reduce((acc: number[], value: number, index: number) => {
           if (value === rawPattern[0]) {
             const romSlice = new Uint8Array(romContent.slice(index, index + rawPattern.length));
             if (romSlice.join(',') === needle) {
@@ -99,10 +99,31 @@ const useRomStore = create(
 
           return acc;
         }, []);
+
+        if (locations[0]) {
+          gotoLocation(locations[0]);
+        }
+
+        return locations;
       },
       gotoLocation: (location: number) => {
         const { pageSize, setRomPage } = getState();
         setRomPage(Math.floor(location / parseInt(pageSize, 10)).toString());
+
+        window.setTimeout(() => {
+          const hl = document.querySelectorAll('.render-char__highlight-current');
+
+          const visibleNode = ([...hl] as HTMLElement[]).find((domNode) => (
+            domNode.getBoundingClientRect().width &&
+            domNode.getBoundingClientRect().height
+          ));
+
+          visibleNode?.scrollIntoView({
+            behavior: 'instant',
+            block: 'center',
+            inline: 'start',
+          });
+        }, 100);
       },
     }),
     {
