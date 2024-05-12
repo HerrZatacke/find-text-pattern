@@ -89,22 +89,26 @@ export function Settings() {
           />
         </label>
       </div>
-      <div className="grid__col grid__col--1 settings__grid">
+      <div className="grid__col grid__col--2 settings__grid">
         <label>
           <span className="settings__label">
             Pagesize:
           </span>
-          <input
-            min={0}
-            max={0x1000}
-            step={0x100}
-            type="number"
+          <select
             value={pageSize}
             onChange={({ target }) => setPageSize(target.value)}
-          />
+          >
+            <option value={0x100}>0x100 (256b)</option>
+            <option value={0x200}>0x200 (512b)</option>
+            <option value={0x400}>0x400 (1kb)</option>
+            <option value={0x800}>0x800 (2kb)</option>
+            <option value={0x1000}>0x1000 (4kb)</option>
+            <option value={0x2000}>0x2000 (8kb)</option>
+            <option value={0x4000}>0x4000 (16kb)</option>
+          </select>
         </label>
       </div>
-      <div className="grid__col grid__col--2">
+      <div className="grid__col grid__col--7">
         <span className="settings__label">
           { `Found: ${currentFound + 1}/${found.length}` }
         </span>
@@ -125,37 +129,31 @@ export function Settings() {
           >
             {'>>'}
           </button>
+          <button
+            type="button"
+            className="settings__button"
+            onClick={() => setVisible(!visible)}
+          >
+            { visible ? 'Hide charmap' : 'Show charmap'}
+          </button>
+          <button
+            type="button"
+            className="settings__button"
+            onClick={() => setRenderTextGrid(!renderTextGrid)}
+          >
+            { renderTextGrid ? 'Full grid' : 'Text grid' }
+          </button>
+          <label
+            className="settings__file file-input"
+          >
+            Load file
+            <input
+              type="file"
+              className="settings__file-input"
+              onChange={({ target }) => setFile(target.files?.[0] || null)}
+            />
+          </label>
         </div>
-      </div>
-      <div className="grid__col grid__col--2">
-        <button
-          type="button"
-          className="settings__button"
-          onClick={() => setVisible(!visible)}
-        >
-          { visible ? 'Hide keyboard' : 'Show keyboard'}
-        </button>
-      </div>
-      <div className="grid__col grid__col--2">
-        <button
-          type="button"
-          className="settings__button"
-          onClick={() => setRenderTextGrid(!renderTextGrid)}
-        >
-          { renderTextGrid ? 'Full grid' : 'Text grid' }
-        </button>
-      </div>
-      <div className="grid__col grid__col--2">
-        <label
-          className="settings__file file-input"
-        >
-          Load file
-          <input
-            type="file"
-            className="settings__file-input"
-            onChange={({ target }) => setFile(target.files?.[0] || null)}
-          />
-        </label>
       </div>
     </div>
   );

@@ -17,13 +17,18 @@ pre {
   padding: 2px;
 }
 
-input, textarea, button, .file-input {
+input, textarea, button, select, .file-input {
+  --bg-color: 210 210 210;
   width: 100%;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: bold;
-  border: 2px solid #aaa;
+  border: 1px solid #aaa;
   border-radius: 5px;
-  background: #eee;
+  background: rgb(var(--bg-color) / 50%);
+
+  &:not([disabled]):hover {
+    background: rgb(var(--bg-color) / 75%);
+  }
 }
 
 
@@ -44,16 +49,15 @@ button, .file-input {
   height: 40px;
   line-height: 40px;
   padding: 0 18px;
-  --bg-color: 220 220 220;
   border: none;
   display: inline-block;
   cursor: pointer;
 
-  background: rgb(var(--bg-color));
+}
 
-  &:not([disabled]):hover {
-    background: rgb(var(--bg-color) / 50%);
-  }
+select {
+  height: 40px;
+  padding: 0 10px;
 }
 
 .file-input {
@@ -69,4 +73,8 @@ button, .file-input {
     height: 1px;
     left: -24px;
   }
+}
+
+label {
+  width: 100%;
 }

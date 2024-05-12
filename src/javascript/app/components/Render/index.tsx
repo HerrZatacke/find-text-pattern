@@ -98,7 +98,8 @@ function Render() {
                 key={index}
                 highlight={loopFound > 0}
                 highlightCurrent={loopFoundExtra}
-                index={pageOffset + index}
+                globalOffset={pageOffset + index}
+                pageOffset={index}
                 char={char}
                 loopClass={loopClass}
               />

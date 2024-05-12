@@ -9,14 +9,22 @@ import { hexPad } from '../../../tools/hexPad';
 
 interface Props {
   char: MapChar,
-  index: number,
+  globalOffset: number,
+  pageOffset: number,
   loopClass: string,
   highlight: boolean,
   highlightCurrent: boolean,
 }
 
-function RenderChar({ char, index, loopClass, highlight, highlightCurrent }: Props) {
-  const title = hexPad(index, 6);
+function RenderChar({
+  char,
+  globalOffset,
+  pageOffset,
+  loopClass,
+  highlight,
+  highlightCurrent,
+}: Props) {
+  const title = `${hexPad(globalOffset, 6)}\n${hexPad(pageOffset, 6)}`;
   const styles: CSSPropertiesVars = {};
 
   let textValue = char.value;

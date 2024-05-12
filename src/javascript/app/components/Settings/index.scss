@@ -16,7 +16,17 @@
 
   &__group {
     display: flex;
-    gap: 12px;
+    gap: 1px;
     margin-top: -17px;
+
+    & > :not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    & > :not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
   }
 }
