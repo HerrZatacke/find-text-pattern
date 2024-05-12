@@ -1,0 +1,22 @@
+.settings {
+  &__grid {
+    display: flex;
+    gap: 24px;
+  }
+
+  &__button, &__file {
+    margin-top: 17px;
+  }
+
+  &__label {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  &__group {
+    display: flex;
+    gap: 12px;
+    margin-top: -17px;
+  }
+}

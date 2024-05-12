@@ -1,4 +1,12 @@
-const charMap = [
+import type { MapChar } from '../types/MapChar';
+import { MapCharTask } from '../types/MapChar';
+
+export const BAD_CHAR: MapChar = {
+  code: -1,
+  value: '',
+};
+
+export const charMap: MapChar[] = [
   { code: 0x00, value: 'あ' },
   { code: 0x01, value: 'い' },
   { code: 0x02, value: 'う' },
@@ -48,7 +56,7 @@ const charMap = [
   { code: 0x2e, value: 'を' },
   { code: 0x2f, value: 'ん' },
   { code: 0x30, value: '〜' },
-  { code: 0x31, value: '♥', special: 2 },
+  { code: 0x31, value: '♥', groupId: 'char' },
   { code: 0x32, value: 'が' },
   { code: 0x33, value: 'ぎ' },
   { code: 0x34, value: 'ぐ' },
@@ -122,8 +130,8 @@ const charMap = [
   { code: 0x78, value: 'ヤ' },
   { code: 0x79, value: 'ユ' },
   { code: 0x7a, value: 'ヨ' },
-  { code: 0x7b, value: '!', special: 2 },
-  { code: 0x7c, value: '?', special: 2 },
+  { code: 0x7b, value: '!', groupId: 'char' },
+  { code: 0x7c, value: '?', groupId: 'char' },
   { code: 0x7d, value: 'ラ' },
   { code: 0x7e, value: 'リ' },
   { code: 0x7f, value: 'ル' },
@@ -133,7 +141,7 @@ const charMap = [
   { code: 0x83, value: 'ヲ' },
   { code: 0x84, value: 'ン' },
   { code: 0x85, value: 'ヴ' },
-  { code: 0x86, value: ' ', special: 3 },
+  { code: 0x86, value: ' ', groupId: 'blank' },
   { code: 0x87, value: 'ガ' },
   { code: 0x88, value: 'ギ' },
   { code: 0x89, value: 'グ' },
@@ -225,9 +233,9 @@ const charMap = [
   { code: 0xdf, value: 'x' },
   { code: 0xe0, value: 'y' },
   { code: 0xe1, value: 'z' },
-  { code: 0xe2, value: '📱', special: 2},
-  { code: 0xe3, value: '😅', special: 2},
-  { code: 0xe4, value: '😄', special: 2},
+  { code: 0xe2, value: '📱', groupId: 'char' },
+  { code: 0xe3, value: '😅', groupId: 'char' },
+  { code: 0xe4, value: '😄', groupId: 'char' },
   { code: 0xe5, value: '_' },
   { code: 0xe6, value: '0' },
   { code: 0xe7, value: '1' },
@@ -245,16 +253,16 @@ const charMap = [
   { code: 0xf3, value: '"' },
   { code: 0xf4, value: '@' },
 
-  { code: 0xf5, value: '🔴', special: 8 },
-  { code: 0xf6, value: '🟡', special: 8 },
-  { code: 0xf7, value: '🟢', special: 8 },
-  { code: 0xf8, value: '1️⃣', special: 4, task: 'ones' },
-  { code: 0xf9, value: '🔟', special: 4, task: 'tens' },
-  { code: 0xfa, value: '💯', special: 4, task: 'hundreds' },
-  { code: 0xfb, value: '🔵', special: 8 },
-  { code: 0xfc, value: '🟣', special: 8 },
-  { code: 0xfd, value: '⏫', special: 5, task: 'bold' },
-  { code: 0xfe, value: '⏬', special: 5, task: 'slim' },
-  { code: 0xff, value: '🛑', special: 1, task: 'term' },
+  { code: 0xf5, value: '🔴', groupId: 'unknown' },
+  { code: 0xf6, value: '🟡', groupId: 'unknown' },
+  { code: 0xf7, value: '🟢', groupId: 'unknown' },
+  { code: 0xf8, value: '1️⃣', groupId: 'digits', special: MapCharTask.ONES_CHAR },
+  { code: 0xf9, value: '🔟', groupId: 'digits', special: MapCharTask.TENS_CHAR },
+  { code: 0xfa, value: '💯', groupId: 'digits', special: MapCharTask.HUNDREDS_CHAR },
+  { code: 0xfb, value: '🔵', groupId: 'unknown' },
+  { code: 0xfc, value: '🟣', groupId: 'unknown' },
+  { code: 0xfd, value: '⏫', groupId: 'font', special: MapCharTask.FONT_BOLD },
+  { code: 0xfe, value: '⏬', groupId: 'font', special: MapCharTask.FONT_SLIM },
+  { code: 0xff, value: '🛑', groupId: 'term', special: MapCharTask.STRING_TERM },
 ];
 

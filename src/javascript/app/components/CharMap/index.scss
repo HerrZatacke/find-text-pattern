@@ -1,0 +1,9 @@
+.charmap {
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(16, 50px);
+    grid-gap: 8px 8px;
+    margin: 0 auto;
+    width: fit-content;
+  }
+}

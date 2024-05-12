@@ -1,0 +1,25 @@
+.text-input {
+  &__label {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  &__group {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__search {
+    flex: 120px 0 0;
+  }
+
+  &__error {
+    text-align: left;
+    color: #ee4444;
+  }
+
+  &--has-error &__input {
+    border-color: #ffc8c8;
+    background-color: #ffefef;
+  }
+}

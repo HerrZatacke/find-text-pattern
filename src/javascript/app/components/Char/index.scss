@@ -1,0 +1,30 @@
+.char {
+  flex-basis: 50px;
+  height: 50px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  --bg-color: 220 220 220;
+  --text-color: 0 0 0;
+  padding: 0;
+  line-height: initial;
+
+  &--missing {
+    --bg-color: 255 255 255;
+    cursor: not-allowed;
+  }
+
+  &__value {
+    display: block;
+    height: 32px;
+    line-height: 32px;
+    --text-color: 255 255 255;
+  }
+
+  &__code {
+    display: block;
+    margin-top: 1px;
+    font-size: 10px;
+    color: #888888;
+  }
+}
