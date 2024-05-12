@@ -119,7 +119,7 @@ export function Settings() {
         <div className="settings__group">
           <button
             type="button"
-            className="settings__button"
+            className="settings__button settings__button--s"
             onClick={() => setCurrentFound(currentFound - 1)}
             disabled={!found.length}
           >
@@ -127,7 +127,7 @@ export function Settings() {
           </button>
           <button
             type="button"
-            className="settings__button"
+            className="settings__button settings__button--s"
             onClick={() => setCurrentFound(currentFound + 1)}
             disabled={!found.length}
           >

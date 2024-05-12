@@ -11,6 +11,10 @@
 
   &__button, &__file {
     margin-top: 17px;
+
+  }
+  &__button--s {
+    flex-basis: 30px;
   }
 
   &__label {
