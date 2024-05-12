@@ -21,6 +21,7 @@ export function Settings() {
   }));
 
   const {
+    hasFile,
     maxPage,
     pageSize,
     romPage,
@@ -28,7 +29,9 @@ export function Settings() {
     setPageSize,
     setRomPage,
     cleanRomPage,
+    unloadFile,
   } = useRomStore((state) => ({
+    hasFile: state.romSize > 0,
     maxPage: state.maxPage,
     pageSize: state.pageSize,
     romPage: state.romPage,
@@ -36,6 +39,7 @@ export function Settings() {
     setPageSize: state.setPageSize,
     setRomPage: state.setRomPage,
     cleanRomPage: state.cleanRomPage,
+    unloadFile: state.unloadFile,
   }));
 
   const { found, setCurrentFound, currentFound } = usePatternStore((state) => ({
@@ -142,6 +146,14 @@ export function Settings() {
             onClick={() => setRenderTextGrid(!renderTextGrid)}
           >
             { renderTextGrid ? 'Full grid' : 'Text grid' }
+          </button>
+          <button
+            type="button"
+            className="settings__button"
+            onClick={unloadFile}
+            disabled={!hasFile}
+          >
+            Unload File
           </button>
           <label
             className="settings__file file-input"

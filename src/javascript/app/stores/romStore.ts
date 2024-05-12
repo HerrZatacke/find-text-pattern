@@ -22,6 +22,7 @@ export interface RomStoreState {
   pageSize: string,
   romPage: string,
   setFile: (file: File | null) => void,
+  unloadFile: () => void,
   setPageSize: (pageSize: string) => void,
   setRomPage: (romPage: string) => void,
   cleanRomPage: () => void,
@@ -32,7 +33,7 @@ export interface RomStoreState {
 const useRomStore = create(
   persist<RomStoreState>(
     (set, getState) => ({
-      romContent: new Uint8Array([]),
+      romContent: new ArrayBuffer(0),
       romSize: 0,
       maxPage: 0,
       pageSize: (0x200).toString(10),
@@ -56,6 +57,15 @@ const useRomStore = create(
             maxPage: Math.ceil(romContent.byteLength / parseInt(pageSize, 10)) - 1,
           });
         }
+      },
+
+      unloadFile: () => {
+        set({
+          romContent: new ArrayBuffer(0),
+          romSize: 0,
+          romPage: '0',
+          maxPage: 0,
+        });
       },
 
       setPageSize: (pageSize: string) => {
