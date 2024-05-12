@@ -19,16 +19,13 @@ jobs:
           cache: 'npm'
 
       - name: Install npm dependencies 🔗
-        if: steps.checkTag.outputs.exists == 'false'
         run: npm install
 
       - name: Build 🧱
-        if: steps.checkTag.outputs.exists == 'false'
         run: npm run build
 
       - name: Deploy to GitHub-Pages 🛳
         uses: JamesIves/github-pages-deploy-action@v4.4.1
-        if: steps.checkTag.outputs.exists == 'false'
         with:
           branch: gh-pages
           folder: dist
