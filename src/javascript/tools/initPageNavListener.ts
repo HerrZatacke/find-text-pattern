@@ -13,13 +13,13 @@ export const initPageNavListener = () => {
     switch (ev.key) {
       case 'ArrowRight': {
         const { romPage, setRomPage } = useRomStore.getState();
-        setRomPage((parseInt(romPage, 10) + 1).toString(10));
+        setRomPage(romPage + 1);
         break;
       }
 
       case 'ArrowLeft': {
         const { romPage, setRomPage } = useRomStore.getState();
-        setRomPage((parseInt(romPage, 10) - 1).toString(10));
+        setRomPage(romPage - 1);
         break;
       }
 

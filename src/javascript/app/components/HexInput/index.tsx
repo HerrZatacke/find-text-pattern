@@ -1,55 +1,57 @@
 import React from 'react';
-import { clsx } from 'clsx';
+import { IconButton, InputAdornment, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import usePatternStore from '../../stores/patternStore';
 import useRomStore from '../../stores/romStore';
-import './index.scss';
+import { useSearch } from '../../hooks/useSearch';
 
 function HexInput() {
-  const { setHex, inputHexError, hex, cleanHex, findInRom, length } = usePatternStore((state) => ({
+  const { setHex, inputHexError, hex, cleanHex, length } = usePatternStore((state) => ({
     setHex: state.setHex,
     inputHexError: state.inputHexError,
     hex: state.hex,
     cleanHex: state.cleanHex,
-    findInRom: state.findInRom,
     length: state.rawPattern.length,
   }));
+
+  const { findInRom } = useSearch();
 
   const romSize = useRomStore((store) => (store.romSize));
 
   return (
-    <div className="hex-input grid__container">
-      <label
-        className={clsx(
-          'grid__col',
-          'grid__col--12',
-          {
-            'hex-input--has-error': inputHexError,
-          },
-        )}
-        htmlFor="hexInput"
-      >
-        <span className="hex-input__label">
-          { `Hex Text: (${length})` }
-        </span>
-        <div className="hex-input__group">
-          <textarea
-            id="hexInput"
-            className="hex-input__input grid__col--12"
-            value={hex}
-            onBlur={cleanHex}
-            onChange={({ target }) => setHex(target.value)}
-          />
-          <button
-            type="button"
-            className="hex-input__search"
-            onClick={findInRom}
-            disabled={!!inputHexError || !romSize || !length}
-          >
-            Search
-          </button>
-        </div>
-      </label>
-      { inputHexError && <p className="hex-input__error grid__col grid__col--12">{inputHexError}</p> }
+    <div className="grid__container">
+      <div className="grid__col grid__col--12">
+        <TextField
+          id="hexInput"
+          label="Hex Text"
+          value={hex}
+          onBlur={cleanHex}
+          onChange={({ target }) => setHex(target.value)}
+          variant="outlined"
+          size="small"
+          fullWidth
+          multiline
+          minRows={4}
+          maxRows={4}
+          error={!!inputHexError}
+          helperText={inputHexError}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  edge="end"
+                  color="primary"
+                  title="Search"
+                  onClick={findInRom}
+                  disabled={!!inputHexError || !romSize || !length}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
     </div>
   );
 }

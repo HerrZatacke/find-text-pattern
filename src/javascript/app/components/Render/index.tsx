@@ -11,6 +11,7 @@ import useGridStore from '../../stores/gridStore';
 import useRomStore from '../../stores/romStore';
 import useSettingsStore from '../../stores/settingsStore';
 import './index.scss';
+import { useSearch } from '../../hooks/useSearch';
 
 function Render() {
   const styles: CSSPropertiesVars = {};
@@ -33,17 +34,14 @@ function Render() {
     romPage: state.romPage,
   }));
 
-  const { found, currentFound } = usePatternStore((state) => ({
-    found: state.found,
-    currentFound: state.currentFound,
-  }));
+  const { found, currentFound } = useSearch();
 
-  const pageOffset = (parseInt(romPage, 10) || 0) * parseInt(pageSize, 10);
+  const pageOffset = romPage * pageSize;
 
   const mappedChars = useMemo<MapChar[]>(() => {
     let view: Uint8Array;
     if (romSize) {
-      const bufferPart = romContent.slice(pageOffset, pageOffset + parseInt(pageSize, 10));
+      const bufferPart = romContent.slice(pageOffset, pageOffset + pageSize);
       view = new Uint8Array(bufferPart);
     } else {
       view = rawPattern;

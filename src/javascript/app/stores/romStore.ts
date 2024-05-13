@@ -19,12 +19,13 @@ export interface RomStoreState {
   romContent: ArrayBuffer,
   romSize: number,
   maxPage: number,
-  pageSize: string,
-  romPage: string,
-  setFile: (file: File | null) => void,
+  pageSize: number,
+  romPage: number,
+
+  setFile: (file: File) => void,
   unloadFile: () => void,
-  setPageSize: (pageSize: string) => void,
-  setRomPage: (romPage: string) => void,
+  setPageSize: (pageSize: number) => void,
+  setRomPage: (romPage: number) => void,
   cleanRomPage: () => void,
   find: (rawPattern: Uint8Array) => number[],
   gotoLocation: (location: number) => void,
@@ -36,11 +37,10 @@ const useRomStore = create(
       romContent: new ArrayBuffer(0),
       romSize: 0,
       maxPage: 0,
-      pageSize: (0x200).toString(10),
-      romPage: '0',
-      found: [],
+      pageSize: 0x200,
+      romPage: 0,
 
-      setFile: async (file: File | null) => {
+      setFile: async (file: File) => {
         if (!file) {
           return;
         }
@@ -53,8 +53,8 @@ const useRomStore = create(
           set({
             romContent,
             romSize: romContent.byteLength,
-            romPage: '0',
-            maxPage: Math.ceil(romContent.byteLength / parseInt(pageSize, 10)) - 1,
+            romPage: 0,
+            maxPage: Math.ceil(romContent.byteLength / pageSize) - 1,
           });
         }
       },
@@ -63,12 +63,12 @@ const useRomStore = create(
         set({
           romContent: new ArrayBuffer(0),
           romSize: 0,
-          romPage: '0',
+          romPage: 0,
           maxPage: 0,
         });
       },
 
-      setPageSize: (pageSize: string) => {
+      setPageSize: (pageSize: number) => {
         if (!pageSize) {
           return;
         }
@@ -76,12 +76,12 @@ const useRomStore = create(
         const { romSize } = getState();
         set({
           pageSize,
-          romPage: '0',
-          maxPage: Math.ceil(romSize / parseInt(pageSize, 10)) - 1,
+          romPage: 0,
+          maxPage: Math.ceil(romSize / pageSize) - 1,
         });
       },
 
-      setRomPage: (romPage: string) => {
+      setRomPage: (romPage: number) => {
         set({
           romPage,
         });
@@ -90,7 +90,7 @@ const useRomStore = create(
       cleanRomPage: () => {
         const { romPage, maxPage } = getState();
         set({
-          romPage: Math.min(Math.max(parseInt(romPage, 10) || 0, 0), maxPage).toString(10),
+          romPage: Math.min(Math.max(romPage, 0), maxPage),
         });
       },
 
@@ -118,7 +118,7 @@ const useRomStore = create(
       },
       gotoLocation: (location: number) => {
         const { pageSize, setRomPage } = getState();
-        setRomPage(Math.floor(location / parseInt(pageSize, 10)).toString());
+        setRomPage(Math.floor(location / pageSize));
 
         window.setTimeout(() => {
           const hl = document.querySelectorAll('.render-char__highlight-current');

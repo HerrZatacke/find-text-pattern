@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import useRomStore from './romStore';
 import { hexStringToNumeric } from '../../tools/hexStringToNumeric';
 import { numericToHexString } from '../../tools/numericToHexString';
 import { stringToNumeric } from '../../tools/stringToNumeric';
@@ -18,11 +17,6 @@ export interface PatternStoreState {
   inputHexError: string | null,
   hex: string,
   cleanHex: () => void,
-
-  findInRom: () => void,
-  found: number[],
-  currentFound: number,
-  setCurrentFound: (found: number) => void,
 }
 
 const usePatternStore = create(
@@ -33,8 +27,6 @@ const usePatternStore = create(
       hex: '',
       inputTextError: null,
       inputHexError: null,
-      currentFound: 0,
-      found: [],
 
       setText: (text: string) => {
         try {
@@ -108,24 +100,6 @@ const usePatternStore = create(
             found: [],
           }));
         }
-      },
-
-      findInRom: () => {
-        const { rawPattern } = getState();
-        set({
-          currentFound: 0,
-          found: useRomStore.getState().find(rawPattern),
-        });
-      },
-
-      setCurrentFound: (index: number) => {
-        const { found } = getState();
-        const maxIndex = found.length - 1;
-        const currentFound = Math.min(Math.max(index, 0), maxIndex);
-        set({
-          currentFound,
-        });
-        useRomStore.getState().gotoLocation(found[currentFound]);
       },
     }),
     {

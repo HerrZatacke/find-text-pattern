@@ -1,9 +1,19 @@
 import React from 'react';
+import { AppBar, Toolbar, Button, TextField, MenuItem, Stack, ButtonGroup } from '@mui/material';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import GridOffIcon from '@mui/icons-material/GridOff';
+import GridOnIcon from '@mui/icons-material/GridOn';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FolderOffIcon from '@mui/icons-material/FolderOff';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+
 import useGridStore from '../../stores/gridStore';
 import useSettingsStore from '../../stores/settingsStore';
-import './index.scss';
 import useRomStore from '../../stores/romStore';
-import usePatternStore from '../../stores/patternStore';
+import { useFile } from '../../hooks/useFile';
+import { useSearch } from '../../hooks/useSearch';
 
 export function Settings() {
   const { gridRows, gridCols, setGridRows, setGridCols } = useGridStore((state) => ({
@@ -21,152 +31,175 @@ export function Settings() {
   }));
 
   const {
-    hasFile,
     maxPage,
     pageSize,
     romPage,
-    setFile,
     setPageSize,
     setRomPage,
     cleanRomPage,
-    unloadFile,
   } = useRomStore((state) => ({
-    hasFile: state.romSize > 0,
     maxPage: state.maxPage,
     pageSize: state.pageSize,
     romPage: state.romPage,
-    setFile: state.setFile,
     setPageSize: state.setPageSize,
     setRomPage: state.setRomPage,
     cleanRomPage: state.cleanRomPage,
-    unloadFile: state.unloadFile,
   }));
 
-  const { found, setCurrentFound, currentFound } = usePatternStore((state) => ({
-    found: state.found,
-    setCurrentFound: state.setCurrentFound,
-    currentFound: state.currentFound,
-  }));
+  const {
+    hasFile,
+    setFile,
+    unloadFile,
+  } = useFile();
+
+  const {
+    foundCount,
+    currentFound,
+    setCurrentFound,
+  } = useSearch();
+
+  const canWorkWithResults = hasFile && foundCount > 0;
 
   return (
-    <div className="grid__container settings">
-      <div className="grid__col grid__col--1 settings__grid">
-        <label>
-          <span className="settings__label">
-            Cols:
-          </span>
-          <input
-            min={0}
-            max={32}
-            type="number"
-            value={gridCols}
-            onChange={({ target }) => setGridCols(target.value)}
-          />
-        </label>
-      </div>
-      <div className="grid__col grid__col--1 settings__grid">
-        <label>
-          <span className="settings__label">
-            Rows:
-          </span>
-          <input
-            min={0}
-            max={4}
-            type="number"
-            value={gridRows}
-            onChange={({ target }) => setGridRows(target.value)}
-          />
-        </label>
-      </div>
-      <div className="grid__col grid__col--1 settings__grid">
-        <label>
-          <span className="settings__label">
-            { `P: ${(parseInt(romPage, 10) || 0)}/${maxPage}`}
-          </span>
-          <input
-            min={0}
-            max={maxPage}
-            type="number"
-            value={romPage}
-            onBlur={cleanRomPage}
-            onChange={({ target }) => setRomPage(target.value)}
-          />
-        </label>
-      </div>
-      <div className="grid__col grid__col--2 settings__grid">
-        <label>
-          <span className="settings__label">
-            Pagesize:
-          </span>
-          <select
-            value={pageSize}
-            onChange={({ target }) => setPageSize(target.value)}
-          >
-            <option value={0x100}>0x100 (256b)</option>
-            <option value={0x200}>0x200 (512b)</option>
-            <option value={0x400}>0x400 (1kb)</option>
-            <option value={0x800}>0x800 (2kb)</option>
-            <option value={0x1000}>0x1000 (4kb)</option>
-            <option value={0x2000}>0x2000 (8kb)</option>
-            <option value={0x4000}>0x4000 (16kb)</option>
-          </select>
-        </label>
-      </div>
-      <div className="grid__col grid__col--7">
-        <span className="settings__label">
-          { found.length ? `Found: ${currentFound + 1}/${found.length}` : 'nothing found' }
-        </span>
-        <div className="settings__group">
-          <button
-            type="button"
-            className="settings__button settings__button--s"
-            onClick={() => setCurrentFound(currentFound - 1)}
-            disabled={!found.length}
-          >
-            {'<<'}
-          </button>
-          <button
-            type="button"
-            className="settings__button settings__button--s"
-            onClick={() => setCurrentFound(currentFound + 1)}
-            disabled={!found.length}
-          >
-            {'>>'}
-          </button>
-          <button
-            type="button"
-            className="settings__button"
-            onClick={() => setVisible(!visible)}
-          >
-            { visible ? 'Hide charmap' : 'Show charmap'}
-          </button>
-          <button
-            type="button"
-            className="settings__button"
-            onClick={() => setRenderTextGrid(!renderTextGrid)}
-          >
-            { renderTextGrid ? 'Full grid' : 'Text grid' }
-          </button>
-          <button
-            type="button"
-            className="settings__button"
-            onClick={unloadFile}
-            disabled={!hasFile}
-          >
-            Unload File
-          </button>
-          <label
-            className="settings__file file-input"
-          >
-            Load file
-            <input
-              type="file"
-              className="settings__file-input"
-              onChange={({ target }) => setFile(target.files?.[0] || null)}
-            />
-          </label>
+    <AppBar
+      position="sticky"
+      color="secondary"
+    >
+      <Toolbar>
+        <div className="grid__container settings">
+          <div className="grid__col grid__col--6">
+            <Stack direction="row" spacing={1} useFlexGap>
+              <TextField
+                label="Columns"
+                title="Columns"
+                value={gridCols}
+                onChange={({ target }) => setGridCols(target.value)}
+                variant="outlined"
+                size="small"
+                select
+              >
+                <MenuItem value={8}>8 Columns</MenuItem>
+                <MenuItem value={10}>10 Columns</MenuItem>
+                <MenuItem value={12}>12 Columns</MenuItem>
+                <MenuItem value={14}>14 Columns</MenuItem>
+                <MenuItem value={16}>16 Columns</MenuItem>
+                <MenuItem value={24}>24 Columns</MenuItem>
+                <MenuItem value={32}>32 Columns</MenuItem>
+              </TextField>
+              <TextField
+                label="Rows"
+                title="Rows"
+                value={gridRows}
+                onChange={({ target }) => setGridRows(target.value)}
+                variant="outlined"
+                size="small"
+                select
+              >
+                <MenuItem value={1}>1 Rows</MenuItem>
+                <MenuItem value={2}>2 Rows</MenuItem>
+                <MenuItem value={3}>3 Rows</MenuItem>
+                <MenuItem value={4}>4 Rows</MenuItem>
+              </TextField>
+              <TextField
+                label={`Page: ${romPage + 1}/${maxPage + 1}`}
+                title="Page"
+                value={romPage + 1}
+                onBlur={cleanRomPage}
+                onChange={({ target }) => setRomPage(parseInt(target.value, 10) - 1 || 0)}
+                variant="outlined"
+                size="small"
+                disabled={!hasFile}
+                inputProps={{
+                  min: 1,
+                  max: maxPage + 1,
+                  type: 'number',
+                }}
+              />
+              <TextField
+                label="Page size"
+                title="Page size"
+                value={pageSize}
+                onChange={({ target }) => setPageSize(parseInt(target.value, 10) || 0)}
+                variant="outlined"
+                size="small"
+                disabled={!hasFile}
+                select
+              >
+                <MenuItem value={0x100}>0x100 (256b)</MenuItem>
+                <MenuItem value={0x200}>0x200 (512b)</MenuItem>
+                <MenuItem value={0x400}>0x400 (1kb)</MenuItem>
+                <MenuItem value={0x800}>0x800 (2kb)</MenuItem>
+                <MenuItem value={0x1000}>0x1000 (4kb)</MenuItem>
+                <MenuItem value={0x2000}>0x2000 (8kb)</MenuItem>
+                <MenuItem value={0x4000}>0x4000 (16kb)</MenuItem>
+              </TextField>
+            </Stack>
+          </div>
+          <div className="grid__col grid__col--6">
+            <Stack direction="row" spacing={1} useFlexGap justifyContent="end">
+              <ButtonGroup>
+                <Button
+                  title="Go to previous found"
+                  variant="outlined"
+                  onClick={() => setCurrentFound(currentFound - 1)}
+                  disabled={!canWorkWithResults}
+                >
+                  <ArrowLeftIcon />
+                </Button>
+                <Button
+                  title="Go to current"
+                  component="p"
+                  variant="outlined"
+                  onClick={() => setCurrentFound(currentFound)}
+                  disabled={!canWorkWithResults}
+                >
+                  { foundCount && hasFile ? `${currentFound + 1}/${foundCount}` : '--' }
+                </Button>
+                <Button
+                  title="Go to next found"
+                  variant="outlined"
+                  onClick={() => setCurrentFound(currentFound + 1)}
+                  disabled={!canWorkWithResults}
+                >
+                  <ArrowRightIcon />
+                </Button>
+              </ButtonGroup>
+              <ButtonGroup>
+                <Button
+                  title="Toggle character map"
+                  onClick={() => setVisible(!visible)}
+                >
+                  {visible ? <GridOnIcon /> : <GridOffIcon />}
+                </Button>
+                <Button
+                  title="Toggle grid rendering"
+                  onClick={() => setRenderTextGrid(!renderTextGrid)}
+                >
+                  {renderTextGrid ? <FormatAlignLeftIcon /> : <FormatAlignJustifyIcon />}
+                </Button>
+              </ButtonGroup>
+              <ButtonGroup>
+                <Button
+                  onClick={unloadFile}
+                  disabled={!hasFile}
+                >
+                  <FolderOffIcon />
+                </Button>
+                <Button
+                  component="label"
+                >
+                  <FolderOpenIcon />
+                  <input
+                    type="file"
+                    hidden
+                    onChange={({ target }) => setFile(target.files)}
+                  />
+                </Button>
+              </ButtonGroup>
+            </Stack>
+          </div>
         </div>
-      </div>
-    </div>
+      </Toolbar>
+    </AppBar>
   );
 }
