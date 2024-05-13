@@ -11,6 +11,7 @@ import useGridStore from '../../stores/gridStore';
 import useRomStore from '../../stores/romStore';
 import useSettingsStore from '../../stores/settingsStore';
 import { useSearch } from '../../hooks/useSearch';
+import { usePatch } from '../../hooks/usePatch';
 
 import './index.scss';
 
@@ -37,6 +38,8 @@ function Render() {
 
   const { found, currentFound } = useSearch();
 
+  const { patches, upsertPatch } = usePatch();
+
   const pageOffset = romPage * pageSize;
 
   const mappedChars = useMemo<MapChar[]>(() => {
@@ -49,13 +52,38 @@ function Render() {
     }
 
     return (
-      view.reduce((acc: MapChar[], code: number) => (
-        acc.concat(findCharByCode(code) || BAD_CHAR)
-      ), [])
+      view.reduce((acc: MapChar[], code: number, index: number): MapChar[] => {
+        const globalIndex = index + pageOffset;
+        const patch = patches.find(({ location }) => location === globalIndex);
+
+        let char = findCharByCode(patch?.code || code);
+
+        if (char && patch) {
+          char = {
+            ...char,
+            patched: true,
+          };
+        }
+
+        return (acc.concat(char || BAD_CHAR)
+        );
+      }, [])
     );
-  }, [pageOffset, pageSize, rawPattern, romContent, romSize]);
+  }, [pageOffset, pageSize, patches, rawPattern, romContent, romSize]);
 
   styles['--grid'] = grid;
+  const update = (location: number, code: number) => {
+    upsertPatch({
+      location,
+      code,
+    });
+    // Nope nope nope... :D
+    // window.requestAnimationFrame(() => {
+    //   const nextChar: HTMLButtonElement | null = document.querySelector(`[data-global-offset="${location + 1}"] button`);
+    //   nextChar?.focus();
+    // });
+  };
+
 
   let loopClass = 'norm';
   let loopFound = 0;
@@ -94,13 +122,14 @@ function Render() {
 
             return (
               <RenderChar
-                key={index}
+                key={pageOffset + index}
                 highlight={loopFound > 0}
                 highlightCurrent={loopFoundExtra}
                 globalOffset={pageOffset + index}
                 pageOffset={index}
                 char={char}
                 loopClass={loopClass}
+                update={update}
               />
             );
           })}

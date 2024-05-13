@@ -8,12 +8,15 @@ import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FolderOffIcon from '@mui/icons-material/FolderOff';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 
 import useGridStore from '../../stores/gridStore';
 import useSettingsStore from '../../stores/settingsStore';
 import useRomStore from '../../stores/romStore';
 import { useFile } from '../../hooks/useFile';
 import { useSearch } from '../../hooks/useSearch';
+import { usePatch } from '../../hooks/usePatch';
 
 export function Settings() {
   const { gridRows, gridCols, setGridRows, setGridCols } = useGridStore((state) => ({
@@ -56,7 +59,10 @@ export function Settings() {
     foundCount,
     currentFound,
     setCurrentFound,
+    clearSearch,
   } = useSearch();
+
+  const { downloadPatchedFile } = usePatch();
 
   const canWorkWithResults = hasFile && foundCount > 0;
 
@@ -148,12 +154,19 @@ export function Settings() {
                 </Button>
                 <Button
                   title="Go to current"
-                  component="p"
                   variant="outlined"
                   onClick={() => setCurrentFound(currentFound)}
                   disabled={!canWorkWithResults}
                 >
                   { foundCount && hasFile ? `${currentFound + 1}/${foundCount}` : '--' }
+                </Button>
+                <Button
+                  title="Clear search"
+                  variant="outlined"
+                  onClick={() => clearSearch()}
+                  disabled={!canWorkWithResults}
+                >
+                  <SearchOffIcon />
                 </Button>
                 <Button
                   title="Go to next found"
@@ -180,12 +193,21 @@ export function Settings() {
               </ButtonGroup>
               <ButtonGroup>
                 <Button
+                  title="Download patched file"
+                  onClick={downloadPatchedFile}
+                  disabled={!hasFile}
+                >
+                  <FileDownloadIcon />
+                </Button>
+                <Button
+                  title="Unload file"
                   onClick={unloadFile}
                   disabled={!hasFile}
                 >
                   <FolderOffIcon />
                 </Button>
                 <Button
+                  title="Load file"
                   component="label"
                 >
                   <FolderOpenIcon />

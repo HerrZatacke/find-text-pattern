@@ -8,6 +8,7 @@ interface UseSearch {
   findInRom: () => void,
   currentFound: number,
   setCurrentFound: (index: number) => void,
+  clearSearch: () => void,
 }
 
 export const useSearch = (): UseSearch => {
@@ -45,11 +46,16 @@ export const useSearch = (): UseSearch => {
     gotoLocation(found[gotoIndex]);
   };
 
+  const clearSearch = () => {
+    setFound([]);
+  };
+
   return {
     found,
     foundCount: found.length,
     currentFound,
     setCurrentFound,
     findInRom,
+    clearSearch,
   };
 };

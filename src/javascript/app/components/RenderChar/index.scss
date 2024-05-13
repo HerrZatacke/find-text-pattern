@@ -1,13 +1,17 @@
 .render-char {
   --bg-color: 255 255 255;
   --text-color: 0 0 0;
+  position: relative;
 
 
   &__char {
     display: block;
+    position: relative;
     height: 40px;
     width: 40px;
     margin: 0 0 0 auto;
+    padding: 0;
+    font-weight: inherit;
     font-size: 28px;
     line-height: 40px;
     border: 1px solid #ddd;
@@ -27,6 +31,15 @@
     }
   }
 
+  &__patched:after {
+    content: '*';
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    font-size: 18px;
+    opacity: 40%;
+  }
+
   .render__list--textgrid &__fontchange {
     display: none;
   }
@@ -43,6 +56,11 @@
   &__highlight-current &__char {
     border: 1px solid #d7c900;
     background-color: #fff648;
+  }
+
+  &__bad-edit &__char {
+    border: 1px solid #ff5353;
+    background-color: #ff7676;
   }
 
   &__bold {

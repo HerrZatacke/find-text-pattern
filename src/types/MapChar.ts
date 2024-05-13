@@ -13,10 +13,16 @@ export interface MapChar {
   value: string,
   groupId?: string,
   special?: MapCharTask,
+  patched?: boolean,
 }
 
 export interface MapCharGroup {
   groupId: string,
   color?: string,
   textColor?: string,
+}
+
+export interface Patch {
+  location: number,
+  code: number,
 }
