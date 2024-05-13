@@ -20,7 +20,8 @@ function HexInput() {
 
   return (
     <div className="grid__container">
-      <div className="grid__col grid__col--12">
+      <div className="grid__col grid__col--2" />
+      <div className="grid__col grid__col--8">
         <TextField
           id="hexInput"
           label="Hex Text"
