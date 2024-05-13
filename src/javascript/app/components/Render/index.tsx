@@ -10,8 +10,9 @@ import { MapCharTask } from '../../../../types/MapChar';
 import useGridStore from '../../stores/gridStore';
 import useRomStore from '../../stores/romStore';
 import useSettingsStore from '../../stores/settingsStore';
-import './index.scss';
 import { useSearch } from '../../hooks/useSearch';
+
+import './index.scss';
 
 function Render() {
   const styles: CSSPropertiesVars = {};

@@ -3,9 +3,10 @@ import React from 'react';
 import { clsx } from 'clsx';
 import type { MapChar } from '../../../../types/MapChar';
 import { MapCharTask } from '../../../../types/MapChar';
-import './index.scss';
 import { charGroups } from '../../../../constants/charGroups';
 import { hexPad } from '../../../tools/hexPad';
+
+import './index.scss';
 
 interface Props {
   char: MapChar,

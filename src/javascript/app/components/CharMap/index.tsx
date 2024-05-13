@@ -1,9 +1,9 @@
 import React from 'react';
-import './index.scss';
 import Char from '../Char';
 import usePatternStore from '../../stores/patternStore';
 import useSettingsStore from '../../stores/settingsStore';
 
+import './index.scss';
 
 function CharMap() {
   const codes = [...Array(256).keys()];

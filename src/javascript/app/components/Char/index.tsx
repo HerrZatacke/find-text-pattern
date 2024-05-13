@@ -4,8 +4,9 @@ import type { CSSPropertiesVars } from 'react';
 import type { MapCharGroup } from '../../../../types/MapChar';
 import { charGroups, GROUP_UNKNOWN } from '../../../../constants/charGroups';
 import { hexPad } from '../../../tools/hexPad';
-import './index.scss';
 import { findCharByCode } from '../../../tools/findChar';
+
+import './index.scss';
 
 interface Props {
   code: number,
