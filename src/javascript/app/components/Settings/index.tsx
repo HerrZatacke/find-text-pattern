@@ -10,6 +10,8 @@ import FolderOffIcon from '@mui/icons-material/FolderOff';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
+import CodeIcon from '@mui/icons-material/Code';
+import CodeOffIcon from '@mui/icons-material/CodeOff';
 
 import useGridStore from '../../stores/gridStore';
 import useSettingsStore from '../../stores/settingsStore';
@@ -26,12 +28,14 @@ export function Settings() {
     setGridCols: state.setGridCols,
   }));
 
-  const { visible, setVisible, renderTextGrid, setRenderTextGrid } = useSettingsStore((state) => ({
-    visible: state.charMapVisible,
-    setVisible: state.setCharMapVisible,
-    renderTextGrid: state.renderTextGrid,
-    setRenderTextGrid: state.setRenderTextGrid,
-  }));
+  const {
+    charMapVisible: visible,
+    setCharMapVisible: setVisible,
+    renderTextGrid,
+    setRenderTextGrid,
+    renderHexChars,
+    setRenderHexChars,
+  } = useSettingsStore();
 
   const {
     maxPage,
@@ -183,6 +187,12 @@ export function Settings() {
                   onClick={() => setVisible(!visible)}
                 >
                   {visible ? <GridOnIcon /> : <GridOffIcon />}
+                </Button>
+                <Button
+                  title="Toggle character type"
+                  onClick={() => setRenderHexChars(!renderHexChars)}
+                >
+                  {renderHexChars ? <CodeIcon /> : <CodeOffIcon />}
                 </Button>
                 <Button
                   title="Toggle grid rendering"

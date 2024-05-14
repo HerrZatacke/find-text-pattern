@@ -18,23 +18,18 @@ import './index.scss';
 function Render() {
   const styles: CSSPropertiesVars = {};
 
-  const rawPattern = usePatternStore((state) => state.rawPattern);
+  const { rawPattern } = usePatternStore();
 
-  const renderTextGrid = useSettingsStore((state) => (state.renderTextGrid));
+  const { renderTextGrid, renderHexChars } = useSettingsStore();
 
-  const grid = useGridStore((state) => (state.grid));
+  const { grid } = useGridStore();
 
   const {
     romContent,
     romSize,
     pageSize,
     romPage,
-  } = useRomStore((state) => ({
-    romContent: state.romContent,
-    romSize: state.romSize,
-    pageSize: state.pageSize,
-    romPage: state.romPage,
-  }));
+  } = useRomStore();
 
   const { found, currentFound } = useSearch();
 
@@ -128,6 +123,7 @@ function Render() {
                 globalOffset={pageOffset + index}
                 pageOffset={index}
                 char={char}
+                renderHexChar={renderHexChars}
                 loopClass={loopClass}
                 update={update}
               />

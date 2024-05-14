@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import type { MapChar } from '../../../../types/MapChar';
 import { MapCharTask } from '../../../../types/MapChar';
 import { charGroups } from '../../../../constants/charGroups';
-import { hexPad } from '../../../tools/hexPad';
+import { hexPad, hexPadSimple } from '../../../tools/hexPad';
 
 
 import './index.scss';
@@ -17,6 +17,7 @@ interface Props {
   loopClass: string,
   highlight: boolean,
   highlightCurrent: boolean,
+  renderHexChar: boolean,
   update: (location: number, code: number) => void,
 }
 
@@ -27,6 +28,7 @@ function RenderChar({
   loopClass,
   highlight,
   highlightCurrent,
+  renderHexChar,
   update,
 }: Props) {
   const [editChar, setEditChar] = useState<MapChar | null>(null);
@@ -46,18 +48,21 @@ function RenderChar({
       styles['--text-color'] = mapCharGroup.textColor;
     }
 
-    if (mapCharGroup?.groupId === 'digits') {
-      textValue = 'n';
-    }
+    if (!renderHexChar) {
+      if (mapCharGroup?.groupId === 'digits') {
+        textValue = 'n';
+      }
 
-    if (mapCharGroup?.groupId === 'blank') {
-      textValue = '␣';
+      if (mapCharGroup?.groupId === 'blank') {
+        textValue = '␣';
+      }
     }
   }
 
   return (
     <div
       className={clsx('render-char', `render-char__${loopClass}`, {
+        'render-char__hex': renderHexChar,
         'render-char__terminator': MapCharTask.STRING_TERM === char.special,
         'render-char__fontchange': [MapCharTask.FONT_SLIM, MapCharTask.FONT_BOLD].includes(char.special as MapCharTask),
         'render-char__highlight': highlight,
@@ -108,7 +113,7 @@ function RenderChar({
             setEditChar(char);
           }}
         >
-          { textValue }
+          { renderHexChar ? hexPadSimple(char.code) : textValue }
         </button>
       ) }
     </div>

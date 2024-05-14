@@ -2,6 +2,7 @@
   --bg-color: 255 255 255;
   --text-color: 0 0 0;
   position: relative;
+  font-size: 28px;
 
 
   &__char {
@@ -12,7 +13,7 @@
     margin: 0 0 0 auto;
     padding: 0;
     font-weight: inherit;
-    font-size: 28px;
+    font-size: inherit;
     line-height: 40px;
     border: 1px solid #ddd;
     text-align: center;
@@ -61,6 +62,10 @@
   &__bad-edit &__char {
     border: 1px solid #ff5353;
     background-color: #ff7676;
+  }
+
+  &__hex {
+    font-size: 18px;
   }
 
   &__bold {

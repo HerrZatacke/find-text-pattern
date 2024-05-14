@@ -6,6 +6,8 @@ export interface SettingsState {
   setCharMapVisible: (visible: boolean) => void,
   renderTextGrid: boolean,
   setRenderTextGrid: (visible: boolean) => void,
+  renderHexChars: boolean,
+  setRenderHexChars: (visible: boolean) => void,
 }
 
 const useSettingsStore = create(
@@ -13,6 +15,7 @@ const useSettingsStore = create(
     (set) => ({
       charMapVisible: false,
       renderTextGrid: false,
+      renderHexChars: false,
 
       setCharMapVisible: (charMapVisible: boolean) => {
         set(() => ({
@@ -23,6 +26,12 @@ const useSettingsStore = create(
       setRenderTextGrid: (renderTextGrid: boolean) => {
         set(() => ({
           renderTextGrid,
+        }));
+      },
+
+      setRenderHexChars: (renderHexChars: boolean) => {
+        set(() => ({
+          renderHexChars,
         }));
       },
     }),
