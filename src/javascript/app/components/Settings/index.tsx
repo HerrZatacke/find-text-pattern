@@ -20,7 +20,7 @@ import { useFile } from '../../hooks/useFile';
 import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
 
-export function Settings() {
+function Settings() {
   const { gridRows, gridCols, setGridRows, setGridCols } = useGridStore();
 
   const {
@@ -223,3 +223,5 @@ export function Settings() {
     </AppBar>
   );
 }
+
+export default Settings;

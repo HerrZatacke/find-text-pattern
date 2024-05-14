@@ -1,14 +1,12 @@
 import type { CSSPropertiesVars } from 'react';
-import React, { useState } from 'react';
+import React from 'react';
 import { clsx } from 'clsx';
 import type { MapChar } from '../../../../types/MapChar';
 import { MapCharTask } from '../../../../types/MapChar';
 import { charGroups } from '../../../../constants/charGroups';
 import { hexPad, hexPadSimple } from '../../../tools/hexPad';
 
-
 import './index.scss';
-import { findCharByValue } from '../../../tools/findChar';
 
 interface Props {
   char: MapChar,
@@ -18,7 +16,7 @@ interface Props {
   highlight: boolean,
   highlightCurrent: boolean,
   renderHexChar: boolean,
-  update: (location: number, code: number) => void,
+  setEditLocation: (editLocation: number) => void,
 }
 
 function RenderChar({
@@ -29,9 +27,8 @@ function RenderChar({
   highlight,
   highlightCurrent,
   renderHexChar,
-  update,
+  setEditLocation,
 }: Props) {
-  const [editChar, setEditChar] = useState<MapChar | null>(null);
   const title = `${hexPad(globalOffset, 6)}\n${hexPad(pageOffset, 6)}`;
   const styles: CSSPropertiesVars = {};
 
@@ -68,54 +65,20 @@ function RenderChar({
         'render-char__highlight': highlight,
         'render-char__highlight-current': highlightCurrent,
         'render-char__patched': char.patched,
-        'render-char__bad-edit': editChar?.code === -1,
       })}
       title={title}
       style={styles}
       // data-global-offset={globalOffset}
     >
-      { editChar !== null ? (
-        <input
-          type="text"
-          className="render-char__char"
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus
-          value={editChar?.value || ''}
-          maxLength={1}
-          onFocus={({ target }) => target.select()}
-          onChange={({ target }) => {
-            const newEditChar = findCharByValue(target.value);
-
-            if (newEditChar) {
-              update(globalOffset, newEditChar.code);
-              setEditChar(null);
-              return;
-            }
-
-            setEditChar({
-              value: target.value,
-              code: -1,
-            });
-          }}
-          onBlur={() => {
-            if (editChar && editChar.code !== -1) {
-              update(globalOffset, editChar.code);
-            }
-
-            setEditChar(null);
-          }}
-        />
-      ) : (
-        <button
-          className="render-char__char"
-          type="button"
-          onFocus={() => {
-            setEditChar(char);
-          }}
-        >
-          { renderHexChar ? hexPadSimple(char.code) : textValue }
-        </button>
-      ) }
+      <button
+        className="render-char__char"
+        type="button"
+        onClick={() => {
+          setEditLocation(globalOffset);
+        }}
+      >
+        { renderHexChar ? hexPadSimple(char.code) : textValue }
+      </button>
     </div>
   );
 }

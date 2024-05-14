@@ -2,33 +2,32 @@ import { saveAs } from 'file-saver';
 import type { PatchStoreState } from '../stores/patchStore';
 import usePatchStore from '../stores/patchStore';
 import useRomStore from '../stores/romStore';
-import type { Patch } from '../../../types/MapChar';
+import type { MapChar } from '../../../types/MapChar';
+import { findCharByCode } from '../../tools/findChar';
 
 
 export interface UsePatch extends Omit<PatchStoreState, 'clearPatches'> {
+  editChar: MapChar | null,
   downloadPatchedFile: () => void,
+  romContentArray: Uint8Array,
 }
 
 export const usePatch = (): UsePatch => {
   const {
+    editLocation,
+    setEditLocation,
     patches,
-    upsertPatch: storeUpsertPatch,
-    deletePatch,
+    addPatchText,
   } = usePatchStore();
 
   const { romContent } = useRomStore();
 
-  const upsertPatch = (patch: Patch) => {
-    const romCharCode = new Uint8Array(romContent)[patch.location];
-    if (romCharCode === patch.code) {
-      deletePatch(patch.location);
-    } else {
-      storeUpsertPatch(patch);
-    }
-  };
+  const romContentArray = new Uint8Array(romContent);
+
+  const editChar = editLocation !== null ? findCharByCode(romContentArray[editLocation]) : null;
 
   const downloadPatchedFile = () => {
-    const patched = new Uint8Array(romContent)
+    const patched = romContentArray
       .map((code: number, location: number) => {
         const patch = patches.find((p) => location === p.location);
         return patch?.code || code;
@@ -42,9 +41,12 @@ export const usePatch = (): UsePatch => {
   };
 
   return {
+    editChar,
+    editLocation,
+    romContentArray,
+    setEditLocation,
     patches,
-    upsertPatch,
-    deletePatch,
+    addPatchText,
     downloadPatchedFile,
   };
 };

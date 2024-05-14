@@ -33,7 +33,7 @@ function Render() {
 
   const { found, currentFound } = useSearch();
 
-  const { patches, upsertPatch } = usePatch();
+  const { patches, setEditLocation } = usePatch();
 
   const pageOffset = romPage * pageSize;
 
@@ -67,18 +67,6 @@ function Render() {
   }, [pageOffset, pageSize, patches, rawPattern, romContent, romSize]);
 
   styles['--grid'] = grid;
-  const update = (location: number, code: number) => {
-    upsertPatch({
-      location,
-      code,
-    });
-    // Nope nope nope... :D
-    // window.requestAnimationFrame(() => {
-    //   const nextChar: HTMLButtonElement | null = document.querySelector(`[data-global-offset="${location + 1}"] button`);
-    //   nextChar?.focus();
-    // });
-  };
-
 
   let loopClass = 'norm';
   let loopFound = 0;
@@ -125,7 +113,7 @@ function Render() {
                 char={char}
                 renderHexChar={renderHexChars}
                 loopClass={loopClass}
-                update={update}
+                setEditLocation={setEditLocation}
               />
             );
           })}

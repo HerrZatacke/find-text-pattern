@@ -5,7 +5,8 @@ import CharMap from '../CharMap';
 import TextInput from '../TextInput';
 import HexInput from '../HexInput';
 import Render from '../Render';
-import { Settings } from '../Settings';
+import PatchEdit from '../PatchEdit';
+import Settings from '../Settings';
 
 import './index.scss';
 
@@ -30,6 +31,7 @@ function App() {
         <HexInput />
         <CharMap />
         <Render />
+        <PatchEdit />
       </div>
     </ThemeProvider>
   );
