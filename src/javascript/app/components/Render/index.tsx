@@ -1,10 +1,7 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { clsx } from 'clsx';
 import type { CSSPropertiesVars } from 'react';
-import type { MapChar } from '../../../../types/MapChar';
 import usePatternStore from '../../stores/patternStore';
-import { findCharByCode } from '../../../tools/findChar';
-import { BAD_CHAR } from '../../../../constants/charMap';
 import RenderChar from '../RenderChar';
 import { MapCharTask } from '../../../../types/MapChar';
 import useGridStore from '../../stores/gridStore';
@@ -25,46 +22,15 @@ function Render() {
   const { grid } = useGridStore();
 
   const {
-    romContent,
-    romSize,
     pageSize,
     romPage,
   } = useRomStore();
 
   const { found, currentFound } = useSearch();
 
-  const { patches, setEditLocation } = usePatch();
+  const { setEditLocation, patchedPage } = usePatch();
 
   const pageOffset = romPage * pageSize;
-
-  const mappedChars = useMemo<MapChar[]>(() => {
-    let view: Uint8Array;
-    if (romSize) {
-      const bufferPart = romContent.slice(pageOffset, pageOffset + pageSize);
-      view = new Uint8Array(bufferPart);
-    } else {
-      view = rawPattern;
-    }
-
-    return (
-      view.reduce((acc: MapChar[], code: number, index: number): MapChar[] => {
-        const globalIndex = index + pageOffset;
-        const patch = patches.find(({ location }) => location === globalIndex);
-
-        let char = findCharByCode(patch?.code || code);
-
-        if (char && patch) {
-          char = {
-            ...char,
-            patched: true,
-          };
-        }
-
-        return (acc.concat(char || BAD_CHAR)
-        );
-      }, [])
-    );
-  }, [pageOffset, pageSize, patches, rawPattern, romContent, romSize]);
 
   styles['--grid'] = grid;
 
@@ -80,7 +46,7 @@ function Render() {
             'render__list--textgrid': renderTextGrid,
           })}
         >
-          {mappedChars.map((char, index) => {
+          {patchedPage.map((char, index) => {
             if (char.special === MapCharTask.FONT_BOLD) {
               loopClass = 'bold';
             }

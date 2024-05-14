@@ -10,7 +10,7 @@ export interface PatchStoreState {
   setEditLocation: (editLocation: number | null) => void,
   patches: Patch[],
   addPatchText: (text: string) => void
-  // deletePatch: (location: number) => void,
+  deletePatches: (locations: number[]) => void,
   clearPatches: () => void,
 }
 
@@ -58,12 +58,12 @@ const usePatchStore = create(
         });
       },
 
-      // deletePatch: (location: number) => {
-      //   const { patches } = getState();
-      //   set({
-      //     patches: patches.filter((patch) => patch.location !== location),
-      //   });
-      // },
+      deletePatches: (locations: number[]) => {
+        const { patches } = getState();
+        set({
+          patches: patches.filter((patch) => !locations.includes(patch.location)),
+        });
+      },
 
       clearPatches: () => {
         set({

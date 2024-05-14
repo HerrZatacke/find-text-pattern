@@ -3,22 +3,25 @@
   --text-color: 0 0 0;
   position: relative;
   font-size: 28px;
-
+  color: rgb(var(--text-color));
+  background-color: rgb(var(--bg-color));
+  overflow: hidden;
 
   &__char {
     display: block;
-    position: relative;
-    height: 40px;
-    width: 40px;
     margin: 0 0 0 auto;
     padding: 0;
     font-weight: inherit;
     font-size: inherit;
+    text-align: center;
+    color: inherit;
+    background: inherit;
+
+    height: 40px;
+    width: 40px;
     line-height: 40px;
     border: 1px solid #ddd;
-    text-align: center;
-    background-color: rgb(var(--bg-color));
-    color: rgb(var(--text-color));
+    cursor: pointer;
   }
 
   .render__list--textgrid &__terminator {
@@ -33,12 +36,14 @@
   }
 
   &__patched:after {
-    content: '*';
+    content: ' ';
+    border-radius: 50%;
     position: absolute;
-    top: 1px;
-    right: 1px;
-    font-size: 18px;
-    opacity: 40%;
+    top: -9px;
+    right: -9px;
+    background: #ff7400;
+    height: 18px;
+    width: 18px;
   }
 
   .render__list--textgrid &__fontchange {
@@ -79,9 +84,4 @@
   &__space {
     color: #e0e0e0;
   }
-
-  //&__error {
-  //  border-color: #ffbbbb;
-  //  background-color: #fff2f2;
-  //}
 }

@@ -12,6 +12,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import CodeIcon from '@mui/icons-material/Code';
 import CodeOffIcon from '@mui/icons-material/CodeOff';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 
 import useGridStore from '../../stores/gridStore';
 import useSettingsStore from '../../stores/settingsStore';
@@ -54,7 +55,9 @@ function Settings() {
     clearSearch,
   } = useSearch();
 
-  const { downloadPatchedFile } = usePatch();
+  const { downloadPatchedFile, cleanPatches, patches } = usePatch();
+
+  const patchCount = patches.length;
 
   const canWorkWithResults = hasFile && foundCount > 0;
 
@@ -190,6 +193,13 @@ function Settings() {
                 </Button>
               </ButtonGroup>
               <ButtonGroup>
+                <Button
+                  title={patchCount ? `Clean ${patchCount} patches` : 'no patches'}
+                  onClick={cleanPatches}
+                  disabled={!hasFile || !patchCount}
+                >
+                  <CleaningServicesIcon />
+                </Button>
                 <Button
                   title="Download patched file"
                   onClick={downloadPatchedFile}

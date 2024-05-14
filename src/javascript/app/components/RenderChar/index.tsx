@@ -68,7 +68,6 @@ function RenderChar({
       })}
       title={title}
       style={styles}
-      // data-global-offset={globalOffset}
     >
       <button
         className="render-char__char"
