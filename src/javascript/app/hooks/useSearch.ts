@@ -18,22 +18,11 @@ export const useSearch = (): UseSearch => {
     currentFound,
     setCurrentFound: storeSetCurrentFound,
     setFound,
-  } = useSearchStore((state) => ({
-    found: state.found,
-    currentFound: state.currentFound,
-    setCurrentFound: state.setCurrentFound,
-    setFound: state.setFound,
-  }));
+  } = useSearchStore();
 
-  const {
-    gotoLocation,
-  } = useRomStore((state) => ({
-    gotoLocation: state.gotoLocation,
-  }));
+  const { gotoLocation } = useRomStore();
 
-  const { rawPattern } = usePatternStore((state) => ({
-    rawPattern: state.rawPattern,
-  }));
+  const { rawPattern } = usePatternStore();
 
   const findInRom = () => {
     setFound(useRomStore.getState().find(rawPattern));

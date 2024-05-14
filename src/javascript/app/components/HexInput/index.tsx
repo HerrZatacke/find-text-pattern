@@ -6,17 +6,12 @@ import useRomStore from '../../stores/romStore';
 import { useSearch } from '../../hooks/useSearch';
 
 function HexInput() {
-  const { setHex, inputHexError, hex, cleanHex, length } = usePatternStore((state) => ({
-    setHex: state.setHex,
-    inputHexError: state.inputHexError,
-    hex: state.hex,
-    cleanHex: state.cleanHex,
-    length: state.rawPattern.length,
-  }));
+  const { setHex, inputHexError, hex, cleanHex, rawPattern } = usePatternStore();
+  const length = rawPattern.length;
 
   const { findInRom } = useSearch();
 
-  const romSize = useRomStore((store) => (store.romSize));
+  const { romSize } = useRomStore();
 
   return (
     <div className="grid__container">

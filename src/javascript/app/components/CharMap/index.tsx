@@ -7,8 +7,8 @@ import './index.scss';
 
 function CharMap() {
   const codes = [...Array(256).keys()];
-  const appendText = usePatternStore((state) => (state.appendText));
-  const visible = useSettingsStore((state) => (state.charMapVisible));
+  const { appendText } = usePatternStore();
+  const { charMapVisible: visible } = useSettingsStore();
 
   if (!visible) {
     return null;

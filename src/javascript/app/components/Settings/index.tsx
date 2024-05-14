@@ -21,12 +21,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
 
 export function Settings() {
-  const { gridRows, gridCols, setGridRows, setGridCols } = useGridStore((state) => ({
-    gridRows: state.gridRows,
-    gridCols: state.gridCols,
-    setGridRows: state.setGridRows,
-    setGridCols: state.setGridCols,
-  }));
+  const { gridRows, gridCols, setGridRows, setGridCols } = useGridStore();
 
   const {
     charMapVisible: visible,
@@ -44,14 +39,7 @@ export function Settings() {
     setPageSize,
     setRomPage,
     cleanRomPage,
-  } = useRomStore((state) => ({
-    maxPage: state.maxPage,
-    pageSize: state.pageSize,
-    romPage: state.romPage,
-    setPageSize: state.setPageSize,
-    setRomPage: state.setRomPage,
-    cleanRomPage: state.cleanRomPage,
-  }));
+  } = useRomStore();
 
   const {
     hasFile,

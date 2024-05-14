@@ -1,5 +1,6 @@
 import useRomStore from '../stores/romStore';
 import useSearchStore from '../stores/searchStore';
+import usePatchStore from '../stores/patchStore';
 
 interface UseFile {
   hasFile: boolean,
@@ -9,26 +10,22 @@ interface UseFile {
 
 export const useFile = (): UseFile => {
   const {
-    hasFile,
+    romSize,
     setFile: storeSetFile,
     unloadFile: storeUnloadFile,
-  } = useRomStore((state) => ({
-    hasFile: state.romSize > 0,
-    setFile: state.setFile,
-    unloadFile: state.unloadFile,
-  }));
+  } = useRomStore();
+
+  const hasFile = romSize > 0;
 
   const {
     setCurrentFound,
     setFound,
-  } = useSearchStore((state) => ({
-    found: state.found,
-    currentFound: state.currentFound,
-    setCurrentFound: state.setCurrentFound,
-    setFound: state.setFound,
-  }));
+  } = useSearchStore();
+
+  const { clearPatches } = usePatchStore();
 
   const unloadFile = () => {
+    clearPatches();
     storeUnloadFile();
     setCurrentFound(0);
     setFound([]);
@@ -39,6 +36,7 @@ export const useFile = (): UseFile => {
       return;
     }
 
+    clearPatches();
     storeSetFile(files[0]);
     setCurrentFound(0);
     setFound([]);

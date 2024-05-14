@@ -5,7 +5,7 @@ import useRomStore from '../stores/romStore';
 import type { Patch } from '../../../types/MapChar';
 
 
-export interface UsePatch extends PatchStoreState {
+export interface UsePatch extends Omit<PatchStoreState, 'clearPatches'> {
   downloadPatchedFile: () => void,
 }
 

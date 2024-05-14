@@ -6,16 +6,12 @@ import useRomStore from '../../stores/romStore';
 import { useSearch } from '../../hooks/useSearch';
 
 function TextInput() {
-  const { setText, inputTextError, text, length } = usePatternStore((state) => ({
-    setText: state.setText,
-    inputTextError: state.inputTextError,
-    text: state.text,
-    length: state.rawPattern.length,
-  }));
+  const { setText, inputTextError, text, rawPattern } = usePatternStore();
+  const length = rawPattern.length;
 
   const { findInRom } = useSearch();
 
-  const romSize = useRomStore((store) => (store.romSize));
+  const { romSize } = useRomStore();
 
   return (
     <div className="grid__container">

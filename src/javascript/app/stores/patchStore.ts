@@ -6,6 +6,7 @@ export interface PatchStoreState {
   patches: Patch[],
   upsertPatch: (patch: Patch) => void,
   deletePatch: (location: number) => void,
+  clearPatches: () => void,
 }
 
 const usePatchStore = create(
@@ -25,6 +26,12 @@ const usePatchStore = create(
         const { patches } = getState();
         set({
           patches: patches.filter((patch) => patch.location !== location),
+        });
+      },
+
+      clearPatches: () => {
+        set({
+          patches: [],
         });
       },
     }),
