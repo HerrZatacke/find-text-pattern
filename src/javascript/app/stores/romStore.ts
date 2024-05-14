@@ -21,6 +21,7 @@ export interface RomStoreState {
   maxPage: number,
   pageSize: number,
   romPage: number,
+  romFileName: string,
 
   setFile: (file: File) => void,
   unloadFile: () => void,
@@ -39,6 +40,7 @@ const useRomStore = create(
       maxPage: 0,
       pageSize: 0x200,
       romPage: 0,
+      romFileName: '',
 
       setFile: async (file: File) => {
         if (!file) {
@@ -55,6 +57,7 @@ const useRomStore = create(
             romSize: romContent.byteLength,
             romPage: 0,
             maxPage: Math.ceil(romContent.byteLength / pageSize) - 1,
+            romFileName: file.name,
           });
         }
       },
@@ -65,6 +68,7 @@ const useRomStore = create(
           romSize: 0,
           romPage: 0,
           maxPage: 0,
+          romFileName: '',
         });
       },
 

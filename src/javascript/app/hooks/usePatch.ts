@@ -43,6 +43,7 @@ export const usePatch = (): UsePatch => {
     pageSize,
     romPage,
     romContent,
+    romFileName,
   } = useRomStore();
 
   const pageOffset = romPage * pageSize;
@@ -77,7 +78,7 @@ export const usePatch = (): UsePatch => {
       type: 'application/octet-stream',
     });
 
-    saveAs(blob, 'patched.rom.gb');
+    saveAs(blob, `patched.${romFileName}`);
   };
 
   const cleanPatches = () => {
