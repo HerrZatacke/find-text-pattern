@@ -14,37 +14,32 @@ function TextInput() {
   const { romSize } = useRomStore();
 
   return (
-    <div className="grid__container">
-      <div className="grid__col grid__col--2" />
-      <div className="grid__col grid__col--8">
-        <TextField
-          id="textInput"
-          label="Text"
-          value={text}
-          onChange={({ target }) => setText(target.value)}
-          variant="outlined"
-          size="small"
-          fullWidth
-          error={!!inputTextError}
-          helperText={inputTextError}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  edge="end"
-                  color="primary"
-                  title="Search"
-                  onClick={findInRom}
-                  disabled={!!inputTextError || !romSize || !length}
-                >
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div>
-    </div>
+    <TextField
+      id="textInput"
+      label="Text"
+      value={text}
+      onChange={({ target }) => setText(target.value)}
+      variant="outlined"
+      size="small"
+      fullWidth
+      error={!!inputTextError}
+      helperText={inputTextError}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              edge="end"
+              color="primary"
+              title="Search"
+              onClick={findInRom}
+              disabled={!!inputTextError || !romSize || !length}
+            >
+              <SearchIcon />
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
   );
 }
 

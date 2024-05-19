@@ -8,12 +8,12 @@ body {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-gap: 0;
-    margin: 6px auto;
+    margin: 8px auto;
     padding: 12px 0;
   }
 
   &__col {
-    padding: 2px 12px;
+    padding: 0 12px;
 
     &--1 { grid-column: span 1; }
     &--2 { grid-column: span 2; }

@@ -14,41 +14,36 @@ function HexInput() {
   const { romSize } = useRomStore();
 
   return (
-    <div className="grid__container">
-      <div className="grid__col grid__col--2" />
-      <div className="grid__col grid__col--8">
-        <TextField
-          id="hexInput"
-          label="Hex Text"
-          value={hex}
-          onBlur={cleanHex}
-          onChange={({ target }) => setHex(target.value)}
-          variant="outlined"
-          size="small"
-          fullWidth
-          multiline
-          minRows={4}
-          maxRows={4}
-          error={!!inputHexError}
-          helperText={inputHexError}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  edge="end"
-                  color="primary"
-                  title="Search"
-                  onClick={findInRom}
-                  disabled={!!inputHexError || !romSize || !length}
-                >
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div>
-    </div>
+    <TextField
+      id="hexInput"
+      label="Hex Text"
+      value={hex}
+      onBlur={cleanHex}
+      onChange={({ target }) => setHex(target.value)}
+      variant="outlined"
+      size="small"
+      fullWidth
+      multiline
+      minRows={4}
+      maxRows={4}
+      error={!!inputHexError}
+      helperText={inputHexError}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              edge="end"
+              color="primary"
+              title="Search"
+              onClick={findInRom}
+              disabled={!!inputHexError || !romSize || !length}
+            >
+              <SearchIcon />
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
   );
 }
 

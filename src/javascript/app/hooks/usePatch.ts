@@ -13,6 +13,7 @@ export interface UsePatch extends Omit<PatchStoreState, 'clearPatches' | 'delete
   downloadPatchedFile: () => void,
   romContentArray: Uint8Array,
   patchedPage: MapChar[],
+  patchedPageArray: number[],
   cleanPatches: () => void,
 }
 
@@ -67,6 +68,10 @@ export const usePatch = (): UsePatch => {
     );
   }, [pageOffset, pageSize, patches, romContentArray]);
 
+  const patchedPageArray = useMemo<number[]>(() => (
+    patchedPage.map((mapChar: MapChar): number => (mapChar.code))
+  ), [patchedPage]);
+
   const downloadPatchedFile = () => {
     const patched = romContentArray
       .map((code: number, location: number) => {
@@ -100,6 +105,7 @@ export const usePatch = (): UsePatch => {
     patches,
     addPatchText,
     patchedPage,
+    patchedPageArray,
     downloadPatchedFile,
     cleanPatches,
   };
