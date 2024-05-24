@@ -69,15 +69,25 @@ function RenderChar({
       title={title}
       style={styles}
     >
-      <button
+      <div
         className="render-char__char"
-        type="button"
-        onClick={() => {
-          setEditLocation(globalOffset);
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        tabIndex={0}
+        // type="button"
+        onMouseUp={() => {
+          if (!window?.getSelection()?.toString().trim()) {
+            setEditLocation(globalOffset);
+          }
+        }}
+        onKeyDown={(ev) => {
+          if ((ev.key === 'Enter') || ev.key === ' ') {
+            ev.preventDefault();
+            setEditLocation(globalOffset);
+          }
         }}
       >
         { renderHexChar ? hexPadSimple(char.code) : textValue }
-      </button>
+      </div>
     </div>
   );
 }
