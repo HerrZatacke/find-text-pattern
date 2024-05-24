@@ -1,3 +1,5 @@
+import settingsStore from '../app/stores/settingsStore';
+
 export const initCopyEventListener = () => {
   document.addEventListener('keydown', async (ev) => {
     if (ev.key === 'c' && ev.ctrlKey) {
@@ -7,9 +9,11 @@ export const initCopyEventListener = () => {
           return;
         }
 
+        const joinChar = settingsStore.getState().renderHexChars ? ' ' : '';
+
         const selectedText = selection.toString()
           .split('\n')
-          .join('')
+          .join(joinChar)
           .split('␣')
           .join(' ');
         await navigator.clipboard.writeText(selectedText);
