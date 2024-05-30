@@ -7,7 +7,8 @@ import GridOnIcon from '@mui/icons-material/GridOn';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FolderOffIcon from '@mui/icons-material/FolderOff';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import FolderIcon from '@mui/icons-material/Folder';
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import CodeIcon from '@mui/icons-material/Code';
@@ -44,8 +45,9 @@ function Settings() {
 
   const {
     hasFile,
-    setFile,
-    unloadFile,
+    onChangeRomFile,
+    onChangeRamFile,
+    unloadRomFile,
   } = useFile();
 
   const {
@@ -209,7 +211,7 @@ function Settings() {
                 </Button>
                 <Button
                   title="Unload file"
-                  onClick={unloadFile}
+                  onClick={unloadRomFile}
                   disabled={!hasFile}
                 >
                   <FolderOffIcon />
@@ -218,13 +220,27 @@ function Settings() {
                   title="Load file"
                   component="label"
                 >
-                  <FolderOpenIcon />
+                  <FolderIcon />
                   <input
                     type="file"
                     hidden
-                    onChange={({ target }) => setFile(target.files)}
+                    onChange={onChangeRomFile}
                   />
                 </Button>
+                { window.location.port !== '3000' ? null : (
+                  <Button
+                    title="Load vram content from BGB .sn1 file"
+                    component="label"
+                    disabled={!hasFile}
+                  >
+                    <FolderSpecialIcon />
+                    <input
+                      type="file"
+                      hidden
+                      onChange={onChangeRamFile}
+                    />
+                  </Button>
+                )}
               </ButtonGroup>
             </Stack>
           </div>

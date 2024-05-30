@@ -1,11 +1,15 @@
+import type { ChangeEvent } from 'react';
 import useRomStore from '../stores/romStore';
 import useSearchStore from '../stores/searchStore';
 import usePatchStore from '../stores/patchStore';
+import useRamStore from '../stores/ramStore';
 
 interface UseFile {
   hasFile: boolean,
-  unloadFile: () => void,
-  setFile: (files: FileList | null) => void,
+  unloadRomFile: () => void,
+  unloadRamFile: () => void,
+  onChangeRamFile: (ev: ChangeEvent<HTMLInputElement>) => void,
+  onChangeRomFile: (ev: ChangeEvent<HTMLInputElement>) => void,
 }
 
 export const useFile = (): UseFile => {
@@ -14,6 +18,12 @@ export const useFile = (): UseFile => {
     setFile: storeSetFile,
     unloadFile: storeUnloadFile,
   } = useRomStore();
+
+
+  const {
+    setRamFile: storeSetRamFile,
+    unloadFile: unloadRamFile,
+  } = useRamStore();
 
   const hasFile = romSize > 0;
 
@@ -24,27 +34,47 @@ export const useFile = (): UseFile => {
 
   const { clearPatches } = usePatchStore();
 
-  const unloadFile = () => {
+  const unloadRomFile = () => {
     clearPatches();
     storeUnloadFile();
     setCurrentFound(0);
     setFound([]);
+    unloadRamFile();
   };
 
-  const setFile = (files: FileList | null) => {
-    if (!files || !files[0]) {
+  const onChangeRomFile = (ev: ChangeEvent<HTMLInputElement>) => {
+    const target = ev.target;
+
+    if (!target.files || !target.files[0]) {
       return;
     }
 
     clearPatches();
-    storeSetFile(files[0]);
+    storeSetFile(target.files[0]);
     setCurrentFound(0);
     setFound([]);
+    unloadRamFile();
+
+    target.value = '';
+  };
+
+  const onChangeRamFile = (ev: ChangeEvent<HTMLInputElement>) => {
+    const target = ev.target;
+
+    if (!target.files || !target.files[0]) {
+      return;
+    }
+
+    storeSetRamFile(target.files[0]);
+
+    target.value = '';
   };
 
   return {
     hasFile,
-    setFile,
-    unloadFile,
+    onChangeRomFile,
+    onChangeRamFile,
+    unloadRomFile,
+    unloadRamFile,
   };
 };
