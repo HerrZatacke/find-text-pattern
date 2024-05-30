@@ -3,10 +3,9 @@ import { saveAs } from 'file-saver';
 import type { PatchStoreState } from '../stores/patchStore';
 import usePatchStore from '../stores/patchStore';
 import useRomStore from '../stores/romStore';
-import type { MapChar, Patch } from '../../../types/MapChar';
+import type { MapChar } from '../../../types/MapChar';
 import { findCharByCode } from '../../tools/findChar';
-import { BAD_CHAR } from '../../../constants/charMap';
-
+import { getPatchedChar } from '../../tools/getPatchedChar';
 
 export interface UsePatch extends Omit<PatchStoreState, 'clearPatches' | 'deletePatches'> {
   editChar: MapChar | null,
@@ -16,20 +15,6 @@ export interface UsePatch extends Omit<PatchStoreState, 'clearPatches' | 'delete
   patchedPageArray: number[],
   cleanPatches: () => void,
 }
-
-const getPatchedChar = (globalOffset: number, patches: Patch[], romContentArray: Uint8Array): MapChar => {
-  const patch = patches.find(({ location }) => location === globalOffset);
-  let char = findCharByCode(patch?.code || romContentArray[globalOffset]);
-
-  if (char && patch) {
-    char = {
-      ...char,
-      patched: true,
-    };
-  }
-
-  return char || BAD_CHAR;
-};
 
 export const usePatch = (): UsePatch => {
   const {

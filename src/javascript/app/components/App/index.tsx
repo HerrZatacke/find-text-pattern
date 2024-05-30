@@ -11,6 +11,8 @@ import Settings from '../Settings';
 import Visual from '../Visual';
 
 import './index.scss';
+import TileMap from '../TileMap';
+import Notifications from '../Notifications';
 
 const theme = createTheme({
   palette: {
@@ -44,7 +46,9 @@ function App() {
         <CharMap />
         <Render />
         <PatchEdit />
+        <TileMap />
       </div>
+      <Notifications />
     </ThemeProvider>
   );
 }

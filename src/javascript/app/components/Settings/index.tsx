@@ -2,6 +2,8 @@ import React from 'react';
 import { AppBar, Toolbar, Button, TextField, MenuItem, Stack, ButtonGroup } from '@mui/material';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ExploreIcon from '@mui/icons-material/Explore';
+import ExploreOffIcon from '@mui/icons-material/ExploreOff';
 import GridOffIcon from '@mui/icons-material/GridOff';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
@@ -21,6 +23,7 @@ import useRomStore from '../../stores/romStore';
 import { useFile } from '../../hooks/useFile';
 import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
+import useRamStore from '../../stores/ramStore';
 
 function Settings() {
   const { gridRows, gridCols, setGridRows, setGridCols } = useGridStore();
@@ -32,6 +35,8 @@ function Settings() {
     setRenderTextGrid,
     renderHexChars,
     setRenderHexChars,
+    showMap,
+    setShowMap,
   } = useSettingsStore();
 
   const {
@@ -56,6 +61,8 @@ function Settings() {
     setCurrentFound,
     clearSearch,
   } = useSearch();
+
+  const { vramTilesOffset } = useRamStore();
 
   const { downloadPatchedFile, cleanPatches, patches } = usePatch();
 
@@ -176,6 +183,13 @@ function Settings() {
               </ButtonGroup>
               <ButtonGroup>
                 <Button
+                  title="Toggle tile map"
+                  onClick={() => setShowMap(!showMap)}
+                  disabled={vramTilesOffset === 0}
+                >
+                  {showMap ? <ExploreIcon /> : <ExploreOffIcon />}
+                </Button>
+                <Button
                   title="Toggle character map"
                   onClick={() => setVisible(!visible)}
                 >
@@ -227,9 +241,9 @@ function Settings() {
                     onChange={onChangeRomFile}
                   />
                 </Button>
-                { window.location.port !== '3000' ? null : (
+                { window.location.port === '3000' && (
                   <Button
-                    title="Load vram content from BGB .sn1 file"
+                    title="Load vram content from BGB .snX file"
                     component="label"
                     disabled={!hasFile}
                   >

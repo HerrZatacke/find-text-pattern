@@ -3,6 +3,7 @@ import useRomStore from '../stores/romStore';
 import useSearchStore from '../stores/searchStore';
 import usePatchStore from '../stores/patchStore';
 import useRamStore from '../stores/ramStore';
+import useNotificationsStore from '../stores/notificationsStore';
 
 interface UseFile {
   hasFile: boolean,
@@ -24,6 +25,8 @@ export const useFile = (): UseFile => {
     setRamFile: storeSetRamFile,
     unloadFile: unloadRamFile,
   } = useRamStore();
+
+  const { addMessage } = useNotificationsStore();
 
   const hasFile = romSize > 0;
 
@@ -61,11 +64,19 @@ export const useFile = (): UseFile => {
   const onChangeRamFile = (ev: ChangeEvent<HTMLInputElement>) => {
     const target = ev.target;
 
-    if (!target.files || !target.files[0]) {
+    if (!target.files) {
       return;
     }
 
-    storeSetRamFile(target.files[0]);
+    const file = [...target.files].find((searchfile) => (
+      searchfile.name.match(/\.(?<extension>sn[0-9]{1}$)/gi)
+    ));
+
+    if (file) {
+      storeSetRamFile(target.files[0]);
+    } else {
+      addMessage('Invalid file - must be a .snX gamestate from BGB emulator.');
+    }
 
     target.value = '';
   };
