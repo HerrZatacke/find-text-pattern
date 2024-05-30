@@ -16,6 +16,7 @@ const decoderBaseOptions = {
 interface UseVisual {
   showROMVisual: boolean,
   showRAMVisual: boolean,
+  searchRef: RefObject<HTMLCanvasElement>,
   canvasRomRef: RefObject<HTMLCanvasElement>,
   canvasVRamRef: RefObject<HTMLCanvasElement>,
   canvasROMWidth: number,
@@ -23,17 +24,31 @@ interface UseVisual {
 }
 
 export const useVisual = (): UseVisual => {
+  const searchRef = useRef<HTMLCanvasElement>(null);
   const canvasRomRef = useRef<HTMLCanvasElement>(null);
   const canvasVRamRef = useRef<HTMLCanvasElement>(null);
   const { patchedPageArray } = usePatch();
   const { vramTiles } = useRamStore();
 
-  const { setHex, cleanHex } = usePatternStore();
+  const { setHex, cleanHex, rawPattern } = usePatternStore();
 
   const { gridRows, gridCols } = useGridStore();
 
+  const searchDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: 1 })), []);
   const romDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: gridRows * gridCols })), [gridRows, gridCols]);
   const ramDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: 16 })), []);
+
+  useEffect(() => {
+    if (!searchRef.current) {
+      return;
+    }
+
+    searchDecoder.update({
+      ...decoderBaseOptions,
+      canvas: searchRef.current,
+      tiles: toTiles(rawPattern),
+    });
+  }, [rawPattern, searchDecoder, searchRef]);
 
   useEffect(() => {
     if (!canvasRomRef.current) {
@@ -72,6 +87,7 @@ export const useVisual = (): UseVisual => {
   return {
     showROMVisual: Boolean(patchedPageArray.length),
     showRAMVisual: Boolean(vramTiles.length),
+    searchRef,
     canvasRomRef,
     canvasVRamRef,
     canvasROMWidth,

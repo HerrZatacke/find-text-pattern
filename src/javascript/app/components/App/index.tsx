@@ -31,13 +31,13 @@ function App() {
         <Settings />
 
         <div className="grid__container">
-          <div className="grid__col grid__col--8">
+          <div className="grid__col grid__col--7">
             <Stack direction="column" spacing={4}>
               <TextInput />
               <HexInput />
             </Stack>
           </div>
-          <div className="grid__col grid__col--4">
+          <div className="grid__col grid__col--5">
             <Visual />
           </div>
         </div>

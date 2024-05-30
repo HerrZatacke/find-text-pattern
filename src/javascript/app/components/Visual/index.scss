@@ -5,6 +5,11 @@
 
   &__label {
     font-size: 12px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+  }
+
+  &__search {
+    width: 96px;
+    image-rendering: pixelated;
   }
 }

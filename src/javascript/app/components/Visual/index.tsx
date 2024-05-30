@@ -1,11 +1,13 @@
 import React from 'react';
-import './index.scss';
 import { useVisual } from '../../hooks/useVisual';
+
+import './index.scss';
 
 function Visual() {
   const {
     showROMVisual,
     showRAMVisual,
+    searchRef,
     canvasRomRef,
     canvasVRamRef,
     canvasROMWidth,
@@ -14,6 +16,14 @@ function Visual() {
 
   return (
     <div className="visual">
+      <div>
+        <p className="visual__label">Current Search</p>
+        <canvas
+          ref={searchRef}
+          className="visual__search"
+          width={8}
+        />
+      </div>
       { showROMVisual && (
         <div>
           <p className="visual__label">Current Page</p>
