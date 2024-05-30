@@ -30,7 +30,7 @@ const usePatchStore = create(
       addPatchText: (text: string) => {
         const { patches, editLocation } = getState();
 
-        if (!editLocation) {
+        if (editLocation === null) {
           return;
         }
 

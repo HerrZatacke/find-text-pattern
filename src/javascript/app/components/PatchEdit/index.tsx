@@ -68,7 +68,7 @@ function PatchEdit() {
       newTextValid: testNewTextValid,
     };
 
-    if (!editLocation) {
+    if (editLocation === null) {
       return info;
     }
 
