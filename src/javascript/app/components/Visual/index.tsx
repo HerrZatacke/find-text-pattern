@@ -1,65 +1,33 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Decoder } from 'gb-image-decoder';
-import { usePatch } from '../../hooks/usePatch';
-import useRamStore from '../../stores/ramStore';
-
+import React from 'react';
 import './index.scss';
-import useGridStore from '../../stores/gridStore';
-import { toTiles } from '../../../tools/toTiles';
-
-const decoderBaseOptions = {
-  palette: ['#dddddd', '#999999', '#666666', '#222222'],
-  invertPalette: false,
-  lockFrame: false,
-};
+import { useVisual } from '../../hooks/useVisual';
 
 function Visual() {
-  const canvasRom = useRef<HTMLCanvasElement>(null);
-  const canvasVRam = useRef<HTMLCanvasElement>(null);
-  const { patchedPageArray } = usePatch();
-  const { vramTiles } = useRamStore();
-
-  const { gridRows, gridCols } = useGridStore();
-
-  const romDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: gridRows * gridCols })), [gridRows, gridCols]);
-  const ramDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: 16 })), []);
-
-  useEffect(() => {
-    if (!canvasRom.current) {
-      return;
-    }
-
-    romDecoder.update({
-      ...decoderBaseOptions,
-      canvas: canvasRom.current,
-      tiles: toTiles(patchedPageArray),
-    });
-  }, [patchedPageArray, romDecoder, canvasRom]);
-
-  useEffect(() => {
-    if (!canvasVRam.current) {
-      return;
-    }
-
-    ramDecoder.update({
-      ...decoderBaseOptions,
-      canvas: canvasVRam.current,
-      tiles: vramTiles,
-    });
-  }, [vramTiles, ramDecoder, canvasVRam]);
+  const {
+    showROMVisual,
+    showRAMVisual,
+    canvasRomRef,
+    canvasVRamRef,
+    canvasROMWidth,
+    vramClick,
+  } = useVisual();
 
   return (
     <div className="visual">
-      { !patchedPageArray.length ? null : (
+      { showROMVisual && (
         <div>
           <p className="visual__label">Current Page</p>
-          <canvas ref={canvasRom} width={gridRows * gridCols * 8} />
+          <canvas ref={canvasRomRef} width={canvasROMWidth} />
         </div>
       )}
-      { !vramTiles.length ? null : (
+      { showRAMVisual && (
         <div>
           <p className="visual__label">VRAM</p>
-          <canvas ref={canvasVRam} width={128} />
+          <canvas
+            ref={canvasVRamRef}
+            width={128}
+            onClick={vramClick}
+          />
         </div>
       )}
     </div>
