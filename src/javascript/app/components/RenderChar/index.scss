@@ -48,7 +48,7 @@
     display: none;
   }
 
-  &__terminator + &__terminator {
+  .render__list--textgrid &__terminator + &__terminator {
     height: 0.25px;
   }
 
