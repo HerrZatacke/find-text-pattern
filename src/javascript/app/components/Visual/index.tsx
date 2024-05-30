@@ -5,6 +5,7 @@ import './index.scss';
 
 function Visual() {
   const {
+    showSearchVisual,
     showROMVisual,
     showRAMVisual,
     searchRef,
@@ -16,14 +17,16 @@ function Visual() {
 
   return (
     <div className="visual">
-      <div>
-        <p className="visual__label">Current Search</p>
-        <canvas
-          ref={searchRef}
-          className="visual__search"
-          width={8}
-        />
-      </div>
+      { showSearchVisual && (
+        <div>
+          <p className="visual__label">Current Search</p>
+          <canvas
+            ref={searchRef}
+            className="visual__search"
+            width={8}
+          />
+        </div>
+      )}
       { showROMVisual && (
         <div>
           <p className="visual__label">Current Page</p>

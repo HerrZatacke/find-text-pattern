@@ -16,6 +16,7 @@ const decoderBaseOptions = {
 interface UseVisual {
   showROMVisual: boolean,
   showRAMVisual: boolean,
+  showSearchVisual: boolean,
   searchRef: RefObject<HTMLCanvasElement>,
   canvasRomRef: RefObject<HTMLCanvasElement>,
   canvasVRamRef: RefObject<HTMLCanvasElement>,
@@ -87,6 +88,7 @@ export const useVisual = (): UseVisual => {
   return {
     showROMVisual: Boolean(patchedPageArray.length),
     showRAMVisual: Boolean(vramTiles.length),
+    showSearchVisual: Boolean(rawPattern.length),
     searchRef,
     canvasRomRef,
     canvasVRamRef,
