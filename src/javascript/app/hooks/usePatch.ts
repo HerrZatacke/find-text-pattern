@@ -59,14 +59,24 @@ export const usePatch = (): UsePatch => {
     return getPatchedChar(editLocation, patches, romContentArray);
   }, [editLocation, patches, romContentArray]);
 
+  const currentPageSize = useMemo<number>(() => {
+    const bytesToEnd = romContentArray.length - pageOffset;
+    if (bytesToEnd >= pageSize) { // not on last page
+      return pageSize;
+    }
+
+    // last pagesize is remaining number of bytes
+    return bytesToEnd;
+  }, [pageOffset, pageSize, romContentArray]);
+
   const patchedPage = useMemo<MapChar[]>(() => {
-    const pageBuffer = [...new Array(pageSize)].fill(null);
+    const pageBuffer = [...new Array(currentPageSize)].fill(null);
     return (
       pageBuffer.reduce((acc: MapChar[], _, index: number): MapChar[] => (
         acc.concat(getPatchedChar(pageOffset + index, patches, romContentArray))
       ), [])
     );
-  }, [pageOffset, pageSize, patches, romContentArray]);
+  }, [pageOffset, currentPageSize, patches, romContentArray]);
 
   const patchedPageArray = useMemo<number[]>(() => (
     patchedPage.map((mapChar: MapChar): number => (mapChar.code))

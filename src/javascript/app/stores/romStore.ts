@@ -2,19 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { compress, decompress } from '../../tools/gzip';
 
-/* eslint-disable no-bitwise */
-const VALID_ROM_SIZES = [
-  0x10000 << 0,
-  0x10000 << 1,
-  0x10000 << 2,
-  0x10000 << 3,
-  0x10000 << 4,
-  0x10000 << 5,
-  0x10000 << 6,
-  0x10000 << 7,
-];
-/* eslint-enable no-bitwise */
-
 export interface RomStoreState {
   romContent: ArrayBuffer,
   romSize: number,
@@ -49,17 +36,15 @@ const useRomStore = create(
 
         const romContent = await file.arrayBuffer();
 
-        if (VALID_ROM_SIZES.includes(romContent.byteLength)) {
-          const { pageSize } = getState();
+        const { pageSize } = getState();
 
-          set({
-            romContent,
-            romSize: romContent.byteLength,
-            romPage: 0,
-            maxPage: Math.ceil(romContent.byteLength / pageSize) - 1,
-            romFileName: file.name,
-          });
-        }
+        set({
+          romContent,
+          romSize: romContent.byteLength,
+          romPage: 0,
+          maxPage: Math.ceil(romContent.byteLength / pageSize) - 1,
+          romFileName: file.name,
+        });
       },
 
       unloadFile: () => {

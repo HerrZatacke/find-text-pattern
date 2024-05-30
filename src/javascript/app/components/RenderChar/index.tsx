@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex */
 import type { CSSPropertiesVars } from 'react';
 import React from 'react';
 import { clsx } from 'clsx';
@@ -29,7 +30,7 @@ function RenderChar({
   renderHexChar,
   setEditLocation,
 }: Props) {
-  const title = `${hexPad(globalOffset, 6)}\n${hexPad(pageOffset, 6)}`;
+  const title = `Global: ${hexPad(globalOffset, 6)} (byte ${globalOffset})\nIn Page: ${hexPad(pageOffset, 6)} (byte ${pageOffset})`;
   const styles: CSSPropertiesVars = {};
 
   let textValue = char.value;
@@ -71,9 +72,7 @@ function RenderChar({
     >
       <div
         className="render-char__char"
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={0}
-        // type="button"
         onMouseUp={() => {
           if (!window?.getSelection()?.toString().trim()) {
             setEditLocation(globalOffset);
