@@ -6,6 +6,7 @@ import { hexPadSimple } from '../../../tools/hexPad';
 import useRamStore from '../../stores/ramStore';
 
 import './index.scss';
+import useGridStore from '../../stores/gridStore';
 
 const toTiles = (data: Uint8Array | number[]): string[] => (
   [...chunk(data, 16)]
@@ -27,7 +28,10 @@ function Visual() {
   const canvasVRam = useRef<HTMLCanvasElement>(null);
   const { patchedPageArray } = usePatch();
   const { vramContent } = useRamStore();
-  const romDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: 32 })), []);
+
+  const { gridRows, gridCols } = useGridStore();
+
+  const romDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: gridRows * gridCols })), [gridRows, gridCols]);
   const ramDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: 16 })), []);
 
   useEffect(() => {
@@ -59,7 +63,7 @@ function Visual() {
       { !patchedPageArray.length ? null : (
         <div>
           <p className="visual__label">Current Page</p>
-          <canvas ref={canvasRom} width={256} />
+          <canvas ref={canvasRom} width={gridRows * gridCols * 8} />
         </div>
       )}
       { !vramContent.byteLength ? null : (
