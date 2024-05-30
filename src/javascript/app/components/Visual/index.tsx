@@ -1,21 +1,11 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Decoder } from 'gb-image-decoder';
-import chunk from 'chunk';
 import { usePatch } from '../../hooks/usePatch';
-import { hexPadSimple } from '../../../tools/hexPad';
 import useRamStore from '../../stores/ramStore';
 
 import './index.scss';
 import useGridStore from '../../stores/gridStore';
-
-const toTiles = (data: Uint8Array | number[]): string[] => (
-  [...chunk(data, 16)]
-    .map((tile: number[]) => (
-      [...tile].map((byte: number) => (
-        hexPadSimple(byte, 2)
-      )).join('')
-    ))
-);
+import { toTiles } from '../../../tools/toTiles';
 
 const decoderBaseOptions = {
   palette: ['#dddddd', '#999999', '#666666', '#222222'],
@@ -27,7 +17,7 @@ function Visual() {
   const canvasRom = useRef<HTMLCanvasElement>(null);
   const canvasVRam = useRef<HTMLCanvasElement>(null);
   const { patchedPageArray } = usePatch();
-  const { vramContent } = useRamStore();
+  const { vramTiles } = useRamStore();
 
   const { gridRows, gridCols } = useGridStore();
 
@@ -54,9 +44,9 @@ function Visual() {
     ramDecoder.update({
       ...decoderBaseOptions,
       canvas: canvasVRam.current,
-      tiles: toTiles(new Uint8Array(vramContent)),
+      tiles: vramTiles,
     });
-  }, [vramContent, ramDecoder, canvasVRam]);
+  }, [vramTiles, ramDecoder, canvasVRam]);
 
   return (
     <div className="visual">
@@ -66,7 +56,7 @@ function Visual() {
           <canvas ref={canvasRom} width={gridRows * gridCols * 8} />
         </div>
       )}
-      { !vramContent.byteLength ? null : (
+      { !vramTiles.length ? null : (
         <div>
           <p className="visual__label">VRAM</p>
           <canvas ref={canvasVRam} width={128} />

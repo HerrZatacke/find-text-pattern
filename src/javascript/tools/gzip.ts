@@ -16,7 +16,7 @@ const readAllChunks = async (readableStream: ReadableStream): Promise<number[]> 
   return pump();
 };
 
-export const compress = async (v: ArrayBuffer) => {
+export const compress = async (v: ArrayBuffer): Promise<number[]> => {
   // eslint-disable-next-line no-undef
   const cs = new CompressionStream('gzip');
   const writer = cs.writable.getWriter();
@@ -33,4 +33,15 @@ export const decompress = async (byteArray: Uint8Array): Promise<ArrayBuffer> =>
   writer.close();
 
   return new Response(cs.readable).arrayBuffer();
+};
+
+export const compressString = async (str: string): Promise<number[]> => {
+  const textEncoder = new TextEncoder();
+  return compress(textEncoder.encode(str).buffer);
+};
+
+export const decompressString = async (byteArray: Uint8Array): Promise<string> => {
+  const buffer = await decompress(byteArray);
+  const textDecoder = new TextDecoder('utf-8');
+  return textDecoder.decode(buffer);
 };
