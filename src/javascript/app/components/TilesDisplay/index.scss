@@ -1,0 +1,10 @@
+
+.tiles-display {
+  --canvas-width: auto;
+  width: var(--canvas-width);
+
+  &__canvas {
+    width: 100%;
+    image-rendering: pixelated;
+  }
+}

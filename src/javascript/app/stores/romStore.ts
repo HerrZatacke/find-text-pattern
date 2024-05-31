@@ -14,7 +14,6 @@ export interface RomStoreState {
   unloadFile: () => void,
   setPageSize: (pageSize: number) => void,
   setRomPage: (romPage: number) => void,
-  cleanRomPage: () => void,
   find: (rawPattern: Uint8Array) => number[],
   gotoLocation: (location: number) => void,
 }
@@ -71,13 +70,7 @@ const useRomStore = create(
       },
 
       setRomPage: (romPage: number) => {
-        set({
-          romPage,
-        });
-      },
-
-      cleanRomPage: () => {
-        const { romPage, maxPage } = getState();
+        const { maxPage } = getState();
         set({
           romPage: Math.min(Math.max(romPage, 0), maxPage),
         });

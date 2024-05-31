@@ -2,16 +2,16 @@ import React from 'react';
 import { useVisual } from '../../hooks/useVisual';
 
 import './index.scss';
+import TilesDisplay from '../TilesDisplay';
 
 function Visual() {
   const {
     showSearchVisual,
     showROMVisual,
     showRAMVisual,
-    searchRef,
-    canvasRomRef,
-    canvasVRamRef,
-    canvasROMWidth,
+    searchTiles,
+    romTiles,
+    vramTiles,
     vramClick,
   } = useVisual();
 
@@ -20,25 +20,28 @@ function Visual() {
       { showSearchVisual && (
         <div>
           <p className="visual__label">Current Search</p>
-          <canvas
-            ref={searchRef}
-            className="visual__search"
-            width={8}
+          <TilesDisplay
+            zoom={12}
+            tiles={searchTiles}
+            tilesPerLine={1}
           />
         </div>
       )}
       { showROMVisual && (
         <div>
           <p className="visual__label">Current Page</p>
-          <canvas ref={canvasRomRef} width={canvasROMWidth} />
+          <TilesDisplay
+            tiles={romTiles}
+            tilesPerLine={16}
+          />
         </div>
       )}
       { showRAMVisual && (
         <div>
           <p className="visual__label">VRAM</p>
-          <canvas
-            ref={canvasVRamRef}
-            width={128}
+          <TilesDisplay
+            tiles={vramTiles}
+            tilesPerLine={16}
             onClick={vramClick}
           />
         </div>

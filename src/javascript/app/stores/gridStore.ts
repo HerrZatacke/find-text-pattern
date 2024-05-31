@@ -3,14 +3,14 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface GridState {
   grid: string,
-  gridRows: number,
+  gridGroups: number,
   gridCols: number,
-  setGridRows: (rows: string) => void,
+  setGridGroups: (groups: string) => void,
   setGridCols: (cols: string) => void,
 }
 
-const createGrid = (cols: number, rows: number): string => {
-  const segments = [...Array(rows)]
+const createGrid = (cols: number, groups: number): string => {
+  const segments = [...Array(groups)]
     .map((_, index) => (
       `repeat(${index ? cols - 1 : cols}, 40px)`
     ));
@@ -22,24 +22,22 @@ const useGridStore = create(
   persist<GridState>(
     (set, getState) => ({
       grid: 'repeat(14, 40px) 60px repeat(13, 40px)',
-      gridRows: 2,
+      gridGroups: 2,
       gridCols: 16,
 
-      setGridRows: (gridRows: string) => {
-        const gridCols = getState().gridCols;
+      setGridGroups: (gridGroups: string) => {
+        const { gridCols } = getState();
         set(() => ({
-          gridCols,
-          gridRows: parseInt(gridRows, 10),
-          grid: createGrid(gridCols, parseInt(gridRows, 10)),
+          gridGroups: parseInt(gridGroups, 10),
+          grid: createGrid(gridCols, parseInt(gridGroups, 10)),
         }));
       },
 
       setGridCols: (gridCols: string) => {
-        const gridRows = getState().gridRows;
+        const { gridGroups } = getState();
         set(() => ({
           gridCols: parseInt(gridCols, 10),
-          gridRows,
-          grid: createGrid(parseInt(gridCols, 10), gridRows),
+          grid: createGrid(parseInt(gridCols, 10), gridGroups),
         }));
       },
     }),

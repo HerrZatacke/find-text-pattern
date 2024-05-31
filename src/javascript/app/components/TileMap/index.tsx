@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Decoder } from 'gb-image-decoder';
+import React, { useMemo } from 'react';
 import {
   Stack,
   Dialog,
@@ -14,6 +13,7 @@ import { hexPadSimple } from '../../../tools/hexPad';
 import useSettingsStore from '../../stores/settingsStore';
 import { getPatchedChar } from '../../../tools/getPatchedChar';
 import usePatchStore from '../../stores/patchStore';
+import TilesDisplay from '../TilesDisplay';
 
 function TileMap() {
   const { tileMap, vramTilesOffset } = useRamStore();
@@ -39,25 +39,6 @@ function TileMap() {
     );
   }, [patches, romContent, tileMap, vramTilesOffset]);
 
-  const searchRef = useRef<HTMLCanvasElement>(null);
-  const searchDecoder = useMemo<Decoder>(() => (new Decoder({ tilesPerLine: 32 })), []);
-  useEffect(() => {
-    window.requestAnimationFrame(() => {
-      if (!searchRef.current || !showMap) {
-        return;
-      }
-
-      searchDecoder.update({
-        palette: ['#e0f8d0', '#88c070', '#346856', '#081820'],
-        invertPalette: false,
-        lockFrame: false,
-        canvas: searchRef.current,
-        tiles: tileMapTiles,
-      });
-    });
-  }, [searchDecoder, tileMapTiles, showMap]);
-
-
   const cancel = () => {
     setShowMap(false);
   };
@@ -70,11 +51,10 @@ function TileMap() {
       <DialogTitle>Tilemap</DialogTitle>
       <DialogContent>
         <Stack direction="column" spacing={4}>
-          <canvas
-            width={256}
-            height={256}
-            ref={searchRef}
-            style={{ border: '1px solid #666666' }}
+          <TilesDisplay
+            zoom={12}
+            tiles={tileMapTiles}
+            tilesPerLine={32}
           />
         </Stack>
       </DialogContent>

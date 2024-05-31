@@ -10,6 +10,7 @@ const VRAM_SIZE = 0x1800;
 export interface RamStoreState {
   tileMap: number[],
   vramTiles: string[],
+  vramSize: number,
   vramTilesOffset: number, // Position of tiles in ROM copied to VRAM
   setRamFile: (file: File) => void,
   unloadFile: () => void,
@@ -20,6 +21,7 @@ const useRamStore = create(
     (set) => ({
       tileMap: [],
       vramTiles: [],
+      vramSize: 0,
       vramTilesOffset: 0,
 
       setRamFile: async (file: File) => {
@@ -30,6 +32,7 @@ const useRamStore = create(
 
         set({
           vramTiles,
+          vramSize: vramTiles.length,
           tileMap,
           vramTilesOffset: 0x59800,
         });
@@ -38,6 +41,7 @@ const useRamStore = create(
       unloadFile: () => {
         set({
           vramTiles: [],
+          vramSize: 0,
           tileMap: [],
           vramTilesOffset: 0,
         });

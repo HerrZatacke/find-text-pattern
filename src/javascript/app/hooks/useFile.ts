@@ -6,7 +6,8 @@ import useRamStore from '../stores/ramStore';
 import useNotificationsStore from '../stores/notificationsStore';
 
 interface UseFile {
-  hasFile: boolean,
+  hasROMFile: boolean,
+  hasVRAMFile: boolean,
   unloadRomFile: () => void,
   unloadRamFile: () => void,
   onChangeRamFile: (ev: ChangeEvent<HTMLInputElement>) => void,
@@ -22,13 +23,15 @@ export const useFile = (): UseFile => {
 
 
   const {
+    vramSize,
     setRamFile: storeSetRamFile,
     unloadFile: unloadRamFile,
   } = useRamStore();
 
   const { addMessage } = useNotificationsStore();
 
-  const hasFile = romSize > 0;
+  const hasROMFile = romSize > 0;
+  const hasVRAMFile = vramSize > 0;
 
   const {
     setCurrentFound,
@@ -56,7 +59,6 @@ export const useFile = (): UseFile => {
     storeSetFile(target.files[0]);
     setCurrentFound(0);
     setFound([]);
-    unloadRamFile();
 
     target.value = '';
   };
@@ -82,7 +84,8 @@ export const useFile = (): UseFile => {
   };
 
   return {
-    hasFile,
+    hasROMFile,
+    hasVRAMFile,
     onChangeRomFile,
     onChangeRamFile,
     unloadRomFile,

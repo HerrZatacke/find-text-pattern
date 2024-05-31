@@ -1,7 +1,9 @@
 import React from 'react';
-import { AppBar, Toolbar, Button, TextField, MenuItem, Stack, ButtonGroup } from '@mui/material';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { AppBar, Toolbar, Button, Stack, ButtonGroup } from '@mui/material';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import LastPageIcon from '@mui/icons-material/LastPage';
 import ExploreIcon from '@mui/icons-material/Explore';
 import ExploreOffIcon from '@mui/icons-material/ExploreOff';
 import GridOffIcon from '@mui/icons-material/GridOff';
@@ -24,9 +26,11 @@ import { useFile } from '../../hooks/useFile';
 import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
 import useRamStore from '../../stores/ramStore';
+import DropdownMenu from '../MenuControls/DropdownMenu';
+import RomPagination from '../MenuControls/RomPagination';
 
 function Settings() {
-  const { gridRows, gridCols, setGridRows, setGridCols } = useGridStore();
+  const { gridGroups, gridCols, setGridGroups, setGridCols } = useGridStore();
 
   const {
     charMapVisible: visible,
@@ -40,19 +44,17 @@ function Settings() {
   } = useSettingsStore();
 
   const {
-    maxPage,
     pageSize,
-    romPage,
     setPageSize,
-    setRomPage,
-    cleanRomPage,
   } = useRomStore();
 
   const {
-    hasFile,
+    hasROMFile,
+    hasVRAMFile,
     onChangeRomFile,
     onChangeRamFile,
     unloadRomFile,
+    unloadRamFile,
   } = useFile();
 
   const {
@@ -68,7 +70,7 @@ function Settings() {
 
   const patchCount = patches.length;
 
-  const canWorkWithResults = hasFile && foundCount > 0;
+  const canWorkWithResults = hasROMFile && foundCount > 0;
 
   return (
     <AppBar
@@ -77,186 +79,176 @@ function Settings() {
     >
       <Toolbar>
         <div className="grid__container settings">
-          <div className="grid__col grid__col--6">
-            <Stack direction="row" spacing={1} useFlexGap>
-              <TextField
-                label="Columns"
-                title="Columns"
-                value={gridCols}
-                onChange={({ target }) => setGridCols(target.value)}
-                variant="outlined"
-                size="small"
-                select
-              >
-                <MenuItem value={8}>8 Columns</MenuItem>
-                <MenuItem value={10}>10 Columns</MenuItem>
-                <MenuItem value={12}>12 Columns</MenuItem>
-                <MenuItem value={14}>14 Columns</MenuItem>
-                <MenuItem value={16}>16 Columns</MenuItem>
-                <MenuItem value={24}>24 Columns</MenuItem>
-                <MenuItem value={32}>32 Columns</MenuItem>
-              </TextField>
-              <TextField
-                label="Rows"
-                title="Rows"
-                value={gridRows}
-                onChange={({ target }) => setGridRows(target.value)}
-                variant="outlined"
-                size="small"
-                select
-              >
-                <MenuItem value={1}>1 Rows</MenuItem>
-                <MenuItem value={2}>2 Rows</MenuItem>
-                <MenuItem value={3}>3 Rows</MenuItem>
-                <MenuItem value={4}>4 Rows</MenuItem>
-              </TextField>
-              <TextField
-                label={`Page: ${romPage + 1}/${maxPage + 1}`}
-                title="Page"
-                value={romPage + 1}
-                onBlur={cleanRomPage}
-                onChange={({ target }) => setRomPage(parseInt(target.value, 10) - 1 || 0)}
-                variant="outlined"
-                size="small"
-                disabled={!hasFile}
-                inputProps={{
-                  min: 1,
-                  max: maxPage + 1,
-                  type: 'number',
-                }}
+          <div className="grid__col grid__col--4">
+            <Stack direction="row" spacing={1} useFlexGap justifyContent="start">
+              <DropdownMenu
+                title="Files"
+                entries={[
+                  {
+                    title: 'Load file',
+                    changeHandler: onChangeRomFile,
+                    icon: <FolderIcon />,
+                  },
+                  {
+                    title: 'Unload file',
+                    clickHandler: unloadRomFile,
+                    disabled: !hasROMFile,
+                    icon: <FolderOffIcon />,
+                  },
+                  {},
+                  {
+                    title: 'Download patched file',
+                    clickHandler: downloadPatchedFile,
+                    disabled: !hasROMFile,
+                    icon: <FileDownloadIcon />,
+                  },
+                  {
+                    title: patchCount ? `Clean ${patchCount} patches` : 'Clean patches',
+                    clickHandler: cleanPatches,
+                    disabled: !hasROMFile || !patchCount,
+                    icon: <CleaningServicesIcon />,
+                  },
+                  {},
+                  {
+                    title: 'Load vram content',
+                    changeHandler: onChangeRamFile,
+                    disabled: !hasROMFile,
+                    icon: <FolderSpecialIcon />,
+                  },
+                  {
+                    title: 'Unload vram content',
+                    clickHandler: unloadRamFile,
+                    disabled: !hasVRAMFile,
+                    icon: <FolderSpecialIcon />,
+                  },
+                ]}
               />
-              <TextField
-                label="Page size"
-                title="Page size"
-                value={pageSize}
-                onChange={({ target }) => setPageSize(parseInt(target.value, 10) || 0)}
-                variant="outlined"
-                size="small"
-                disabled={!hasFile}
-                select
-              >
-                <MenuItem value={0x100}>0x100 (256b)</MenuItem>
-                <MenuItem value={0x200}>0x200 (512b)</MenuItem>
-                <MenuItem value={0x400}>0x400 (1kb)</MenuItem>
-                <MenuItem value={0x800}>0x800 (2kb)</MenuItem>
-                <MenuItem value={0x1000}>0x1000 (4kb)</MenuItem>
-                <MenuItem value={0x2000}>0x2000 (8kb)</MenuItem>
-                <MenuItem value={0x4000}>0x4000 (16kb)</MenuItem>
-              </TextField>
+              <DropdownMenu
+                title="View"
+                entries={[
+                  {
+                    title: 'Toggle character map',
+                    clickHandler: () => setVisible(!visible),
+                    icon: visible ? <GridOnIcon /> : <GridOffIcon />,
+                  },
+                  {
+                    title: 'Toggle character type',
+                    clickHandler: () => setRenderHexChars(!renderHexChars),
+                    icon: renderHexChars ? <CodeIcon /> : <CodeOffIcon />,
+                  },
+                  {
+                    title: 'Toggle grid rendering',
+                    clickHandler: () => setRenderTextGrid(!renderTextGrid),
+                    icon: renderTextGrid ? <FormatAlignLeftIcon /> : <FormatAlignJustifyIcon />,
+                  },
+                  {
+                    title: 'Toggle tile map',
+                    clickHandler: () => setShowMap(!showMap),
+                    disabled: vramTilesOffset === 0,
+                    icon: showMap ? <ExploreIcon /> : <ExploreOffIcon />,
+                  },
+                ]}
+              />
+              <DropdownMenu
+                title="Grid"
+                entries={[
+                  {
+                    title: 'Columns',
+                    updateHandler: setGridCols,
+                    optionsValue: gridCols.toString(10),
+                    options: [
+                      { title: '8 Columns', value: '8' },
+                      { title: '10 Columns', value: '10' },
+                      { title: '12 Columns', value: '12' },
+                      { title: '14 Columns', value: '14' },
+                      { title: '16 Columns', value: '16' },
+                      { title: '24 Columns', value: '24' },
+                      { title: '32 Columns', value: '32' },
+                    ],
+                  },
+                  {
+                    title: 'Groups',
+                    updateHandler: setGridGroups,
+                    optionsValue: gridGroups.toString(10),
+                    options: [
+                      { title: '1 Group', value: '1' },
+                      { title: '2 Groups', value: '2' },
+                      { title: '3 Groups', value: '3' },
+                      { title: '4 Groups', value: '4' },
+                    ],
+                  },
+                  {
+                    title: 'Page size',
+                    updateHandler: (value) => setPageSize(parseInt(value, 10) || 0),
+                    optionsValue: pageSize.toString(10),
+                    options: [
+                      { title: '0x100 (256b)', value: (0x100).toString(10) },
+                      { title: '0x200 (512b)', value: (0x200).toString(10) },
+                      { title: '0x400 (1kb)', value: (0x400).toString(10) },
+                      { title: '0x800 (2kb)', value: (0x800).toString(10) },
+                      { title: '0x1000 (4kb)', value: (0x1000).toString(10) },
+                      { title: '0x2000 (8kb)', value: (0x2000).toString(10) },
+                      { title: '0x4000 (16kb)', value: (0x4000).toString(10) },
+                    ],
+                  },
+                ]}
+              />
             </Stack>
           </div>
-          <div className="grid__col grid__col--6">
-            <Stack direction="row" spacing={1} useFlexGap justifyContent="end">
-              <ButtonGroup>
-                <Button
-                  title="Go to previous found"
-                  variant="outlined"
-                  onClick={() => setCurrentFound(currentFound - 1)}
-                  disabled={!canWorkWithResults}
-                >
-                  <ArrowLeftIcon />
-                </Button>
-                <Button
-                  title="Go to current"
-                  variant="outlined"
-                  onClick={() => setCurrentFound(currentFound)}
-                  disabled={!canWorkWithResults}
-                >
-                  { foundCount && hasFile ? `${currentFound + 1}/${foundCount}` : '--' }
-                </Button>
-                <Button
-                  title="Clear search"
-                  variant="outlined"
-                  onClick={() => clearSearch()}
-                  disabled={!canWorkWithResults}
-                >
-                  <SearchOffIcon />
-                </Button>
-                <Button
-                  title="Go to next found"
-                  variant="outlined"
-                  onClick={() => setCurrentFound(currentFound + 1)}
-                  disabled={!canWorkWithResults}
-                >
-                  <ArrowRightIcon />
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup>
-                <Button
-                  title="Toggle tile map"
-                  onClick={() => setShowMap(!showMap)}
-                  disabled={vramTilesOffset === 0}
-                >
-                  {showMap ? <ExploreIcon /> : <ExploreOffIcon />}
-                </Button>
-                <Button
-                  title="Toggle character map"
-                  onClick={() => setVisible(!visible)}
-                >
-                  {visible ? <GridOnIcon /> : <GridOffIcon />}
-                </Button>
-                <Button
-                  title="Toggle character type"
-                  onClick={() => setRenderHexChars(!renderHexChars)}
-                >
-                  {renderHexChars ? <CodeIcon /> : <CodeOffIcon />}
-                </Button>
-                <Button
-                  title="Toggle grid rendering"
-                  onClick={() => setRenderTextGrid(!renderTextGrid)}
-                >
-                  {renderTextGrid ? <FormatAlignLeftIcon /> : <FormatAlignJustifyIcon />}
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup>
-                <Button
-                  title={patchCount ? `Clean ${patchCount} patches` : 'no patches'}
-                  onClick={cleanPatches}
-                  disabled={!hasFile || !patchCount}
-                >
-                  <CleaningServicesIcon />
-                </Button>
-                <Button
-                  title="Download patched file"
-                  onClick={downloadPatchedFile}
-                  disabled={!hasFile}
-                >
-                  <FileDownloadIcon />
-                </Button>
-                <Button
-                  title="Unload file"
-                  onClick={unloadRomFile}
-                  disabled={!hasFile}
-                >
-                  <FolderOffIcon />
-                </Button>
-                <Button
-                  title="Load file"
-                  component="label"
-                >
-                  <FolderIcon />
-                  <input
-                    type="file"
-                    hidden
-                    onChange={onChangeRomFile}
-                  />
-                </Button>
-                { window.location.port === '3000' && (
-                  <Button
-                    title="Load vram content from BGB .snX file"
-                    component="label"
-                    disabled={!hasFile}
-                  >
-                    <FolderSpecialIcon />
-                    <input
-                      type="file"
-                      hidden
-                      onChange={onChangeRamFile}
-                    />
-                  </Button>
-                )}
-              </ButtonGroup>
-            </Stack>
+          <div className="grid__col grid__col--4">
+            <ButtonGroup>
+              <Button
+                title="Go to previous found"
+                variant="outlined"
+                onClick={() => setCurrentFound(0)}
+                disabled={!canWorkWithResults || currentFound === 0}
+              >
+                <FirstPageIcon />
+              </Button>
+              <Button
+                title="Go to previous found"
+                variant="outlined"
+                onClick={() => setCurrentFound(currentFound - 1)}
+                disabled={!canWorkWithResults || currentFound === 0}
+              >
+                <NavigateBeforeIcon />
+              </Button>
+              <Button
+                title="Jump to current"
+                variant="outlined"
+                onClick={() => setCurrentFound(currentFound)}
+                disabled={!canWorkWithResults}
+              >
+                { foundCount && hasROMFile ? `${currentFound + 1}/${foundCount}` : '--' }
+              </Button>
+              <Button
+                title="Clear search"
+                variant="outlined"
+                onClick={() => clearSearch()}
+                disabled={!canWorkWithResults}
+              >
+                <SearchOffIcon />
+              </Button>
+              <Button
+                title="Go to next found"
+                variant="outlined"
+                onClick={() => setCurrentFound(currentFound + 1)}
+                disabled={!canWorkWithResults || currentFound + 1 === foundCount}
+              >
+                <NavigateNextIcon />
+              </Button>
+              <Button
+                title="Go to last found"
+                variant="outlined"
+                onClick={() => setCurrentFound(foundCount)}
+                disabled={!canWorkWithResults || currentFound + 1 === foundCount}
+              >
+                <LastPageIcon />
+              </Button>
+            </ButtonGroup>
+          </div>
+          <div className="grid__col grid__col--4">
+            <RomPagination />
           </div>
         </div>
       </Toolbar>
