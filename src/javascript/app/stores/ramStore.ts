@@ -39,6 +39,7 @@ const useRamStore = create(
         set({
           vramTiles: [],
           tileMap: [],
+          vramTilesOffset: 0,
         });
       },
     }),
