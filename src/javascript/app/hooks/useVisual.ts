@@ -20,7 +20,7 @@ export const useVisual = (): UseVisual => {
   const { vramTiles, vramSize } = useRam();
   const { setHex, cleanHex, rawPattern } = usePatternStore();
 
-  const searchTiles = useMemo<string[]>(() => toTiles(rawPattern), [rawPattern]);
+  const searchTiles = useMemo<string[]>(() => toTiles(new Uint8Array(rawPattern)), [rawPattern]);
   const romTiles = useMemo<string[]>(() => toTiles(patchedPageArray), [patchedPageArray]);
 
   const vramClick = (ev: MouseEvent<HTMLButtonElement>) => {
@@ -34,7 +34,7 @@ export const useVisual = (): UseVisual => {
   return {
     showROMVisual: Boolean(patchedPageArray.length),
     showRAMVisual: Boolean(vramSize),
-    showSearchVisual: Boolean(rawPattern.length),
+    showSearchVisual: Boolean(rawPattern.byteLength),
     romTiles,
     searchTiles,
     vramTiles,

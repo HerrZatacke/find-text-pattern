@@ -7,7 +7,7 @@ import { numericToString } from '../../tools/numericToString';
 import { createCompressedJSONStorage } from '../../tools/zustand/createCompressedStorage';
 
 export interface PatternStoreState {
-  rawPattern: Uint8Array,
+  rawPattern: ArrayBuffer,
 
   setText: (text: string) => void,
   inputTextError: string | null,
@@ -23,7 +23,7 @@ export interface PatternStoreState {
 const usePatternStore = create(
   persist<PatternStoreState>(
     (set, getState) => ({
-      rawPattern: new Uint8Array([]),
+      rawPattern: new ArrayBuffer(0),
       text: '',
       hex: '',
       inputTextError: null,
@@ -38,7 +38,7 @@ const usePatternStore = create(
             hex,
             inputTextError: null,
             inputHexError: null,
-            rawPattern,
+            rawPattern: rawPattern.buffer,
             currentFound: 0,
             found: [],
           }));
@@ -66,7 +66,7 @@ const usePatternStore = create(
             hex,
             inputTextError: null,
             inputHexError: null,
-            rawPattern,
+            rawPattern: rawPattern.buffer,
             currentFound: 0,
             found: [],
           }));
@@ -93,7 +93,7 @@ const usePatternStore = create(
             return;
           }
 
-          setHex(numericToHexString(rawPattern, 32));
+          setHex(numericToHexString(new Uint8Array(rawPattern), 32));
         } catch (error) {
           set(() => ({
             inputHexError: (error as Error).message,

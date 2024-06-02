@@ -7,7 +7,7 @@ import { useSearch } from '../../hooks/useSearch';
 
 function TextInput() {
   const { setText, inputTextError, text, rawPattern } = usePatternStore();
-  const length = rawPattern.length;
+  const length = rawPattern.byteLength;
 
   const { findInRom } = useSearch();
 

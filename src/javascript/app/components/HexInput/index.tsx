@@ -7,7 +7,7 @@ import { useSearch } from '../../hooks/useSearch';
 
 function HexInput() {
   const { setHex, inputHexError, hex, cleanHex, rawPattern } = usePatternStore();
-  const length = rawPattern.length;
+  const length = rawPattern.byteLength;
 
   const { findInRom } = useSearch();
 

@@ -25,7 +25,7 @@ export const useSearch = (): UseSearch => {
   const { rawPattern } = usePatternStore();
 
   const findInRom = () => {
-    setFound(find(rawPattern));
+    setFound(find(new Uint8Array(rawPattern)));
   };
 
   const setCurrentFound = (index: number) => {

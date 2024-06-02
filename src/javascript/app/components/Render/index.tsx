@@ -58,7 +58,7 @@ function Render() {
 
             const foundTest = found.findIndex((location) => location === pageOffset + index);
             if (foundTest > -1) {
-              loopFound = rawPattern.length;
+              loopFound = rawPattern.byteLength;
               if (foundTest === currentFound) {
                 loopFoundExtra = true;
               }
