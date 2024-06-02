@@ -1,11 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { compress, decompress } from '../../tools/gzip';
+import { createCompressedJSONStorage } from '../../tools/zustand/createCompressedStorage';
 
 export interface RomStoreState {
   romContent: ArrayBuffer,
-  romSize: number,
-  maxPage: number,
   pageSize: number,
   romPage: number,
   romFileName: string,
@@ -22,8 +20,6 @@ const useRomStore = create(
   persist<RomStoreState>(
     (set, getState) => ({
       romContent: new ArrayBuffer(0),
-      romSize: 0,
-      maxPage: 0,
       pageSize: 0x200,
       romPage: 0,
       romFileName: '',
@@ -35,13 +31,9 @@ const useRomStore = create(
 
         const romContent = await file.arrayBuffer();
 
-        const { pageSize } = getState();
-
         set({
           romContent,
-          romSize: romContent.byteLength,
           romPage: 0,
-          maxPage: Math.ceil(romContent.byteLength / pageSize) - 1,
           romFileName: file.name,
         });
       },
@@ -49,9 +41,7 @@ const useRomStore = create(
       unloadFile: () => {
         set({
           romContent: new ArrayBuffer(0),
-          romSize: 0,
           romPage: 0,
-          maxPage: 0,
           romFileName: '',
         });
       },
@@ -61,18 +51,15 @@ const useRomStore = create(
           return;
         }
 
-        const { romSize } = getState();
         set({
           pageSize,
           romPage: 0,
-          maxPage: Math.ceil(romSize / pageSize) - 1,
         });
       },
 
       setRomPage: (romPage: number) => {
-        const { maxPage } = getState();
         set({
-          romPage: Math.min(Math.max(romPage, 0), maxPage),
+          romPage,
         });
       },
 
@@ -120,22 +107,7 @@ const useRomStore = create(
     }),
     {
       name: 'find-text-pattern-rom',
-      // storage: createJSONStorage(() => sessionStorage),
-      serialize: async (value) => {
-        const romContent = await compress(value.state.romContent);
-        return JSON.stringify({
-          ...value,
-          state: {
-            ...value.state,
-            romContent,
-          },
-        });
-      },
-      deserialize: async (value: string) => {
-        const parsed = JSON.parse(value);
-        parsed.state.romContent = await decompress(new Uint8Array(parsed.state.romContent));
-        return parsed;
-      },
+      storage: createCompressedJSONStorage(() => localStorage, { arrayBufferFields: ['romContent'] }),
     },
   ),
 );

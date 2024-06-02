@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { saveAs } from 'file-saver';
 import type { PatchStoreState } from '../stores/patchStore';
 import usePatchStore from '../stores/patchStore';
-import useRomStore from '../stores/romStore';
+import { useRom } from './useRom';
 import type { MapChar } from '../../../types/MapChar';
 import { findCharByCode } from '../../tools/findChar';
 import { getPatchedChar } from '../../tools/getPatchedChar';
@@ -30,7 +30,7 @@ export const usePatch = (): UsePatch => {
     romPage,
     romContent,
     romFileName,
-  } = useRomStore();
+  } = useRom();
 
   const pageOffset = romPage * pageSize;
 

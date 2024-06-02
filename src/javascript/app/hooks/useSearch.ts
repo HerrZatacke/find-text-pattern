@@ -1,4 +1,4 @@
-import useRomStore from '../stores/romStore';
+import { useRom } from './useRom';
 import usePatternStore from '../stores/patternStore';
 import useSearchStore from '../stores/searchStore';
 
@@ -20,12 +20,12 @@ export const useSearch = (): UseSearch => {
     setFound,
   } = useSearchStore();
 
-  const { gotoLocation } = useRomStore();
+  const { gotoLocation, find } = useRom();
 
   const { rawPattern } = usePatternStore();
 
   const findInRom = () => {
-    setFound(useRomStore.getState().find(rawPattern));
+    setFound(find(rawPattern));
   };
 
   const setCurrentFound = (index: number) => {

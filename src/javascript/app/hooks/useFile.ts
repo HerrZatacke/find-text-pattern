@@ -1,8 +1,8 @@
 import type { ChangeEvent } from 'react';
-import useRomStore from '../stores/romStore';
+import { useRom } from './useRom';
 import useSearchStore from '../stores/searchStore';
 import usePatchStore from '../stores/patchStore';
-import useRamStore from '../stores/ramStore';
+import { useRam } from './useRam';
 import useNotificationsStore from '../stores/notificationsStore';
 
 interface UseFile {
@@ -19,14 +19,14 @@ export const useFile = (): UseFile => {
     romSize,
     setFile: storeSetFile,
     unloadFile: storeUnloadFile,
-  } = useRomStore();
+  } = useRom();
 
 
   const {
     vramSize,
     setRamFile: storeSetRamFile,
     unloadFile: unloadRamFile,
-  } = useRamStore();
+  } = useRam();
 
   const { addMessage } = useNotificationsStore();
 

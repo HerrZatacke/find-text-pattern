@@ -21,11 +21,11 @@ import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 
 import useGridStore from '../../stores/gridStore';
 import useSettingsStore from '../../stores/settingsStore';
-import useRomStore from '../../stores/romStore';
+import { useRom } from '../../hooks/useRom';
 import { useFile } from '../../hooks/useFile';
 import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
-import useRamStore from '../../stores/ramStore';
+import { useRam } from '../../hooks/useRam';
 import DropdownMenu from '../MenuControls/DropdownMenu';
 import RomPagination from '../MenuControls/RomPagination';
 
@@ -46,7 +46,7 @@ function Settings() {
   const {
     pageSize,
     setPageSize,
-  } = useRomStore();
+  } = useRom();
 
   const {
     hasROMFile,
@@ -64,7 +64,7 @@ function Settings() {
     clearSearch,
   } = useSearch();
 
-  const { vramTilesOffset } = useRamStore();
+  const { vramTilesOffset } = useRam();
 
   const { downloadPatchedFile, cleanPatches, patches } = usePatch();
 

@@ -7,8 +7,8 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
-import useRamStore from '../../stores/ramStore';
-import useRomStore from '../../stores/romStore';
+import { useRam } from '../../hooks/useRam';
+import { useRom } from '../../hooks/useRom';
 import { hexPadSimple } from '../../../tools/hexPad';
 import useSettingsStore from '../../stores/settingsStore';
 import { getPatchedChar } from '../../../tools/getPatchedChar';
@@ -16,8 +16,8 @@ import usePatchStore from '../../stores/patchStore';
 import TilesDisplay from '../TilesDisplay';
 
 function TileMap() {
-  const { tileMap, vramTilesOffset } = useRamStore();
-  const { romContent } = useRomStore();
+  const { tileMap, vramTilesOffset } = useRam();
+  const { romContent } = useRom();
   const { showMap, setShowMap } = useSettingsStore();
   const { patches } = usePatchStore();
 

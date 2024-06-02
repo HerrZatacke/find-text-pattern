@@ -5,7 +5,7 @@ import usePatternStore from '../../stores/patternStore';
 import RenderChar from '../RenderChar';
 import { MapCharTask } from '../../../../types/MapChar';
 import useGridStore from '../../stores/gridStore';
-import useRomStore from '../../stores/romStore';
+import { useRom } from '../../hooks/useRom';
 import useSettingsStore from '../../stores/settingsStore';
 import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
@@ -24,7 +24,7 @@ function Render() {
   const {
     pageSize,
     romPage,
-  } = useRomStore();
+  } = useRom();
 
   const { found, currentFound } = useSearch();
 

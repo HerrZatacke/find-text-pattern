@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { MouseEvent } from 'react';
 import { usePatch } from './usePatch';
-import useRamStore from '../stores/ramStore';
+import { useRam } from './useRam';
 import { toTiles } from '../../tools/toTiles';
 import usePatternStore from '../stores/patternStore';
 
@@ -17,7 +17,7 @@ interface UseVisual {
 
 export const useVisual = (): UseVisual => {
   const { patchedPageArray } = usePatch();
-  const { vramTiles, vramSize } = useRamStore();
+  const { vramTiles, vramSize } = useRam();
   const { setHex, cleanHex, rawPattern } = usePatternStore();
 
   const searchTiles = useMemo<string[]>(() => toTiles(rawPattern), [rawPattern]);

@@ -2,7 +2,7 @@ import React from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import usePatternStore from '../../stores/patternStore';
-import useRomStore from '../../stores/romStore';
+import { useRom } from '../../hooks/useRom';
 import { useSearch } from '../../hooks/useSearch';
 
 function TextInput() {
@@ -11,7 +11,7 @@ function TextInput() {
 
   const { findInRom } = useSearch();
 
-  const { romSize } = useRomStore();
+  const { romSize } = useRom();
 
   return (
     <TextField
