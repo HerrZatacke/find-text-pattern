@@ -4,6 +4,7 @@ import { hexStringToNumeric } from '../../tools/hexStringToNumeric';
 import { numericToHexString } from '../../tools/numericToHexString';
 import { stringToNumeric } from '../../tools/stringToNumeric';
 import { numericToString } from '../../tools/numericToString';
+import { createCompressedJSONStorage } from '../../tools/zustand/createCompressedStorage';
 
 export interface PatternStoreState {
   rawPattern: Uint8Array,
@@ -104,21 +105,7 @@ const usePatternStore = create(
     }),
     {
       name: 'find-text-pattern-pattern',
-      // storage: createJSONStorage(() => localStorage),
-      serialize: (value) => (
-        JSON.stringify({
-          ...value,
-          state: {
-            ...value.state,
-            rawPattern: [...value.state.rawPattern],
-          },
-        })
-      ),
-      deserialize: (value: string) => {
-        const parsed = JSON.parse(value);
-        parsed.state.rawPattern = new Uint8Array(parsed.state.rawPattern);
-        return parsed;
-      },
+      storage: createCompressedJSONStorage(() => localStorage, { arrayBufferFields: ['rawPattern'] }),
     },
   ),
 );

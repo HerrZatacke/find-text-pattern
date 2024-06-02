@@ -30,7 +30,11 @@ const compress = async (value: ArrayBuffer): Promise<string> => {
   return readAllChunks(cs.readable);
 };
 
-const decompress = async (data: string): Promise<ArrayBuffer> => {
+const decompress = async (data: string | unknown): Promise<ArrayBuffer> => {
+  if (typeof data !== 'string') {
+    return new ArrayBuffer(0);
+  }
+
   const byteArray = new Uint8Array(data.split('').map((char) => char.charCodeAt(0)));
   // eslint-disable-next-line no-undef
   const cs = new DecompressionStream('gzip');
