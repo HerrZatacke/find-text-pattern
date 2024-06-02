@@ -50,8 +50,8 @@ export const usePatch = (): UsePatch => {
       return pageSize;
     }
 
-    // last pagesize is remaining number of bytes
-    return bytesToEnd;
+    // last pagesize is remaining number of bytes and should not become negative by error
+    return Math.max(0, bytesToEnd);
   }, [pageOffset, pageSize, romContentArray]);
 
   const patchedPage = useMemo<MapChar[]>(() => {
