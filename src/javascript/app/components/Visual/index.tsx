@@ -18,7 +18,7 @@ function Visual() {
   return (
     <div className="visual">
       { showSearchVisual && (
-        <div>
+        <div className="visual__current-search">
           <p className="visual__label">Current Search</p>
           <TilesDisplay
             zoom={12}

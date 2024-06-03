@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './app/components/App';
 import { initCopyEventListener } from './tools/initCopyEventListener';
 import { initPageNavListener } from './tools/initPageNavListener';
+import { initRamContentTools } from './tools/zustand/ramContentTools';
 import '../scss/index.scss';
 import '../scss/grid.scss';
 
@@ -18,4 +19,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initCopyEventListener();
   initPageNavListener();
+  initRamContentTools();
 });

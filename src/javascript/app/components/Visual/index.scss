@@ -3,6 +3,11 @@
   gap: 16px;
   align-items: flex-start;
 
+  &__current-search {
+    max-height: 170px;
+    overflow-y: auto;
+  }
+
   &__label {
     font-size: 12px;
     margin-bottom: 4px;

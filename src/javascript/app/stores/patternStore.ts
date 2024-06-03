@@ -8,6 +8,7 @@ import { createCompressedJSONStorage } from '../../tools/zustand/createCompresse
 
 export interface PatternStoreState {
   rawPattern: ArrayBuffer,
+  setRawPattern: (pattern: Uint8Array | number[]) => void,
 
   setText: (text: string) => void,
   inputTextError: string | null,
@@ -28,6 +29,19 @@ const usePatternStore = create(
       hex: '',
       inputTextError: null,
       inputHexError: null,
+
+      setRawPattern: (pattern: Uint8Array | number[]) => {
+        const rawPattern = new Uint8Array(pattern);
+        const text = numericToString(rawPattern);
+        const hex = numericToHexString(rawPattern, 32);
+        set({
+          rawPattern,
+          text,
+          hex,
+          inputTextError: null,
+          inputHexError: null,
+        });
+      },
 
       setText: (text: string) => {
         try {

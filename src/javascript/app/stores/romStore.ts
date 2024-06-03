@@ -12,7 +12,7 @@ export interface RomStoreState {
   unloadFile: () => void,
   setPageSize: (pageSize: number) => void,
   setRomPage: (romPage: number) => void,
-  find: (rawPattern: Uint8Array) => number[],
+  find: (rawPattern: Uint8Array | number[]) => number[],
   gotoLocation: (location: number) => void,
 }
 
@@ -63,7 +63,7 @@ const useRomStore = create(
         });
       },
 
-      find: (rawPattern: Uint8Array) => {
+      find: (rawPattern: Uint8Array | number[]) => {
         const needle = rawPattern.join(',');
         const { romContent, gotoLocation } = getState();
         const contentArray = new Uint8Array(romContent);

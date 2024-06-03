@@ -5,6 +5,8 @@ import { createCompressedJSONStorage } from '../../tools/zustand/createCompresse
 export interface RamStoreState {
   fileContent: ArrayBuffer,
   setRamFile: (file: File) => void,
+  vramTilesOffset: number,
+  setVRAMTilesOffset: (offset: number) => void,
   unloadFile: () => void,
 }
 
@@ -14,20 +16,22 @@ const useRamStore = create(
       fileContent: new ArrayBuffer(0),
       vramTilesOffset: 0,
 
+      setVRAMTilesOffset: (vramTilesOffset: number) => {
+        set({ vramTilesOffset });
+      },
+
       setRamFile: async (file: File) => {
         const fileContent = await file.arrayBuffer();
-        // const vramContent = fileContent.slice(VRAM_SN1_OFFSET, VRAM_SN1_OFFSET + VRAM_SIZE);
-        // const tileMap = [...new Uint8Array(fileContent.slice(TILEMAP_SN1_OFFSET, TILEMAP_SN1_OFFSET + 1024))];
-        // const vramTiles = toTiles(new Uint8Array(vramContent));
-
         set({
           fileContent,
+          vramTilesOffset: 0,
         });
       },
 
       unloadFile: () => {
         set({
           fileContent: new ArrayBuffer(0),
+          vramTilesOffset: 0,
         });
       },
     }),
