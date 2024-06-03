@@ -236,7 +236,7 @@ export const charMap: MapChar[] = [
   { code: 0xe2, value: '📱', groupId: 'char' },
   { code: 0xe3, value: '😅', groupId: 'char' },
   { code: 0xe4, value: '😄', groupId: 'char' },
-  { code: 0xe5, value: '_' },
+  { code: 0xe5, value: '-' },
   { code: 0xe6, value: '0' },
   { code: 0xe7, value: '1' },
   { code: 0xe8, value: '2' },
@@ -266,7 +266,7 @@ export const charMap: MapChar[] = [
   { code: 0xff, value: '🛑', groupId: 'term', special: MapCharTask.STRING_TERM },
 ];
 
-
+/*
 export const charMapAsc: MapChar[] = [
   { code: 0x00, value: '🔴', groupId: 'unknown' },
   { code: 0x01, value: '🔴', groupId: 'unknown' },
@@ -526,3 +526,4 @@ export const charMapAsc: MapChar[] = [
   { code: 0xff, value: '🛑', groupId: 'term', special: MapCharTask.STRING_TERM },
 ];
 
+*/
