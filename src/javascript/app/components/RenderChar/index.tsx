@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex */
-import type { CSSPropertiesVars } from 'react';
 import React from 'react';
+import type { CSSPropertiesVars, MouseEvent } from 'react';
 import { clsx } from 'clsx';
 import type { MapChar } from '../../../../types/MapChar';
 import { MapCharTask } from '../../../../types/MapChar';
@@ -18,6 +18,7 @@ interface Props {
   highlightCurrent: boolean,
   renderHexChar: boolean,
   setEditLocation: (editLocation: number) => void,
+  handleContextMenu: (event: MouseEvent, location: number) => void,
 }
 
 function RenderChar({
@@ -29,6 +30,7 @@ function RenderChar({
   highlightCurrent,
   renderHexChar,
   setEditLocation,
+  handleContextMenu,
 }: Props) {
   const title = `Global: ${hexPad(globalOffset, 6)} (byte ${globalOffset})\nIn Page: ${hexPad(pageOffset, 6)} (byte ${pageOffset})`;
   const styles: CSSPropertiesVars = {};
@@ -73,11 +75,7 @@ function RenderChar({
       <div
         className="render-char__char"
         tabIndex={0}
-        onMouseUp={() => {
-          if (!window?.getSelection()?.toString().trim()) {
-            setEditLocation(globalOffset);
-          }
-        }}
+        onContextMenu={(ev) => handleContextMenu(ev, globalOffset)}
         onKeyDown={(ev) => {
           if ((ev.key === 'Enter') || ev.key === ' ') {
             ev.preventDefault();

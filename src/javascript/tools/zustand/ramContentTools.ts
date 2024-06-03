@@ -2,7 +2,6 @@ import useRamStore from '../../app/stores/ramStore';
 import useRomStore from '../../app/stores/romStore';
 import useSearchStore from '../../app/stores/searchStore';
 import { toTilesRaw } from '../toTiles';
-import usePatternStore from '../../app/stores/patternStore';
 import { TILEMAP_SN1_OFFSET, VRAM_SIZE, VRAM_SN1_OFFSET } from '../../../constants/ram';
 
 export const initRamContentTools = () => {
@@ -29,7 +28,6 @@ export const initRamContentTools = () => {
     const locations = find(tileMap);
 
     if (locations.length) {
-      usePatternStore.getState().setRawPattern(tileMap);
       useSearchStore.getState().setFound(locations);
     }
   });

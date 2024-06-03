@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { clsx } from 'clsx';
-import type { CSSPropertiesVars } from 'react';
+import type { CSSPropertiesVars, MouseEvent } from 'react';
+import { Menu, MenuItem } from '@mui/material';
 import usePatternStore from '../../stores/patternStore';
 import RenderChar from '../RenderChar';
 import { MapCharTask } from '../../../../types/MapChar';
@@ -11,6 +12,8 @@ import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
 
 import './index.scss';
+import { useContextMenu } from '../../hooks/useContextMenu';
+import useNotificationsStore from '../../stores/notificationsStore';
 
 function Render() {
   const styles: CSSPropertiesVars = {};
@@ -37,6 +40,41 @@ function Render() {
   let loopClass = 'norm';
   let loopFound = 0;
   let loopFoundExtra = false;
+
+  const {
+    contextMenu,
+    handleContextMenu: hookHandleContextMenu,
+    handleClose: hookHandleClose,
+  } = useContextMenu();
+
+  const { addMessage } = useNotificationsStore();
+
+  const [contextLocation, setContextLocation] = useState<number | null>(null);
+
+  const handleContextMenu = (ev: MouseEvent, location: number) => {
+    setContextLocation(location);
+    hookHandleContextMenu(ev);
+  };
+
+  const startEdit = () => {
+    setEditLocation(contextLocation);
+    hookHandleClose();
+  };
+
+  const handleClose = () => {
+    setEditLocation(null);
+    hookHandleClose();
+  };
+
+  const setTilemapStart = () => {
+    addMessage('not implemented');
+    hookHandleClose();
+  };
+
+  const setVRAMStart = () => {
+    addMessage('not implemented');
+    hookHandleClose();
+  };
 
   return (
     <div className="render grid__container" style={styles}>
@@ -80,11 +118,22 @@ function Render() {
                 renderHexChar={renderHexChars}
                 loopClass={loopClass}
                 setEditLocation={setEditLocation}
+                handleContextMenu={handleContextMenu}
               />
             );
           })}
         </div>
       </div>
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={contextMenu || undefined}
+      >
+        <MenuItem onClick={startEdit}>Edit from here</MenuItem>
+        <MenuItem onClick={setTilemapStart}>Tilemap starts here</MenuItem>
+        <MenuItem onClick={setVRAMStart}>VRAM starts here</MenuItem>
+      </Menu>
     </div>
   );
 }
