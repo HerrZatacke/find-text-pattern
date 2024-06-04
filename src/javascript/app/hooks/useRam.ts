@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import useRamStore from '../stores/ramStore';
-import { toTiles } from '../../tools/toTiles';
-import { TILEMAP_SIZE, TILEMAP_SN1_OFFSET, VRAM_SIZE, VRAM_SN1_OFFSET } from '../../../constants/ram';
 import useRomStore from '../stores/romStore';
+import usePatchStore from '../stores/patchStore';
+import { toTiles } from '../../tools/toTiles';
+import { getPatchedRange } from '../../tools/getPatchedRange';
+import { TILEMAP_SIZE, TILEMAP_SN1_OFFSET, VRAM_SIZE, VRAM_SN1_OFFSET } from '../../../constants/ram';
 
 interface UseRam {
   tileMap: number[],
@@ -31,6 +33,8 @@ export const useRam = (): UseRam => {
     romContent,
   } = useRomStore();
 
+  const { patches } = usePatchStore();
+
   const vramContent = useMemo<ArrayBuffer>(() => {
     if (vramTilesOffset !== null) {
       return romContent.slice(vramTilesOffset, vramTilesOffset + VRAM_SIZE);
@@ -43,15 +47,13 @@ export const useRam = (): UseRam => {
 
   const tileMap = useMemo<number[]>(() => {
     if (vramMapOffset !== null) {
-      return (
-        [...new Uint8Array(romContent.slice(vramMapOffset, vramMapOffset + TILEMAP_SIZE))]
-      );
+      return getPatchedRange(romContent, patches, vramMapOffset, TILEMAP_SIZE);
     }
 
     return (
       [...new Uint8Array(fileContent.slice(TILEMAP_SN1_OFFSET, TILEMAP_SN1_OFFSET + TILEMAP_SIZE))]
     );
-  }, [fileContent, romContent, vramMapOffset]);
+  }, [fileContent, patches, romContent, vramMapOffset]);
 
   const vramTiles = useMemo<string[]>(() => (
     toTiles(new Uint8Array(vramContent))

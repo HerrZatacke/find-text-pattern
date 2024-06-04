@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   Stack,
   Typography,
@@ -8,45 +8,24 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
-import { useRam } from '../../hooks/useRam';
-import { useRom } from '../../hooks/useRom';
-import { hexPad, hexPadSimple } from '../../../tools/hexPad';
+import { hexPad } from '../../../tools/hexPad';
 import useSettingsStore from '../../stores/settingsStore';
-import { getPatchedChar } from '../../../tools/getPatchedChar';
-import usePatchStore from '../../stores/patchStore';
 import TilesDisplay from '../TilesDisplay';
+import { usePatchedTilemap } from '../../hooks/usePatchedTilemap';
 
 function TileMap() {
-  const { tileMap, vramTilesOffset, vramMapOffset } = useRam();
-  const { romContent, gotoLocation } = useRom();
   const { showMap, setShowMap } = useSettingsStore();
-  const { patches } = usePatchStore();
-
-  const tileMapTiles = useMemo<string[]>(() => {
-    const romContentArray = new Uint8Array(romContent);
-    if (vramTilesOffset === null) {
-      return [];
-    }
-
-    return (
-      tileMap.map((tileIndex) => {
-        const mapOffset = tileIndex < 0x80 ? tileIndex + 0x100 : tileIndex;
-        const totalOffset = (mapOffset * 0x10) + vramTilesOffset;
-        const rc = Array(16)
-          .fill(0)
-          .map((_, offset) => {
-            const patchedChar = getPatchedChar(totalOffset + offset, patches, romContentArray);
-            return hexPadSimple(patchedChar.code);
-          });
-
-        return rc.join(' ');
-      })
-    );
-  }, [patches, romContent, tileMap, vramTilesOffset]);
 
   const close = () => {
     setShowMap(false);
   };
+
+  const {
+    vramTilesOffset,
+    vramMapOffset,
+    tileMapTiles,
+    gotoLocation,
+  } = usePatchedTilemap();
 
   return (
     <Dialog
