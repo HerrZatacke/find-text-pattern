@@ -37,7 +37,7 @@ function TilesDisplay({ tiles, tilesPerLine, onClick, zoom }: Props) {
   }, [tiles, decoder, canvasRef]);
 
   const styles: CSSPropertiesVars = {
-    '--canvas-width': tilesPerLine * 8 * (zoom || 1),
+    '--canvas-width': `${tilesPerLine * 8 * (zoom || 1)}px`,
   };
 
   const canvas = (

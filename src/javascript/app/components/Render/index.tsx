@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { clsx } from 'clsx';
 import type { CSSPropertiesVars, MouseEvent } from 'react';
 import { Menu, MenuItem } from '@mui/material';
-import usePatternStore from '../../stores/patternStore';
-import RenderChar from '../RenderChar';
 import { MapCharTask } from '../../../../types/MapChar';
+import usePatternStore from '../../stores/patternStore';
 import useGridStore from '../../stores/gridStore';
-import { useRom } from '../../hooks/useRom';
 import useSettingsStore from '../../stores/settingsStore';
+import RenderChar from '../RenderChar';
+import { useRom } from '../../hooks/useRom';
+import { useRam } from '../../hooks/useRam';
 import { useSearch } from '../../hooks/useSearch';
 import { usePatch } from '../../hooks/usePatch';
+import { useContextMenu } from '../../hooks/useContextMenu';
 
 import './index.scss';
-import { useContextMenu } from '../../hooks/useContextMenu';
-import useNotificationsStore from '../../stores/notificationsStore';
 
 function Render() {
   const styles: CSSPropertiesVars = {};
@@ -28,6 +28,11 @@ function Render() {
     pageSize,
     romPage,
   } = useRom();
+
+  const {
+    setVRAMTilesOffset,
+    setVRAMMapOffset,
+  } = useRam();
 
   const { found, currentFound } = useSearch();
 
@@ -47,8 +52,6 @@ function Render() {
     handleClose: hookHandleClose,
   } = useContextMenu();
 
-  const { addMessage } = useNotificationsStore();
-
   const [contextLocation, setContextLocation] = useState<number | null>(null);
 
   const handleContextMenu = (ev: MouseEvent, location: number) => {
@@ -67,12 +70,18 @@ function Render() {
   };
 
   const setTilemapStart = () => {
-    addMessage('not implemented');
+    if (contextLocation !== null) {
+      setVRAMMapOffset(contextLocation);
+    }
+
     hookHandleClose();
   };
 
   const setVRAMStart = () => {
-    addMessage('not implemented');
+    if (contextLocation !== null) {
+      setVRAMTilesOffset(contextLocation);
+    }
+
     hookHandleClose();
   };
 

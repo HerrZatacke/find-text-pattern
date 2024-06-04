@@ -19,5 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initCopyEventListener();
   initPageNavListener();
-  initRamContentTools();
+
+  // Wait until stores have been repopulated from localstorage
+  window.setTimeout(() => {
+    initRamContentTools();
+  }, 100);
 });

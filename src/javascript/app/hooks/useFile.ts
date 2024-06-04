@@ -31,8 +31,6 @@ export const useFile = (): UseFile => {
 
   const { addMessage } = useNotificationsStore();
 
-  const { setShowMap } = useSettingsStore();
-
   const hasROMFile = romSize > 0;
   const hasVRAMFile = vramSize > 0;
 
@@ -58,10 +56,19 @@ export const useFile = (): UseFile => {
       return;
     }
 
-    clearPatches();
-    storeSetFile(target.files[0]);
-    setCurrentFound(0);
-    setFound([]);
+    const file = [...target.files].find((searchfile) => (
+      searchfile.name.match(/\.(?<extension>gb[c]?$)/gi)
+    ));
+
+    if (file) {
+      clearPatches();
+      storeSetFile(target.files[0]);
+      setCurrentFound(0);
+      setFound([]);
+    } else {
+      addMessage('Invalid file - must be a .gb or .gbc file');
+    }
+
 
     target.value = '';
   };
@@ -79,7 +86,6 @@ export const useFile = (): UseFile => {
 
     if (file) {
       storeSetRamFile(target.files[0]);
-      setShowMap(true);
     } else {
       addMessage('Invalid file - must be a .snX gamestate from BGB emulator.');
     }
