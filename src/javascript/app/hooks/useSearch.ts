@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useRom } from './useRom';
 import usePatternStore from '../stores/patternStore';
 import useSearchStore from '../stores/searchStore';
@@ -12,6 +13,7 @@ interface UseSearch {
 }
 
 export const useSearch = (): UseSearch => {
+  const navigateTo = useNavigate();
 
   const {
     found,
@@ -26,6 +28,7 @@ export const useSearch = (): UseSearch => {
 
   const findInRom = () => {
     setFound(find(new Uint8Array(rawPattern)));
+    navigateTo('/romview');
   };
 
   const setCurrentFound = (index: number) => {
@@ -33,6 +36,7 @@ export const useSearch = (): UseSearch => {
     const gotoIndex = Math.min(Math.max(index, 0), maxIndex);
     storeSetCurrentFound(gotoIndex);
     gotoLocation(found[gotoIndex]);
+    navigateTo('/romview');
   };
 
   const clearSearch = () => {

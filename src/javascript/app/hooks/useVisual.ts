@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { MouseEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePatch } from './usePatch';
 import { useRam } from './useRam';
 import { toTiles } from '../../tools/toTiles';
@@ -23,12 +24,15 @@ export const useVisual = (): UseVisual => {
   const searchTiles = useMemo<string[]>(() => toTiles(new Uint8Array(rawPattern)), [rawPattern]);
   const romTiles = useMemo<string[]>(() => toTiles(patchedPageArray), [patchedPageArray]);
 
+  const navigateTo = useNavigate();
+
   const vramClick = (ev: MouseEvent<HTMLButtonElement>) => {
     const x = Math.floor((ev.nativeEvent.offsetX - 1) / 8);
     const y = Math.floor(ev.nativeEvent.offsetY / 8);
     const tileIndex = (y * 16) + x;
     setHex(vramTiles[tileIndex]);
     cleanHex();
+    navigateTo('/romview');
   };
 
   return {

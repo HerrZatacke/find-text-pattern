@@ -66,6 +66,7 @@
     "postcss-pxtorem": "^6.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1",
     "reset-css": "^5.0.1",
     "rimraf": "^5.0.0",
     "sass": "^1.62.1",

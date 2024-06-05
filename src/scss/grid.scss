@@ -8,8 +8,13 @@ body {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-gap: 0;
-    margin: 8px auto;
+    margin: 16px auto 0;
     padding: 12px 0;
+
+    &--v-slim {
+      margin: 0 auto;
+      padding: 0;
+    }
   }
 
   &__col {
@@ -28,5 +33,9 @@ body {
     &--11 { grid-column: span 11; }
     &--12 { grid-column: span 12; }
 
+    &--content-end {
+      display: flex;
+      justify-content: flex-end;
+    }
   }
 }
