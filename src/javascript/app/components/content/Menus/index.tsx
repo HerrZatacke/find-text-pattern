@@ -6,19 +6,23 @@ import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 
-import { useFile } from '../../../hooks/useFile';
+import { useRomFile } from '../../../hooks/useRomFile';
+import { useRamFile } from '../../../hooks/useRamFile';
 import { usePatch } from '../../../hooks/usePatch';
 import DropdownMenu from '../MenuControls/DropdownMenu';
 
 function Menus() {
   const {
     hasROMFile,
-    hasVRAMFile,
     onChangeRomFile,
-    onChangeRamFile,
     unloadRomFile,
+  } = useRomFile();
+
+  const {
+    hasVRAMFile,
+    onChangeRamFile,
     unloadRamFile,
-  } = useFile();
+  } = useRamFile();
 
   const { downloadPatchedFile, cleanPatches, patches } = usePatch();
 

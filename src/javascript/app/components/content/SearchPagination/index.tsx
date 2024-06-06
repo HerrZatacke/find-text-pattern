@@ -6,13 +6,13 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 
-import { useFile } from '../../../hooks/useFile';
+import { useRomFile } from '../../../hooks/useRomFile';
 import { useSearch } from '../../../hooks/useSearch';
 
 function SearchPagination() {
   const {
     hasROMFile,
-  } = useFile();
+  } = useRomFile();
 
   const {
     foundCount,
