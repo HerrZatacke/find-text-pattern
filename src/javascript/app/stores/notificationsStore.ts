@@ -1,8 +1,14 @@
 import { create } from 'zustand';
+import type { AlertColor } from '@mui/material/Alert/Alert';
+
+interface Message {
+  text: string,
+  type: AlertColor,
+}
 
 export interface SettingsState {
-  messages: string[],
-  addMessage: (message: string) => void,
+  messages: Message[],
+  addMessage: (message: Message) => void,
   dismissMessage: (index: number) => void,
 }
 
@@ -10,7 +16,7 @@ const useNotificationsStore = create<SettingsState>(
   (set, getState) => ({
     messages: [],
 
-    addMessage: (message: string) => {
+    addMessage: (message: Message) => {
       const { messages } = getState();
       set(() => ({
         messages: [...messages, message],

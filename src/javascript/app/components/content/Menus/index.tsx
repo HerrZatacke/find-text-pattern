@@ -19,9 +19,8 @@ function Menus() {
   } = useRomFile();
 
   const {
-    hasVRAMFile,
     onChangeRamFile,
-    unloadRamFile,
+    clear,
   } = useRamFile();
 
   const { downloadPatchedFile, cleanPatches, patches } = usePatch();
@@ -65,9 +64,8 @@ function Menus() {
             icon: <FolderSpecialIcon />,
           },
           {
-            title: 'Unload vram content',
-            clickHandler: unloadRamFile,
-            disabled: !hasVRAMFile,
+            title: 'Clear vram',
+            clickHandler: clear,
             icon: <FolderSpecialIcon />,
           },
         ]}

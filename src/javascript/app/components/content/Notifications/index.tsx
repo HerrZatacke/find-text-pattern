@@ -22,10 +22,10 @@ function Notifications() {
             >
               <Alert
                 onClose={close}
-                severity="error"
+                severity={message.type}
                 variant="filled"
               >
-                { message }
+                { message.text }
               </Alert>
             </Snackbar>
           );

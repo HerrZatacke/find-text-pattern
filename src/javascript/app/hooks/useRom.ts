@@ -12,7 +12,7 @@ interface UseRom {
   unloadFile: () => void,
   setPageSize: (pageSize: number) => void,
   setRomPage: (romPage: number) => void,
-  find: (rawPattern: Uint8Array) => number[],
+  find: (rawPattern: Uint8Array | number[]) => number[],
   gotoLocation: (location: number) => void,
 }
 

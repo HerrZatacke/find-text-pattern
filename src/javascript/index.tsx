@@ -4,7 +4,6 @@ import { HashRouter } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lightBlue } from '@mui/material/colors';
 import App from './app/components/structure/App';
-import { initRamContentTools } from './tools/zustand/ramContentTools';
 
 import '../scss/index.scss';
 import '../scss/grid.scss';
@@ -38,8 +37,4 @@ document.addEventListener('DOMContentLoaded', () => {
       </HashRouter>
     </React.StrictMode>,
   );
-  // Wait until stores have been repopulated from localstorage
-  window.setTimeout(() => {
-    initRamContentTools();
-  }, 100);
 });

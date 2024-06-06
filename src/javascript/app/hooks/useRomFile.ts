@@ -52,7 +52,7 @@ export const useRomFile = (): UseRomFile => {
       setCurrentFound(0);
       setFound([]);
     } else {
-      addMessage('Invalid file - must be a .gb or .gbc file');
+      addMessage({ text: 'Invalid file - must be a .gb or .gbc file', type: 'error' });
     }
 
 
