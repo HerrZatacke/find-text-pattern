@@ -17,6 +17,7 @@ import { useContextMenu } from '../../../hooks/useContextMenu';
 import './index.scss';
 import { useRomListeners } from '../../../hooks/useRomListeners';
 import RenderGridOptions from '../RenderGridOptions';
+import { hexPad } from '../../../../tools/hexPad';
 
 function Render() {
   const styles: CSSPropertiesVars = {};
@@ -35,6 +36,8 @@ function Render() {
   } = useRom();
 
   const {
+    vramTilesOffset,
+    vramMapOffset,
     setVRAMTilesOffset,
     setVRAMMapOffset,
   } = useRam();
@@ -156,8 +159,18 @@ function Render() {
           anchorPosition={contextMenu || undefined}
         >
           <MenuItem onClick={startEdit}>Edit from here</MenuItem>
-          <MenuItem onClick={setTilemapStart}>Tilemap starts here</MenuItem>
-          <MenuItem onClick={setVRAMStart}>VRAM starts here</MenuItem>
+          <MenuItem onClick={setTilemapStart}>
+            { `Tilemap starts here${vramMapOffset !== null && vramMapOffset !== contextLocation ?
+              ` (Will replace location ${hexPad(vramMapOffset, 6)})` :
+              ''
+            }` }
+          </MenuItem>
+          <MenuItem onClick={setVRAMStart}>
+            { `VRAM starts here${vramTilesOffset !== null && vramTilesOffset !== contextLocation ?
+              ` (Will replace location ${hexPad(vramTilesOffset, 6)})` :
+              ''
+            }` }
+          </MenuItem>
         </Menu>
       </div>
     </>
