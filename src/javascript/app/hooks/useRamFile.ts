@@ -1,9 +1,9 @@
 import type { ChangeEvent } from 'react';
 import { useRam } from './useRam';
-import { useRom } from './useRom';
 import useNotificationsStore from '../stores/notificationsStore';
 import { TILEMAP_SIZE, TILEMAP_SN1_OFFSET, VRAM_SIZE, VRAM_SN1_OFFSET } from '../../../constants/ram';
-import { toTilesRaw } from '../../tools/toTiles';
+import { useFuzzySearch } from './useFuzzySearch';
+
 
 interface UseRamFile {
   hasVRAMFile: boolean,
@@ -19,11 +19,12 @@ export const useRamFile = (): UseRamFile => {
     clear,
   } = useRam();
 
-  const { find } = useRom();
 
   const { addMessage } = useNotificationsStore();
 
   const hasVRAMFile = vramSize > 0;
+
+  const { findClosest } = useFuzzySearch();
 
   const onChangeRamFile = async (ev: ChangeEvent<HTMLInputElement>) => {
     const target = ev.target;
@@ -42,22 +43,24 @@ export const useRamFile = (): UseRamFile => {
       const fileContent = await file.arrayBuffer();
 
       const tileMap = new Uint8Array(fileContent.slice(TILEMAP_SN1_OFFSET, TILEMAP_SN1_OFFSET + TILEMAP_SIZE));
-      const vramContent = fileContent.slice(VRAM_SN1_OFFSET, VRAM_SN1_OFFSET + VRAM_SIZE);
-      const vramRawTiles = toTilesRaw(new Uint8Array(vramContent));
+      const vramContent = new Uint8Array(fileContent.slice(VRAM_SN1_OFFSET, VRAM_SN1_OFFSET + VRAM_SIZE));
 
-      const vramTilesOffset = find(vramRawTiles[0]);
-      const mapLocations = find(tileMap);
+      const [
+        tileMapResult,
+        vramTilesResult,
+      ] = await Promise.all([
+        findClosest(tileMap, 'tileMap'),
+        findClosest(vramContent, 'vramTiles'),
+      ]);
 
-      // ToDo: ask if multiple locations found...
-      if (vramTilesOffset.length && mapLocations.length) {
-        setVRAMTilesOffset(vramTilesOffset[0]);
-        setVRAMMapOffset(mapLocations[0]);
-        addMessage({ text: 'File parsed successfully', type: 'success' });
+      if (vramTilesResult.pos && tileMapResult.pos) {
+        setVRAMTilesOffset(vramTilesResult.pos);
+        setVRAMMapOffset(tileMapResult.pos);
+        addMessage({ text: `File parsed successfully | VRAM score:${vramTilesResult.score} | Tilemap score:${tileMapResult.score} `, type: 'success' });
       } else {
         addMessage({ text: 'Could not find tiles and/or map in loaded file', type: 'error' });
       }
     }
-
 
     target.value = '';
   };

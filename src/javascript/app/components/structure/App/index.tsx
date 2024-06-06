@@ -10,7 +10,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route path="romview" element={<RomView />} />
-        <Route path="tilemap" element={<TileMap />} />
+        <Route path="tilemaps" element={<TileMap />} />
         <Route path="charmap" element={<CharMap />} />
         <Route index element={<Navigate to="/romview" />} />
         <Route path="*" element={<Navigate to="/romview" />} />

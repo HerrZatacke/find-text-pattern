@@ -6,13 +6,13 @@ interface Message {
   type: AlertColor,
 }
 
-export interface SettingsState {
+export interface NotificationsState {
   messages: Message[],
   addMessage: (message: Message) => void,
   dismissMessage: (index: number) => void,
 }
 
-const useNotificationsStore = create<SettingsState>(
+const useNotificationsStore = create<NotificationsState>(
   (set, getState) => ({
     messages: [],
 

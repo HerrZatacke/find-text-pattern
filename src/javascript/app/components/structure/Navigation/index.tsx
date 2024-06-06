@@ -1,7 +1,8 @@
 import React from 'react';
 import { matchPath, useLocation, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Tabs, Tab, Stack } from '@mui/material';
+import { AppBar, Toolbar, Tabs, Tab, Stack, LinearProgress } from '@mui/material';
 import Menus from '../../content/Menus';
+import useProgressStore from '../../../stores/progressStore';
 
 function useRouteMatch(patterns: readonly string[]) {
   const { pathname } = useLocation();
@@ -22,8 +23,10 @@ function Navigation() {
   // This means that if you have nested routes like:
   // users, users/new, users/edit.
   // Then the order should be ['users/add', 'users/edit', 'users'].
-  const routeMatch = useRouteMatch(['/romview', '/charmap', '/tilemap']);
+  const routeMatch = useRouteMatch(['/romview', '/charmap', '/tilemaps']);
   const currentTab = routeMatch?.pattern?.path;
+
+  const { progresss } = useProgressStore();
 
   return (
     <AppBar
@@ -37,7 +40,7 @@ function Navigation() {
               <Tabs value={currentTab}>
                 <Tab label="Rom view" value="/romview" to="/romview" component={Link} />
                 <Tab label="Charmap" value="/charmap" to="/charmap" component={Link} />
-                <Tab label="Tilemap" value="/tilemap" to="/tilemap" component={Link} />
+                <Tab label="Tilemaps" value="/tilemaps" to="/tilemaps" component={Link} />
               </Tabs>
             </Stack>
           </div>
@@ -48,6 +51,15 @@ function Navigation() {
           </div>
         </div>
       </Toolbar>
+      {
+        progresss.map((progress) => (
+          <LinearProgress
+            key={progress.id}
+            variant="determinate"
+            value={progress.value * 100}
+          />
+        ))
+      }
     </AppBar>
   );
 }

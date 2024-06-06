@@ -45,7 +45,7 @@ function Tilemap() {
           ) }
           { vramMapOffset && (
             <Typography variant="body2">
-              { `VRAM Map starts at 0x${hexPad(vramMapOffset, 6)} (${vramMapOffset})`}
+              { `TileMap starts at 0x${hexPad(vramMapOffset, 6)} (${vramMapOffset})`}
               <Button
                 onClick={() => goto(vramMapOffset)}
               >

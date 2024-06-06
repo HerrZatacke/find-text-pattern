@@ -12,6 +12,9 @@ const config = () => ({
     main: [
       path.join(process.cwd(), 'src', 'javascript', 'index.tsx'),
     ],
+    worker: [
+      path.join(process.cwd(), 'src', 'javascript', 'workers', 'fuzzySearch.worker.ts'),
+    ],
   },
   module: {
     rules: [
@@ -119,7 +122,8 @@ const config = () => ({
   },
   output: {
     path: path.resolve(process.cwd(), 'dist'),
-    filename: '[fullhash:4]/[name].js',
+    filename: '[name].js',
+    // filename: '[fullhash:4]/[name].js',
   },
   plugins: [
     new ESLintPlugin({

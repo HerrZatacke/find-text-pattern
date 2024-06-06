@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
 
+export const createRandomId = () => (
+  Math.random().toString(16).split('.')[1]
+);
+
 export const useRandomId = () => (
-  useMemo(() => Math.random().toString(16).split('.')[1], [])
+  useMemo(createRandomId, [])
 );
