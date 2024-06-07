@@ -4,11 +4,11 @@ import type { MapChar } from '../../../../../types/MapChar';
 import { TILEMAP_SIZE, VRAM_SIZE } from '../../../../../constants/ram';
 import useRomStore from '../../../stores/romStore';
 import usePatchStore from '../../../stores/patchStore';
-import useRamStore from '../../../stores/ramStore';
 import { getPatchedChar } from '../../../../tools/getPatchedChar';
 import { getPatchedRange } from '../../../../tools/getPatchedRange';
 import { toTiles } from '../../../../tools/toTiles';
 import { hexPadSimple } from '../../../../tools/hexPad';
+import { useTileMap } from '../../../hooks/useTileMap';
 
 export interface GlobalData {
   romContentArray: Uint8Array,
@@ -35,7 +35,7 @@ export const dataContext: Context<GlobalData> = createContext<GlobalData>(defaul
 function DataProvider({ children }: PropsWithChildren) {
   const { romContent, pageSize, romPage } = useRomStore();
   const { patches } = usePatchStore();
-  const { vramTilesOffset, vramMapOffset } = useRamStore();
+  const { tilesOffset, mapOffset } = useTileMap();
 
   const pageOffset = romPage * pageSize;
 
@@ -66,40 +66,40 @@ function DataProvider({ children }: PropsWithChildren) {
 
 
   const vramContent = useMemo<Uint8Array>(() => {
-    if (vramTilesOffset !== null) {
-      return romContentArray.slice(vramTilesOffset, vramTilesOffset + VRAM_SIZE);
+    if (tilesOffset !== null) {
+      return romContentArray.slice(tilesOffset, tilesOffset + VRAM_SIZE);
     }
 
     return new Uint8Array([]);
-  }, [romContentArray, vramTilesOffset]);
+  }, [romContentArray, tilesOffset]);
 
   const tileMap = useMemo<number[]>(() => {
-    if (vramMapOffset !== null) {
-      return getPatchedRange(romContentArray, patches, vramMapOffset, TILEMAP_SIZE);
+    if (mapOffset !== null) {
+      return getPatchedRange(romContentArray, patches, mapOffset, TILEMAP_SIZE);
     }
 
     return [];
-  }, [patches, romContentArray, vramMapOffset]);
+  }, [patches, romContentArray, mapOffset]);
 
   const vramTiles = useMemo<string[]>(() => (
     toTiles(new Uint8Array(vramContent))
   ), [vramContent]);
 
   const tileMapTiles = useMemo<string[]>(() => {
-    if (vramTilesOffset === null) {
+    if (tilesOffset === null) {
       return [];
     }
 
     return (
       tileMap.map((tileIndex) => {
         const mapOffset = tileIndex < 0x80 ? tileIndex + 0x100 : tileIndex;
-        const totalOffset = (mapOffset * 0x10) + vramTilesOffset;
+        const totalOffset = (mapOffset * 0x10) + tilesOffset;
         return getPatchedRange(romContentArray, patches, totalOffset, 16)
           .map(((code) => hexPadSimple(code)))
           .join(' ');
       })
     );
-  }, [patches, romContentArray, tileMap, vramTilesOffset]);
+  }, [patches, romContentArray, tileMap, tilesOffset]);
 
   const value = useMemo<GlobalData>(() => ({
     romContentArray,

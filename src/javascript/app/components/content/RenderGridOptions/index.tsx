@@ -8,14 +8,14 @@ import Code from '@mui/icons-material/Code';
 import ButtonMenu from '../MenuControls/ButtonMenu';
 import useGridStore from '../../../stores/gridStore';
 import useRomStore from '../../../stores/romStore';
-import useRamStore from '../../../stores/ramStore';
 import useSettingsStore, { CharRender } from '../../../stores/settingsStore';
+import { useTileMap } from '../../../hooks/useTileMap';
 
 function RenderGridOptions() {
   const { gridGroups, gridCols, setGridGroups, setGridCols } = useGridStore();
   const { renderTextGrid, setRenderTextGrid, charStyle, setCharStyle } = useSettingsStore();
   const { pageSize, setPageSize } = useRomStore();
-  const { vramTilesOffset, vramMapOffset } = useRamStore();
+  const { tilesOffset, mapOffset } = useTileMap();
 
   return (
     <ButtonMenu
@@ -70,7 +70,7 @@ function RenderGridOptions() {
           options: [
             { title: 'Character Map', value: CharRender.CHAR_MAP },
             { title: 'Hexadecimal', value: CharRender.HEX },
-            { title: 'Tile Map', value: CharRender.TILE_MAP, disabled: vramTilesOffset === null || vramMapOffset === null },
+            { title: 'Tile Map', value: CharRender.TILE_MAP, disabled: tilesOffset === null || mapOffset === null },
           ],
         },
         {

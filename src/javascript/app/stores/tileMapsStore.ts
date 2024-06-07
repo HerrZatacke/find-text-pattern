@@ -5,9 +5,11 @@ import { createRandomId } from '../hooks/useRandomId';
 export const NEW_TILEMAP = 'NEW_TILEMAP';
 
 export interface PartialTileMap {
+  title: string,
   width: number,
   height: number,
   internalMapping: number[],
+  // internalVRAM: number[], // could be used for varying vram tiles
   vramOffset: number,
 }
 
@@ -17,6 +19,8 @@ export interface TileMap extends PartialTileMap {
 
 export interface TileMapsStoreState {
   tileMaps: TileMap[],
+  activeMap: string | null,
+  setActiveMap: (activeMap: string) => void,
   addTileMap: (tileMap: PartialTileMap) => void,
   updateTileMap: (tileMap: TileMap) => void,
   deleteTileMap: (tileMapId: string) => void,
@@ -26,6 +30,11 @@ const useTileMapsStore = create(
   persist<TileMapsStoreState>(
     (set, getState) => ({
       tileMaps: [],
+      activeMap: null,
+
+      setActiveMap: (activeMap: string) => {
+        set({ activeMap });
+      },
 
       addTileMap: (tileMap: PartialTileMap) => {
         const { tileMaps } = getState();
@@ -65,7 +74,7 @@ const useTileMapsStore = create(
 
     }),
     {
-      name: 'find-text-pattern-ram',
+      name: 'find-text-pattern-tilemaps',
       storage: createJSONStorage(() => localStorage),
     },
   ),

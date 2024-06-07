@@ -7,7 +7,7 @@ import usePatternStore from '../../../stores/patternStore';
 import useGridStore from '../../../stores/gridStore';
 import useSettingsStore from '../../../stores/settingsStore';
 import useRomStore from '../../../stores/romStore';
-import useRamStore from '../../../stores/ramStore';
+import useTileMapsStore from '../../../stores/tileMapsStore';
 import RenderChar from '../RenderChar';
 import RomPagination from '../RomPagination';
 import RenderGridOptions from '../RenderGridOptions';
@@ -17,6 +17,7 @@ import { useContextMenu } from '../../../hooks/useContextMenu';
 import { useRomListeners } from '../../../hooks/useRomListeners';
 import { hexPad } from '../../../../tools/hexPad';
 import { useDataContext } from '../../../hooks/useDataContext';
+import { useTileMap } from '../../../hooks/useTileMap';
 
 import './index.scss';
 
@@ -29,6 +30,9 @@ function Render() {
 
   const { grid } = useGridStore();
 
+  const { updateTileMap } = useTileMapsStore();
+  const { activeMapItem } = useTileMap();
+
   useRomListeners();
 
   const {
@@ -36,12 +40,7 @@ function Render() {
     romPage,
   } = useRomStore();
 
-  const {
-    vramTilesOffset,
-    vramMapOffset,
-    setVRAMTilesOffset,
-    setVRAMMapOffset,
-  } = useRamStore();
+  const { tilesOffset, mapOffset } = useTileMap();
 
   const { found, currentFound } = useSearch();
   const { setEditLocation } = usePatch();
@@ -79,16 +78,28 @@ function Render() {
   };
 
   const setTilemapStart = () => {
-    if (contextLocation !== null) {
-      setVRAMMapOffset(contextLocation);
+    if (contextLocation !== null && activeMapItem) {
+      const internalMapping = Array(32 * 32)
+        .fill('')
+        .map((_, index: number) => (
+          contextLocation + index
+        ));
+
+      updateTileMap({
+        ...activeMapItem,
+        internalMapping,
+      });
     }
 
     hookHandleClose();
   };
 
   const setVRAMStart = () => {
-    if (contextLocation !== null) {
-      setVRAMTilesOffset(contextLocation);
+    if (contextLocation !== null && activeMapItem) {
+      updateTileMap({
+        ...activeMapItem,
+        vramOffset: contextLocation,
+      });
     }
 
     hookHandleClose();
@@ -160,15 +171,17 @@ function Render() {
           anchorPosition={contextMenu || undefined}
         >
           <MenuItem onClick={startEdit}>Edit from here</MenuItem>
+
           <MenuItem onClick={setTilemapStart}>
-            { `Tilemap starts here${vramMapOffset !== null && vramMapOffset !== contextLocation ?
-              ` (Will replace location ${hexPad(vramMapOffset, 6)})` :
+            { `Tilemap starts here${mapOffset !== null && mapOffset !== contextLocation ?
+              ` (Will replace location ${hexPad(mapOffset, 6)})` :
               ''
             }` }
           </MenuItem>
+
           <MenuItem onClick={setVRAMStart}>
-            { `VRAM starts here${vramTilesOffset !== null && vramTilesOffset !== contextLocation ?
-              ` (Will replace location ${hexPad(vramTilesOffset, 6)})` :
+            { `VRAM starts here${tilesOffset !== null && tilesOffset !== contextLocation ?
+              ` (Will replace location ${hexPad(tilesOffset, 6)})` :
               ''
             }` }
           </MenuItem>

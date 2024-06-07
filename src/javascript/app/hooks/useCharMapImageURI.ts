@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Decoder, ExportFrameMode } from 'gb-image-decoder';
-import useRamStore from '../stores/ramStore';
 import usePatchStore from '../stores/patchStore';
 import useSettingsStore, { CharRender } from '../stores/settingsStore';
 import { getPatchedRange } from '../../tools/getPatchedRange';
 import { hexPadSimple } from '../../tools/hexPad';
 import { decoderBaseOptions } from '../../../constants/decoderBaseOptions';
 import { useDataContext } from './useDataContext';
+import { useTileMap } from './useTileMap';
 
 interface UseCharMapImageURI {
   charMapImageURI: string | null,
@@ -15,13 +15,13 @@ interface UseCharMapImageURI {
 export const useCharMapImageURI = (): UseCharMapImageURI => {
   const [charMapImageURI, setCharMapImageURI] = useState<string | null>(null);
 
-  const { vramTilesOffset, vramMapOffset } = useRamStore();
+  const { tilesOffset, mapOffset } = useTileMap();
   const { romContentArray } = useDataContext();
   const { patches } = usePatchStore();
   const { setCharStyle } = useSettingsStore();
 
   useEffect(() => {
-    if (vramTilesOffset === null) {
+    if (tilesOffset === null) {
       setCharMapImageURI(null);
       return;
     }
@@ -29,8 +29,8 @@ export const useCharMapImageURI = (): UseCharMapImageURI => {
     const tiles = Array(256)
       .fill('')
       .map((_, index: number) => {
-        const mapOffset = index < 0x80 ? index + 0x100 : index;
-        const totalOffset = (mapOffset * 0x10) + vramTilesOffset;
+        const pageOffset = index < 0x80 ? index + 0x100 : index;
+        const totalOffset = (pageOffset * 0x10) + tilesOffset;
         return getPatchedRange(romContentArray, patches, totalOffset, 16)
           .map(((code) => hexPadSimple(code)))
           .join(' ');
@@ -51,13 +51,13 @@ export const useCharMapImageURI = (): UseCharMapImageURI => {
         setCharMapImageURI(URL.createObjectURL(blob));
       }
     });
-  }, [patches, romContentArray, vramTilesOffset]);
+  }, [patches, romContentArray, tilesOffset]);
 
   useEffect(() => {
-    if (vramTilesOffset === null || vramMapOffset === null) {
+    if (tilesOffset === null || mapOffset === null) {
       setCharStyle(CharRender.HEX);
     }
-  }, [setCharStyle, vramMapOffset, vramTilesOffset]);
+  }, [setCharStyle, mapOffset, tilesOffset]);
 
   return { charMapImageURI };
 };

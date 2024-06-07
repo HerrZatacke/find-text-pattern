@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
-import useRamStore from '../stores/ramStore';
 import useNotificationsStore from '../stores/notificationsStore';
+import useTileMapsStore from '../stores/tileMapsStore';
 import { TILEMAP_SIZE, TILEMAP_SN1_OFFSET, VRAM_SIZE, VRAM_SN1_OFFSET } from '../../../constants/ram';
 import { useFuzzySearch } from './useFuzzySearch';
 import { useDataContext } from './useDataContext';
@@ -8,17 +8,10 @@ import { useDataContext } from './useDataContext';
 
 interface UseRamFile {
   hasVRAMFile: boolean,
-  clear: () => void,
   onChangeRamFile: (ev: ChangeEvent<HTMLInputElement>) => void,
 }
 
 export const useRamFile = (): UseRamFile => {
-  const {
-    setVRAMTilesOffset,
-    setVRAMMapOffset,
-    clear,
-  } = useRamStore();
-
   const { vramSize } = useDataContext();
 
   const { addMessage } = useNotificationsStore();
@@ -26,6 +19,8 @@ export const useRamFile = (): UseRamFile => {
   const hasVRAMFile = vramSize > 0;
 
   const { findClosest } = useFuzzySearch();
+
+  const { addTileMap } = useTileMapsStore();
 
   const onChangeRamFile = async (ev: ChangeEvent<HTMLInputElement>) => {
     const target = ev.target;
@@ -55,9 +50,21 @@ export const useRamFile = (): UseRamFile => {
       ]);
 
       if (vramTilesResult.pos && tileMapResult.pos) {
-        setVRAMTilesOffset(vramTilesResult.pos);
-        setVRAMMapOffset(tileMapResult.pos);
-        addMessage({ text: `File parsed successfully | VRAM score:${vramTilesResult.score} | Tilemap score:${tileMapResult.score} `, type: 'success' });
+        const internalMapping = Array(32 * 32)
+          .fill('')
+          .map((_, index: number) => (
+            tileMapResult.pos + index
+          ));
+
+        addTileMap({
+          title: `${file.name} | VRAM score:${vramTilesResult.score} | Tilemap score:${tileMapResult.score}`,
+          internalMapping,
+          vramOffset: vramTilesResult.pos,
+          width: 32,
+          height: 32,
+        });
+
+        addMessage({ text: `File parsed successfully | VRAM score:${vramTilesResult.score} | Tilemap score:${tileMapResult.score}`, type: 'success' });
       } else {
         addMessage({ text: 'Could not find tiles and/or map in loaded file', type: 'error' });
       }
@@ -69,6 +76,5 @@ export const useRamFile = (): UseRamFile => {
   return {
     hasVRAMFile,
     onChangeRamFile,
-    clear,
   };
 };

@@ -1,20 +1,36 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, List, ListItem, ListItemButton, Stack } from '@mui/material';
+import Star from '@mui/icons-material/Star';
+import StarBorder from '@mui/icons-material/StarBorder';
+import Delete from '@mui/icons-material/Delete';
+import ContentCopy from '@mui/icons-material/ContentCopy';
+import Edit from '@mui/icons-material/Edit';
 import TilesDisplay from '../../content/TilesDisplay';
 import Visual from '../../content/Visual';
 import { useDataContext } from '../../../hooks/useDataContext';
 import useRomStore from '../../../stores/romStore';
-import useRamStore from '../../../stores/ramStore';
+import useTileMapsStore from '../../../stores/tileMapsStore';
 import { hexPad } from '../../../../tools/hexPad';
+import { useTileMap } from '../../../hooks/useTileMap';
 
 function Tilemap() {
 
-  const { vramTilesOffset, vramMapOffset } = useRamStore();
   const { gotoLocation } = useRomStore();
   const { tileMapTiles } = useDataContext();
 
   const navigateTo = useNavigate();
+
+  const {
+    tileMaps,
+    activeMap,
+    setActiveMap,
+    deleteTileMap,
+    addTileMap,
+    updateTileMap,
+  } = useTileMapsStore();
+
+  const { downloadTileMaps } = useTileMap();
 
   const goto = (location: number) => {
     navigateTo('/romview');
@@ -29,29 +45,79 @@ function Tilemap() {
           tilesPerLine={32}
         />
       </div>
-      <div className="grid__col grid__col--6 grid__col--content-end">
-        <Stack direction="column" useFlexGap spacing={1}>
+      <div className="grid__col grid__col--6">
+        <Stack direction="column" useFlexGap spacing={4}>
           <Visual showVRAM />
-          { vramTilesOffset !== null && (
-            <Typography variant="body2">
-              { `VRAM Tiles start at 0x${hexPad(vramTilesOffset, 6)} (${vramTilesOffset})`}
-              <Button
-                onClick={() => goto(vramTilesOffset)}
-              >
-                Jump
-              </Button>
-            </Typography>
-          ) }
-          { vramMapOffset !== null && (
-            <Typography variant="body2">
-              { `TileMap starts at 0x${hexPad(vramMapOffset, 6)} (${vramMapOffset})`}
-              <Button
-                onClick={() => goto(vramMapOffset)}
-              >
-                Jump
-              </Button>
-            </Typography>
-          ) }
+          <Button
+            variant="contained"
+            onClick={downloadTileMaps}
+          >
+            Download TileMaps
+          </Button>
+          <List>
+            { tileMaps.map((tileMap) => (
+              <ListItem key={tileMap.id} title={tileMap.id}>
+                <ListItemButton
+                  onClick={() => setActiveMap(tileMap.id)}
+                >
+                  {activeMap === tileMap.id ? (<Star />) : (<StarBorder />)}
+                </ListItemButton>
+                <ListItemButton
+                  onClick={() => {
+                    // eslint-disable-next-line no-restricted-globals,no-alert
+                    if (confirm(`Delete TileMap "${tileMap.title || tileMap.id}"?`)) {
+                      deleteTileMap(tileMap.id);
+                    }
+                  }}
+                >
+                  <Delete />
+                </ListItemButton>
+                <ListItemButton
+                  onClick={() => addTileMap({
+                    title: `Copy of ${tileMap.title}`,
+                    width: tileMap.width,
+                    height: tileMap.height,
+                    internalMapping: [...tileMap.internalMapping],
+                    vramOffset: tileMap.vramOffset,
+                  })}
+                >
+                  <ContentCopy />
+                </ListItemButton>
+                <ListItemButton
+                  onClick={() => {
+                    // eslint-disable-next-line no-restricted-globals,no-alert
+                    const title = prompt('New Title', tileMap.title);
+
+                    if (title) {
+                      updateTileMap({
+                        ...tileMap,
+                        title,
+                      });
+                    }
+                  }}
+                >
+                  <Edit />
+                </ListItemButton>
+                <p>
+                  { tileMap.title }
+                </p>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => goto(tileMap.internalMapping[0])}
+                >
+                  {`Tilemap ${hexPad(tileMap.internalMapping[0], 6)}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => goto(tileMap.vramOffset)}
+                >
+                  {`VRAM ${hexPad(tileMap.vramOffset, 6)}`}
+                </Button>
+              </ListItem>
+            ))}
+          </List>
         </Stack>
       </div>
     </div>
