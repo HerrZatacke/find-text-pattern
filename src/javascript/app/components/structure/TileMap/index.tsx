@@ -33,7 +33,7 @@ function Tilemap() {
       <div className="grid__col grid__col--6 grid__col--content-end">
         <Stack direction="column" useFlexGap spacing={1}>
           <Visual showVRAM />
-          { vramTilesOffset && (
+          { vramTilesOffset !== null && (
             <Typography variant="body2">
               { `VRAM Tiles start at 0x${hexPad(vramTilesOffset, 6)} (${vramTilesOffset})`}
               <Button
@@ -43,7 +43,7 @@ function Tilemap() {
               </Button>
             </Typography>
           ) }
-          { vramMapOffset && (
+          { vramMapOffset !== null && (
             <Typography variant="body2">
               { `TileMap starts at 0x${hexPad(vramMapOffset, 6)} (${vramMapOffset})`}
               <Button

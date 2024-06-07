@@ -14,6 +14,7 @@ const useRamStore = create(
     (set) => ({
       vramTilesOffset: null,
       vramMapOffset: null,
+      tileMapBlobURI: null,
 
       setVRAMTilesOffset: (vramTilesOffset: number) => {
         set({ vramTilesOffset });

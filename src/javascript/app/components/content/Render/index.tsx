@@ -24,7 +24,7 @@ function Render() {
 
   const { rawPattern } = usePatternStore();
 
-  const { renderTextGrid, renderHexChars } = useSettingsStore();
+  const { renderTextGrid, charStyle } = useSettingsStore();
 
   const { grid } = useGridStore();
 
@@ -143,7 +143,7 @@ function Render() {
                   globalOffset={pageOffset + index}
                   pageOffset={index}
                   char={char}
-                  renderHexChar={renderHexChars}
+                  charStyle={charStyle}
                   loopClass={loopClass}
                   setEditLocation={setEditLocation}
                   handleContextMenu={handleContextMenu}

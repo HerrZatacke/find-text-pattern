@@ -2,15 +2,12 @@
   --bg-color: 255 255 255;
   --text-color: 0 0 0;
   position: relative;
-  font-size: 28px;
   overflow: hidden;
 
   &__char {
     display: block;
     margin: 0 0 0 auto;
     padding: 0;
-    font-weight: inherit;
-    font-size: inherit;
     text-align: center;
     background-color: rgb(var(--bg-color));
     color: rgb(var(--text-color));
@@ -22,7 +19,7 @@
     cursor: pointer;
   }
 
-  .render__list--textgrid &__terminator {
+  .render__list--textgrid &--terminator {
     grid-column-start: 1;
     height: 4px;
     grid-column-end: -1;
@@ -33,7 +30,7 @@
     }
   }
 
-  &__patched:after {
+  &--patched:after {
     content: ' ';
     border-radius: 50%;
     position: absolute;
@@ -44,42 +41,49 @@
     width: 18px;
   }
 
-  .render__list--textgrid &__fontchange {
+  .render__list--textgrid &--fontchange {
     display: none;
   }
 
-  .render__list--textgrid &__terminator + &__terminator {
+  .render__list--textgrid &--terminator + &--terminator {
     height: 0.25px;
   }
 
-  &__highlight &__char {
+  &--highlight &__char {
     border: 1px solid #d76c00;
     background-color: #ff9a48;
   }
 
-  &__highlight-current &__char {
+  &--highlight-current &__char {
     border: 1px solid #d7c900;
     background-color: #fff648;
   }
 
-  &__hex {
-    font-size: 18px;
-  }
-
-  &__bold {
+  &--bold {
     font-weight: bold;
   }
 
-  &__norm {
+  &--norm {
     font-weight: normal;
   }
 
-  &__digit {
-    background-color: #beffe0;
-    font-weight: normal;
+  &--style-hex {
+    font-size: 110%;
   }
 
-  &__space {
-    color: #e0e0e0;
+  &--style-charmap {
+    font-size: 170%;
+  }
+
+  &--style-tilemap {
+    font-size: 50%;
+  }
+
+  &--style-tilemap &__char {
+    border-color: #538f51;
+    background-image: var(--charmap-uri);
+    background-repeat: no-repeat;
+    background-size: 640px 640px;
+    image-rendering: pixelated;
   }
 }

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import useSettingsStore from '../stores/settingsStore';
+import useSettingsStore, { CharRender } from '../stores/settingsStore';
 import useRomStore from '../stores/romStore';
 
 export const useRomListeners = () => {
-  const { renderHexChars } = useSettingsStore();
+  const { charStyle } = useSettingsStore();
   const { romPage, setRomPage } = useRomStore();
 
   const copyListener = async (ev: KeyboardEvent) => {
@@ -14,7 +14,7 @@ export const useRomListeners = () => {
           return;
         }
 
-        const joinChar = renderHexChars ? ' ' : '';
+        const joinChar = charStyle !== CharRender.CHAR_MAP ? ' ' : '';
 
         const selectedText = selection.toString()
           .split('\n')

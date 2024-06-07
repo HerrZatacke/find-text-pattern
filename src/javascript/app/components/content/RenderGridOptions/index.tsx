@@ -5,16 +5,17 @@ import ViewColumn from '@mui/icons-material/ViewColumn';
 import ViewModule from '@mui/icons-material/ViewModule';
 import PhotoSizeSelectSmall from '@mui/icons-material/PhotoSizeSelectSmall';
 import Code from '@mui/icons-material/Code';
-import CodeOff from '@mui/icons-material/CodeOff';
 import ButtonMenu from '../MenuControls/ButtonMenu';
 import useGridStore from '../../../stores/gridStore';
 import { useRom } from '../../../hooks/useRom';
-import useSettingsStore from '../../../stores/settingsStore';
+import { useRam } from '../../../hooks/useRam';
+import useSettingsStore, { CharRender } from '../../../stores/settingsStore';
 
 function RenderGridOptions() {
   const { gridGroups, gridCols, setGridGroups, setGridCols } = useGridStore();
-  const { renderTextGrid, setRenderTextGrid, renderHexChars, setRenderHexChars } = useSettingsStore();
+  const { renderTextGrid, setRenderTextGrid, charStyle, setCharStyle } = useSettingsStore();
   const { pageSize, setPageSize } = useRom();
+  const { vramTilesOffset, vramMapOffset } = useRam();
 
   return (
     <ButtonMenu
@@ -62,14 +63,20 @@ function RenderGridOptions() {
           ],
         },
         {
+          title: 'Character style',
+          updateHandler: (value) => setCharStyle(value as CharRender),
+          optionsValue: charStyle,
+          icon: <Code />,
+          options: [
+            { title: 'Character Map', value: CharRender.CHAR_MAP },
+            { title: 'Hexadecimal', value: CharRender.HEX },
+            { title: 'Tile Map', value: CharRender.TILE_MAP, disabled: vramTilesOffset === null || vramMapOffset === null },
+          ],
+        },
+        {
           title: 'Grid style',
           clickHandler: () => setRenderTextGrid(!renderTextGrid),
           icon: renderTextGrid ? <FormatAlignLeft /> : <FormatAlignJustify />,
-        },
-        {
-          title: 'Character type',
-          clickHandler: () => setRenderHexChars(!renderHexChars),
-          icon: renderHexChars ? <Code /> : <CodeOff />,
         },
       ]}
     />

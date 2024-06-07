@@ -1,7 +1,8 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex */
+/* eslint-disable jsx-a11y/no-static-element-interactions,jsx-a11y/no-noninteractive-tabindex,no-nested-ternary */
 import React from 'react';
 import type { CSSPropertiesVars, MouseEvent } from 'react';
 import { clsx } from 'clsx';
+import { CharRender } from '../../../stores/settingsStore';
 import type { MapChar } from '../../../../../types/MapChar';
 import { MapCharTask } from '../../../../../types/MapChar';
 import { charGroups } from '../../../../../constants/charGroups';
@@ -16,7 +17,7 @@ interface Props {
   loopClass: string,
   highlight: boolean,
   highlightCurrent: boolean,
-  renderHexChar: boolean,
+  charStyle: CharRender,
   setEditLocation: (editLocation: number) => void,
   handleContextMenu: (event: MouseEvent, location: number) => void,
 }
@@ -28,12 +29,14 @@ function RenderChar({
   loopClass,
   highlight,
   highlightCurrent,
-  renderHexChar,
+  charStyle,
   setEditLocation,
   handleContextMenu,
 }: Props) {
   const title = `Global: ${hexPad(globalOffset, 6)} (byte ${globalOffset})\nIn Page: ${hexPad(pageOffset, 6)} (byte ${pageOffset})`;
   const styles: CSSPropertiesVars = {};
+
+  const CHAR_SIZE = 40;
 
   let textValue = char.value;
 
@@ -48,7 +51,7 @@ function RenderChar({
       styles['--text-color'] = mapCharGroup.textColor;
     }
 
-    if (!renderHexChar) {
+    if (charStyle === CharRender.HEX) {
       if (mapCharGroup?.groupId === 'digits') {
         textValue = 'n';
       }
@@ -61,13 +64,15 @@ function RenderChar({
 
   return (
     <div
-      className={clsx('render-char', `render-char__${loopClass}`, {
-        'render-char__hex': renderHexChar,
-        'render-char__terminator': MapCharTask.STRING_TERM === char.special,
-        'render-char__fontchange': [MapCharTask.FONT_SLIM, MapCharTask.FONT_BOLD].includes(char.special as MapCharTask),
-        'render-char__highlight': highlight,
-        'render-char__highlight-current': highlightCurrent,
-        'render-char__patched': char.patched,
+      className={clsx('render-char', `render-char--${loopClass}`, {
+        'render-char--terminator': MapCharTask.STRING_TERM === char.special,
+        'render-char--fontchange': [MapCharTask.FONT_SLIM, MapCharTask.FONT_BOLD].includes(char.special as MapCharTask),
+        'render-char--highlight': highlight,
+        'render-char--highlight-current': highlightCurrent,
+        'render-char--patched': char.patched,
+        'render-char--style-hex': charStyle === CharRender.HEX,
+        'render-char--style-tilemap': charStyle === CharRender.TILE_MAP,
+        'render-char--style-charmap': charStyle === CharRender.CHAR_MAP,
       })}
       title={title}
       style={styles}
@@ -82,8 +87,12 @@ function RenderChar({
             setEditLocation(globalOffset);
           }
         }}
+        style={(charStyle === CharRender.TILE_MAP) ? {
+          backgroundPositionX: `${(char.code % 16) * CHAR_SIZE * -1}px`,
+          backgroundPositionY: `${Math.floor(char.code / 16) * CHAR_SIZE * -1}px`,
+        } : undefined}
       >
-        { renderHexChar ? hexPadSimple(char.code) : textValue }
+        { charStyle !== CharRender.CHAR_MAP ? hexPadSimple(char.code) : textValue }
       </div>
     </div>
   );

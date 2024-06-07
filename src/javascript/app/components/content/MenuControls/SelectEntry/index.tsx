@@ -7,6 +7,7 @@ import { useRandomId } from '../../../../hooks/useRandomId';
 export interface MenuEntrySelectOption {
   title: string,
   value: string,
+  disabled?: boolean,
 }
 
 interface Props {
@@ -80,7 +81,11 @@ function SelectEntry({ title, value, updateHandler, options, disabled, button, i
           options.map((option, index) => (
             <MenuItem
               key={index}
-              onClick={() => updateHandler(option.value)}
+              onClick={() => {
+                updateHandler(option.value);
+                handleClose();
+              }}
+              disabled={option.disabled}
             >
               { option.title}
             </MenuItem>
