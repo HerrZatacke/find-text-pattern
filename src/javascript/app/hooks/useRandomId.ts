@@ -5,5 +5,5 @@ export const createRandomId = () => (
 );
 
 export const useRandomId = () => (
-  useMemo(createRandomId, [])
+  useMemo<string>(createRandomId, [])
 );
