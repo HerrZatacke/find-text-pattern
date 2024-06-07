@@ -58,8 +58,10 @@ const useRomStore = create(
       },
 
       setRomPage: (romPage: number) => {
+        const { romContent, pageSize } = getState();
+        const maxPage = Math.ceil(romContent.byteLength / pageSize) - 1;
         set({
-          romPage,
+          romPage: Math.min(Math.max(romPage, 0), maxPage),
         });
       },
 

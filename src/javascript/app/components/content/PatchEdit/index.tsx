@@ -13,10 +13,11 @@ import {
 } from '@mui/material';
 import { usePatch } from '../../../hooks/usePatch';
 import { hexPad } from '../../../../tools/hexPad';
+import { useDataContext } from '../../../hooks/useDataContext';
 import { findCharByCode } from '../../../../tools/findChar';
-import { MapCharTask } from '../../../../../types/MapChar';
 import { intlSplit } from '../../../../tools/intlSplit';
 import { stringToNumeric } from '../../../../tools/stringToNumeric';
+import { MapCharTask } from '../../../../../types/MapChar';
 
 interface ReplacementInfo {
   replacedText: string,
@@ -41,9 +42,10 @@ function PatchEdit() {
     editLocation,
     setEditLocation,
     editChar,
-    romContentArray,
     addPatchText,
   } = usePatch();
+
+  const { romContentArray } = useDataContext();
 
   const [newText, setNewText] = useState<string>(editChar?.value || '');
   const [allowReplaceTerm, setAllowReplaceTerm] = useState<boolean>(false);

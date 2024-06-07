@@ -1,8 +1,9 @@
 import type { ChangeEvent } from 'react';
-import { useRam } from './useRam';
+import useRamStore from '../stores/ramStore';
 import useNotificationsStore from '../stores/notificationsStore';
 import { TILEMAP_SIZE, TILEMAP_SN1_OFFSET, VRAM_SIZE, VRAM_SN1_OFFSET } from '../../../constants/ram';
 import { useFuzzySearch } from './useFuzzySearch';
+import { useDataContext } from './useDataContext';
 
 
 interface UseRamFile {
@@ -13,12 +14,12 @@ interface UseRamFile {
 
 export const useRamFile = (): UseRamFile => {
   const {
-    vramSize,
     setVRAMTilesOffset,
     setVRAMMapOffset,
     clear,
-  } = useRam();
+  } = useRamStore();
 
+  const { vramSize } = useDataContext();
 
   const { addMessage } = useNotificationsStore();
 

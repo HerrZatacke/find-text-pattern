@@ -6,18 +6,19 @@ import { MapCharTask } from '../../../../../types/MapChar';
 import usePatternStore from '../../../stores/patternStore';
 import useGridStore from '../../../stores/gridStore';
 import useSettingsStore from '../../../stores/settingsStore';
+import useRomStore from '../../../stores/romStore';
+import useRamStore from '../../../stores/ramStore';
 import RenderChar from '../RenderChar';
 import RomPagination from '../RomPagination';
-import { useRom } from '../../../hooks/useRom';
-import { useRam } from '../../../hooks/useRam';
+import RenderGridOptions from '../RenderGridOptions';
 import { useSearch } from '../../../hooks/useSearch';
 import { usePatch } from '../../../hooks/usePatch';
 import { useContextMenu } from '../../../hooks/useContextMenu';
+import { useRomListeners } from '../../../hooks/useRomListeners';
+import { hexPad } from '../../../../tools/hexPad';
+import { useDataContext } from '../../../hooks/useDataContext';
 
 import './index.scss';
-import { useRomListeners } from '../../../hooks/useRomListeners';
-import RenderGridOptions from '../RenderGridOptions';
-import { hexPad } from '../../../../tools/hexPad';
 
 function Render() {
   const styles: CSSPropertiesVars = {};
@@ -33,18 +34,18 @@ function Render() {
   const {
     pageSize,
     romPage,
-  } = useRom();
+  } = useRomStore();
 
   const {
     vramTilesOffset,
     vramMapOffset,
     setVRAMTilesOffset,
     setVRAMMapOffset,
-  } = useRam();
+  } = useRamStore();
 
   const { found, currentFound } = useSearch();
-
-  const { setEditLocation, patchedPage } = usePatch();
+  const { setEditLocation } = usePatch();
+  const { patchedPage } = useDataContext();
 
   const pageOffset = romPage * pageSize;
 

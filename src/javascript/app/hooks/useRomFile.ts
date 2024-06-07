@@ -3,6 +3,7 @@ import { useRom } from './useRom';
 import useSearchStore from '../stores/searchStore';
 import usePatchStore from '../stores/patchStore';
 import useNotificationsStore from '../stores/notificationsStore';
+import useRomStore from '../stores/romStore';
 
 interface UseRomFile {
   hasROMFile: boolean,
@@ -12,10 +13,11 @@ interface UseRomFile {
 
 export const useRomFile = (): UseRomFile => {
   const {
-    romSize,
     setFile: storeSetFile,
     unloadFile: storeUnloadFile,
-  } = useRom();
+  } = useRomStore();
+
+  const { romSize } = useRom();
 
   const { addMessage } = useNotificationsStore();
 

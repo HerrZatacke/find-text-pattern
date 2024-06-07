@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useRom } from './useRom';
+import useRomStore from '../stores/romStore';
 import usePatternStore from '../stores/patternStore';
 import useSearchStore from '../stores/searchStore';
 
@@ -22,7 +22,7 @@ export const useSearch = (): UseSearch => {
     setFound,
   } = useSearchStore();
 
-  const { gotoLocation, find } = useRom();
+  const { gotoLocation, find } = useRomStore();
 
   const { rawPattern } = usePatternStore();
 

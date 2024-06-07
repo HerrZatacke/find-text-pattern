@@ -5,16 +5,21 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { useRom } from '../../../hooks/useRom';
+import useRomStore from '../../../stores/romStore';
 import { useRandomId } from '../../../hooks/useRandomId';
+import { useRom } from '../../../hooks/useRom';
 
 function RomPagination() {
   const {
     maxPage,
-    romPage,
     romSize,
-    setRomPage,
   } = useRom();
+
+  const {
+    setRomPage,
+  } = useRomStore();
+
+  const { romPage } = useRomStore();
 
   const formId = useRandomId();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

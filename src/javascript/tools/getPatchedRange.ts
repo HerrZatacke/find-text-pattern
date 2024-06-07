@@ -2,7 +2,7 @@ import type { Patch } from '../../types/MapChar';
 import { getPatchedChar } from './getPatchedChar';
 
 export const getPatchedRange = (
-  romContent: ArrayBuffer,
+  romContentArray: Uint8Array,
   patches: Patch[],
   sliceStart: number,
   sliceLength: number,
@@ -10,8 +10,6 @@ export const getPatchedRange = (
   if (!sliceLength) {
     return [];
   }
-
-  const romContentArray = new Uint8Array(romContent);
 
   return Array(sliceLength)
     .fill(0)

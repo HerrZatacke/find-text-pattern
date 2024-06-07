@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import type { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePatch } from './usePatch';
-import { useRam } from './useRam';
+import { useDataContext } from './useDataContext';
 import { toTiles } from '../../tools/toTiles';
 import usePatternStore from '../stores/patternStore';
 
@@ -17,8 +16,7 @@ interface UseVisual {
 }
 
 export const useVisual = (): UseVisual => {
-  const { patchedPageArray } = usePatch();
-  const { vramTiles, vramSize } = useRam();
+  const { vramTiles, vramSize, patchedPageArray } = useDataContext();
   const { setHex, cleanHex, rawPattern } = usePatternStore();
 
   const searchTiles = useMemo<string[]>(() => toTiles(new Uint8Array(rawPattern)), [rawPattern]);

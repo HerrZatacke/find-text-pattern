@@ -7,15 +7,15 @@ import PhotoSizeSelectSmall from '@mui/icons-material/PhotoSizeSelectSmall';
 import Code from '@mui/icons-material/Code';
 import ButtonMenu from '../MenuControls/ButtonMenu';
 import useGridStore from '../../../stores/gridStore';
-import { useRom } from '../../../hooks/useRom';
-import { useRam } from '../../../hooks/useRam';
+import useRomStore from '../../../stores/romStore';
+import useRamStore from '../../../stores/ramStore';
 import useSettingsStore, { CharRender } from '../../../stores/settingsStore';
 
 function RenderGridOptions() {
   const { gridGroups, gridCols, setGridGroups, setGridCols } = useGridStore();
   const { renderTextGrid, setRenderTextGrid, charStyle, setCharStyle } = useSettingsStore();
-  const { pageSize, setPageSize } = useRom();
-  const { vramTilesOffset, vramMapOffset } = useRam();
+  const { pageSize, setPageSize } = useRomStore();
+  const { vramTilesOffset, vramMapOffset } = useRamStore();
 
   return (
     <ButtonMenu

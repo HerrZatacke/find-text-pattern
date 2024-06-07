@@ -2,17 +2,15 @@ import { useMemo } from 'react';
 import { saveAs } from 'file-saver';
 import type { PatchStoreState } from '../stores/patchStore';
 import usePatchStore from '../stores/patchStore';
-import { useRom } from './useRom';
+import useRomStore from '../stores/romStore';
 import type { MapChar } from '../../../types/MapChar';
 import { findCharByCode } from '../../tools/findChar';
 import { getPatchedChar } from '../../tools/getPatchedChar';
+import { useDataContext } from './useDataContext';
 
 export interface UsePatch extends Omit<PatchStoreState, 'clearPatches' | 'deletePatches'> {
   editChar: MapChar | null,
   downloadPatchedFile: () => void,
-  romContentArray: Uint8Array,
-  patchedPage: MapChar[],
-  patchedPageArray: number[],
   cleanPatches: () => void,
 }
 
@@ -26,15 +24,10 @@ export const usePatch = (): UsePatch => {
   } = usePatchStore();
 
   const {
-    pageSize,
-    romPage,
-    romContent,
     romFileName,
-  } = useRom();
+  } = useRomStore();
 
-  const pageOffset = romPage * pageSize;
-
-  const romContentArray = useMemo<Uint8Array>(() => new Uint8Array(romContent), [romContent]);
+  const { romContentArray } = useDataContext();
 
   const editChar = useMemo<MapChar | null>(() => {
     if (editLocation === null) {
@@ -43,29 +36,6 @@ export const usePatch = (): UsePatch => {
 
     return getPatchedChar(editLocation, patches, romContentArray);
   }, [editLocation, patches, romContentArray]);
-
-  const currentPageSize = useMemo<number>(() => {
-    const bytesToEnd = romContentArray.length - pageOffset;
-    if (bytesToEnd >= pageSize) { // not on last page
-      return pageSize;
-    }
-
-    // last pagesize is remaining number of bytes and should not become negative by error
-    return Math.max(0, bytesToEnd);
-  }, [pageOffset, pageSize, romContentArray]);
-
-  const patchedPage = useMemo<MapChar[]>(() => {
-    const pageBuffer = [...new Array(currentPageSize)].fill(null);
-    return (
-      pageBuffer.reduce((acc: MapChar[], _, index: number): MapChar[] => (
-        acc.concat(getPatchedChar(pageOffset + index, patches, romContentArray))
-      ), [])
-    );
-  }, [pageOffset, currentPageSize, patches, romContentArray]);
-
-  const patchedPageArray = useMemo<number[]>(() => (
-    patchedPage.map((mapChar: MapChar): number => (mapChar.code))
-  ), [patchedPage]);
 
   const downloadPatchedFile = () => {
     const patched = romContentArray
@@ -95,12 +65,9 @@ export const usePatch = (): UsePatch => {
   return {
     editChar,
     editLocation,
-    romContentArray,
     setEditLocation,
     patches,
     addPatchText,
-    patchedPage,
-    patchedPageArray,
     downloadPatchedFile,
     cleanPatches,
   };

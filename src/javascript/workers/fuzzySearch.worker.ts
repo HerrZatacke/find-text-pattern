@@ -6,13 +6,13 @@ export interface FuzzySearchResult {
   pos: number,
 }
 
-const arrayBufferToString = (data: Uint8Array): string => (
+const uInt8ArrayToString = (data: Uint8Array): string => (
   data.reduce((acc: string, code: number) => (
     `${acc}${String.fromCharCode(code)}`
   ), '')
 );
 
-const findClosestStep = (term: string, haystack: ArrayBuffer, logFn: (n: number) => void) => (
+const findClosestStep = (term: string, haystack: Uint8Array, logFn: (n: number) => void) => (
   stepPrecision: number,
   startIndex: number,
   length: number,
@@ -29,7 +29,7 @@ const findClosestStep = (term: string, haystack: ArrayBuffer, logFn: (n: number)
       logFn(s / length);
 
       const start = (s * stepPrecision) + startIndex;
-      const termHay = arrayBufferToString(new Uint8Array(haystack.slice(start, start + termLength)));
+      const termHay = uInt8ArrayToString(haystack.slice(start, start + termLength));
       const score = distance(term, termHay);
       const newScore = Math.min(score, acc.score);
 
@@ -45,8 +45,8 @@ const findClosestStep = (term: string, haystack: ArrayBuffer, logFn: (n: number)
   return result;
 };
 
-const findClosest = (haystack: ArrayBuffer, term: Uint8Array, progressId: string): FuzzySearchResult => {
-  const termStr = arrayBufferToString(term);
+const findClosest = (haystack: Uint8Array, term: Uint8Array, progressId: string): FuzzySearchResult => {
+  const termStr = uInt8ArrayToString(term);
   const termLength = termStr.length;
 
   const precision = 64;

@@ -3,17 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Stack, Typography } from '@mui/material';
 import TilesDisplay from '../../content/TilesDisplay';
 import Visual from '../../content/Visual';
-import { usePatchedTilemap } from '../../../hooks/usePatchedTilemap';
+import { useDataContext } from '../../../hooks/useDataContext';
+import useRomStore from '../../../stores/romStore';
+import useRamStore from '../../../stores/ramStore';
 import { hexPad } from '../../../../tools/hexPad';
 
 function Tilemap() {
 
-  const {
-    vramTilesOffset,
-    vramMapOffset,
-    tileMapTiles,
-    gotoLocation,
-  } = usePatchedTilemap();
+  const { vramTilesOffset, vramMapOffset } = useRamStore();
+  const { gotoLocation } = useRomStore();
+  const { tileMapTiles } = useDataContext();
 
   const navigateTo = useNavigate();
 

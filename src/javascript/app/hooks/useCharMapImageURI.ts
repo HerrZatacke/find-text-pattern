@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Decoder, ExportFrameMode } from 'gb-image-decoder';
 import useRamStore from '../stores/ramStore';
-import useRomStore from '../stores/romStore';
 import usePatchStore from '../stores/patchStore';
 import useSettingsStore, { CharRender } from '../stores/settingsStore';
 import { getPatchedRange } from '../../tools/getPatchedRange';
 import { hexPadSimple } from '../../tools/hexPad';
 import { decoderBaseOptions } from '../../../constants/decoderBaseOptions';
+import { useDataContext } from './useDataContext';
 
 interface UseCharMapImageURI {
   charMapImageURI: string | null,
@@ -16,7 +16,7 @@ export const useCharMapImageURI = (): UseCharMapImageURI => {
   const [charMapImageURI, setCharMapImageURI] = useState<string | null>(null);
 
   const { vramTilesOffset, vramMapOffset } = useRamStore();
-  const { romContent } = useRomStore();
+  const { romContentArray } = useDataContext();
   const { patches } = usePatchStore();
   const { setCharStyle } = useSettingsStore();
 
@@ -31,7 +31,7 @@ export const useCharMapImageURI = (): UseCharMapImageURI => {
       .map((_, index: number) => {
         const mapOffset = index < 0x80 ? index + 0x100 : index;
         const totalOffset = (mapOffset * 0x10) + vramTilesOffset;
-        return getPatchedRange(romContent, patches, totalOffset, 16)
+        return getPatchedRange(romContentArray, patches, totalOffset, 16)
           .map(((code) => hexPadSimple(code)))
           .join(' ');
       });
@@ -51,7 +51,7 @@ export const useCharMapImageURI = (): UseCharMapImageURI => {
         setCharMapImageURI(URL.createObjectURL(blob));
       }
     });
-  }, [patches, romContent, vramTilesOffset]);
+  }, [patches, romContentArray, vramTilesOffset]);
 
   useEffect(() => {
     if (vramTilesOffset === null || vramMapOffset === null) {
