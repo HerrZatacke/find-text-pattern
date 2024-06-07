@@ -12,7 +12,7 @@ export const useFuzzySearch = (): UseFuzzySearch => {
   const { setProgress } = useProgressStore();
 
   const findClosest = async (term: Uint8Array, progressId: string): Promise<FuzzySearchResult> => {
-    const worker = new Worker('/worker.js');
+    const worker = new Worker('./worker.js');
 
     worker.postMessage({ term, haystack: romContentArray, progressId });
 
