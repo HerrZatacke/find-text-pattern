@@ -40,7 +40,7 @@ function Char({ code, appendText }: Props) {
     >
       { char && (
         <>
-          <span className="char__value">{char.value}</span>
+          <span className="char__value">{char.value === ' ' ? '␣' : char.value}</span>
           <span className="char__code">
             { hexPad(char.code) }
           </span>

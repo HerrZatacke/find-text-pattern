@@ -51,7 +51,7 @@ function RenderChar({
       styles['--text-color'] = mapCharGroup.textColor;
     }
 
-    if (charStyle === CharRender.HEX) {
+    if (charStyle === CharRender.CHAR_MAP) {
       if (mapCharGroup?.groupId === 'digits') {
         textValue = 'n';
       }
