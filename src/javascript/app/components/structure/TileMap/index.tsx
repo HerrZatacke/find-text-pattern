@@ -64,7 +64,7 @@ function Tilemap() {
                 </ListItemButton>
                 <ListItemButton
                   onClick={() => {
-                    // eslint-disable-next-line no-restricted-globals,no-alert
+                    // eslint-disable-next-line no-alert
                     if (confirm(`Delete TileMap "${tileMap.title || tileMap.id}"?`)) {
                       deleteTileMap(tileMap.id);
                     }
@@ -85,7 +85,7 @@ function Tilemap() {
                 </ListItemButton>
                 <ListItemButton
                   onClick={() => {
-                    // eslint-disable-next-line no-restricted-globals,no-alert
+                    // eslint-disable-next-line no-alert
                     const title = prompt('New Title', tileMap.title);
 
                     if (title) {
