@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
-export const createRandomId = () => (
-  Math.random().toString(16).split('.')[1]
-);
+export const createRandomId = uuidv4;
 
 export const useRandomId = () => (
   useMemo<string>(createRandomId, [])

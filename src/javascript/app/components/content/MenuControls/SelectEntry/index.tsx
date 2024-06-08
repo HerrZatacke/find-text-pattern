@@ -37,9 +37,9 @@ function SelectEntry({ title, value, updateHandler, options, disabled, button, i
 
   const menuItemProps = {
     disabled,
-    id: `${id}-button`,
+    id: `button-${id}`,
     title: selectedOption?.title,
-    'aria-controls': open ? `${id}-menu` : undefined,
+    'aria-controls': open ? `menu-${id}` : undefined,
     'aria-haspopup': true,
     'aria-expanded': open,
     onClick: handleClick,
@@ -69,12 +69,12 @@ function SelectEntry({ title, value, updateHandler, options, disabled, button, i
         </MenuItem>
       ) }
       <Menu
-        id={`${id}-menu`}
+        id={`menu-${id}`}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': `${id}-button`,
+          'aria-labelledby': `button-${id}`,
         }}
       >
         {

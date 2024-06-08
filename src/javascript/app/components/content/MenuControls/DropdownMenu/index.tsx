@@ -27,8 +27,8 @@ function DropdownMenu({ title, entries }: Props) {
   return (
     <div>
       <Button
-        id={`${id}-button`}
-        aria-controls={open ? `${id}-menu` : undefined}
+        id={`button-${id}`}
+        aria-controls={open ? `menu-${id}` : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
@@ -37,12 +37,12 @@ function DropdownMenu({ title, entries }: Props) {
         { title }
       </Button>
       <Menu
-        id={`${id}-menu`}
+        id={`menu-${id}`}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': `${id}-button`,
+          'aria-labelledby': `button-${id}`,
         }}
       >
         {

@@ -54,11 +54,11 @@ function RomPagination() {
           <NavigateBeforeIcon />
         </Button>
         <Button
-          id={`${formId}-button`}
+          id={`button-${formId}`}
           title="Go to page"
           variant="outlined"
           disabled={!hasROMFile}
-          aria-controls={showForm ? `${formId}-menu` : undefined}
+          aria-controls={showForm ? `menu-${formId}` : undefined}
           aria-haspopup="true"
           aria-expanded={showForm ? 'true' : undefined}
           onClick={(event) => {
@@ -87,13 +87,13 @@ function RomPagination() {
         </Button>
       </ButtonGroup>
       <Popover
-        id={`${formId}-menu`}
+        id={`menu-${formId}`}
         anchorEl={anchorEl}
         open={showForm}
         onClose={() => setAnchorEl(null)}
         slotProps={{
           paper: {
-            'aria-labelledby': `${formId}-button`,
+            'aria-labelledby': `button-${formId}`,
           },
         }}
       >
