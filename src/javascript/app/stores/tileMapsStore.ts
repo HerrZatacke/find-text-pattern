@@ -5,6 +5,7 @@ import { createRandomId } from '../hooks/useRandomId';
 export const NEW_TILEMAP = 'NEW_TILEMAP';
 
 export interface PartialTileMap {
+  id ?:string,
   title: string,
   width: number,
   height: number,
@@ -37,11 +38,16 @@ const useTileMapsStore = create(
       },
 
       addTileMap: (tileMap: PartialTileMap) => {
-        const { tileMaps } = getState();
+        const { tileMaps, updateTileMap } = getState();
+
+        if (tileMap.id && tileMaps.findIndex(({ id }) => tileMap.id === id) !== -1) {
+          updateTileMap(tileMap as TileMap);
+          return;
+        }
 
         const newTilemap: TileMap = {
           ...tileMap,
-          id: createRandomId(),
+          id: tileMap.id || createRandomId(),
         };
 
         set({

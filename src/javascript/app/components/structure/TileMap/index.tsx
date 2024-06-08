@@ -30,7 +30,7 @@ function Tilemap() {
     updateTileMap,
   } = useTileMapsStore();
 
-  const { downloadTileMaps } = useTileMap();
+  const { downloadTileMaps, onChangeTileMapFile } = useTileMap();
 
   const goto = (location: number) => {
     navigateTo('/romview');
@@ -53,6 +53,17 @@ function Tilemap() {
             onClick={downloadTileMaps}
           >
             Download TileMaps
+          </Button>
+          <Button
+            variant="contained"
+            component="label"
+          >
+            <input
+              type="file"
+              hidden
+              onChange={onChangeTileMapFile}
+            />
+            Load TileMaps
           </Button>
           <List>
             { tileMaps.map((tileMap) => (

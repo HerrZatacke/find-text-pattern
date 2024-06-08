@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { ChangeEvent } from 'react';
 import { saveAs } from 'file-saver';
 import useTileMapsStore from '../stores/tileMapsStore';
 import type { TileMap } from '../stores/tileMapsStore';
@@ -8,10 +9,11 @@ interface UseTileMap {
   tilesOffset: number | null,
   mapOffset: number | null,
   downloadTileMaps: () => void,
+  onChangeTileMapFile: (ev: ChangeEvent<HTMLInputElement>) => Promise<void>,
 }
 
 export const useTileMap = (): UseTileMap => {
-  const { tileMaps, activeMap } = useTileMapsStore();
+  const { tileMaps, activeMap, addTileMap } = useTileMapsStore();
   const activeMapItem = useMemo<TileMap | null>(() => (
     tileMaps.find(({ id }) => id === activeMap) || null
   ), [activeMap, tileMaps]);
@@ -29,10 +31,34 @@ export const useTileMap = (): UseTileMap => {
     saveAs(blob, 'tileMaps.json');
   };
 
+  const onChangeTileMapFile = async (ev: ChangeEvent<HTMLInputElement>) => {
+    const target = ev.target;
+
+    if (!target.files || !target.files[0]) {
+      return;
+    }
+
+    const file = target.files[0];
+    const textDecoder = new TextDecoder();
+
+    const rawText = textDecoder.decode(await file.arrayBuffer());
+    try {
+      const { tileMaps: importTileMaps } = JSON.parse(rawText || '{}');
+      (importTileMaps as TileMap[]).forEach(addTileMap);
+    } catch (error) {
+      console.error(error);
+      /* noop */
+    }
+
+    target.value = '';
+  };
+
+
   return {
     activeMapItem,
     tilesOffset,
     mapOffset,
     downloadTileMaps,
+    onChangeTileMapFile,
   };
 };
