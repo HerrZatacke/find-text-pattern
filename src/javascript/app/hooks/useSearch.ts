@@ -6,6 +6,7 @@ import useSearchStore from '../stores/searchStore';
 interface UseSearch {
   found: number[],
   foundCount: number,
+  searchLength: number,
   findInRom: () => void,
   currentFound: number,
   setCurrentFound: (index: number) => void,
@@ -18,6 +19,7 @@ export const useSearch = (): UseSearch => {
   const {
     found,
     currentFound,
+    searchLength,
     setCurrentFound: storeSetCurrentFound,
     setFound,
   } = useSearchStore();
@@ -27,7 +29,7 @@ export const useSearch = (): UseSearch => {
   const { rawPattern } = usePatternStore();
 
   const findInRom = () => {
-    setFound(find(new Uint8Array(rawPattern)));
+    setFound(find(new Uint8Array(rawPattern)), rawPattern.byteLength);
     navigateTo('/romview');
   };
 
@@ -40,13 +42,14 @@ export const useSearch = (): UseSearch => {
   };
 
   const clearSearch = () => {
-    setFound([]);
+    setFound([], 0);
   };
 
   return {
     found,
     foundCount: found.length,
     currentFound,
+    searchLength,
     setCurrentFound,
     findInRom,
     clearSearch,

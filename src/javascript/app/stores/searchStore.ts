@@ -4,8 +4,9 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 export interface SearchStoreState {
   found: number[],
   currentFound: number,
+  searchLength: number,
   setCurrentFound: (found: number) => void,
-  setFound: (found: number[]) => void,
+  setFound: (found: number[], searchLength: number) => void,
 }
 
 const useSearchStore = create(
@@ -13,11 +14,13 @@ const useSearchStore = create(
     (set) => ({
       currentFound: 0,
       found: [],
+      searchLength: 0,
 
-      setFound: (found: number[]) => {
+      setFound: (found: number[], searchLength: number) => {
         set({
           currentFound: 0,
           found,
+          searchLength,
         });
       },
 

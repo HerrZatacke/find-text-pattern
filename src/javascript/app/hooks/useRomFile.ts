@@ -34,7 +34,7 @@ export const useRomFile = (): UseRomFile => {
     clearPatches();
     storeUnloadFile();
     setCurrentFound(0);
-    setFound([]);
+    setFound([], 0);
   };
 
   const onChangeRomFile = (ev: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +52,7 @@ export const useRomFile = (): UseRomFile => {
       clearPatches();
       storeSetFile(target.files[0]);
       setCurrentFound(0);
-      setFound([]);
+      setFound([], 0);
     } else {
       addMessage({ text: 'Invalid file - must be a .gb or .gbc file', type: 'error' });
     }

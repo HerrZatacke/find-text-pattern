@@ -10,13 +10,19 @@ import { hexPad, hexPadSimple } from '../../../../tools/hexPad';
 
 import './index.scss';
 
+export interface FoundInfo {
+  isFound: boolean,
+  isCurrentFound: boolean,
+  foundIndex: number,
+  currentFoundIndex: number,
+}
+
 interface Props {
   char: MapChar,
   globalOffset: number,
   pageOffset: number,
   loopClass: string,
-  highlight: boolean,
-  highlightCurrent: boolean,
+  found: FoundInfo,
   charStyle: CharRender,
   setEditLocation: (editLocation: number) => void,
   handleContextMenu: (event: MouseEvent, location: number) => void,
@@ -27,8 +33,7 @@ function RenderChar({
   globalOffset,
   pageOffset,
   loopClass,
-  highlight,
-  highlightCurrent,
+  found,
   charStyle,
   setEditLocation,
   handleContextMenu,
@@ -43,12 +48,15 @@ function RenderChar({
   if (char.groupId) {
     const groupId = char.groupId;
     const mapCharGroup = charGroups.find((charGroup) => charGroup.groupId === groupId);
-    if (mapCharGroup?.color) {
-      styles['--bg-color'] = mapCharGroup.color;
-    }
 
-    if (mapCharGroup?.textColor) {
-      styles['--text-color'] = mapCharGroup.textColor;
+    if (!found.isFound && !found.isCurrentFound && charStyle !== CharRender.TILE_MAP) {
+      if (mapCharGroup?.color) {
+        styles['--bg-color'] = mapCharGroup.color;
+      }
+
+      if (mapCharGroup?.textColor) {
+        styles['--text-color'] = mapCharGroup.textColor;
+      }
     }
 
     if (charStyle === CharRender.CHAR_MAP) {
@@ -67,8 +75,8 @@ function RenderChar({
       className={clsx('render-char', `render-char--${loopClass}`, {
         'render-char--terminator': MapCharTask.STRING_TERM === char.special,
         'render-char--fontchange': [MapCharTask.FONT_SLIM, MapCharTask.FONT_BOLD].includes(char.special as MapCharTask),
-        'render-char--highlight': highlight,
-        'render-char--highlight-current': highlightCurrent,
+        'render-char--highlight': found.isFound,
+        'render-char--highlight-current': found.isCurrentFound,
         'render-char--patched': char.patched,
         'render-char--style-hex': charStyle === CharRender.HEX,
         'render-char--style-tilemap': charStyle === CharRender.TILE_MAP,

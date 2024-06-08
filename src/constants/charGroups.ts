@@ -2,30 +2,30 @@ import type { MapCharGroup } from '../types/MapChar';
 
 export const GROUP_UNKNOWN: MapCharGroup = {
   groupId: 'unknown',
-  color: '235 220 255',
+  color: '#ebdcff',
 };
 
 export const charGroups: MapCharGroup[] = [
   {
     groupId: 'term',
-    color: '255 220 220',
+    color: '#ffdcdc',
   },
   {
     groupId: 'char',
-    color: '255 244 193',
+    color: '#fff4c1',
   },
   {
     groupId: 'blank',
-    color: '208 255 186',
-    textColor: '220 220 220',
+    color: '#d0ffba',
+    textColor: '#dcdcdc',
   },
   {
     groupId: 'digits',
-    color: '190 255 224',
+    color: '#beffe0',
   },
   {
     groupId: 'font',
-    color: '185 227 255',
+    color: '#b9e3ff',
   },
   GROUP_UNKNOWN,
 ];

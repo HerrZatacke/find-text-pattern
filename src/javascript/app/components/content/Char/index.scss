@@ -4,15 +4,15 @@
   font-size: 20px;
   font-weight: bold;
   border: none;
-  --bg-color: 220 220 220;
-  --text-color: 0 0 0;
+  --bg-color: #dcdcdc;
+  --text-color: #000000;
   padding: 0;
   line-height: initial;
-  background-color: rgb(var(--bg-color));
-  color: rgb(var(--text-color));
+  background-color: var(--bg-color);
+  color: var(--text-color);
 
   &--missing {
-    --bg-color: 255 255 255;
+    --bg-color: #ffffff;
     cursor: not-allowed;
   }
 
@@ -20,7 +20,7 @@
     display: block;
     height: 32px;
     line-height: 32px;
-    --text-color: 255 255 255;
+    --text-color: #dddddd;
   }
 
   &__code {

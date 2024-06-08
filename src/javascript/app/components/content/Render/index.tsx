@@ -3,12 +3,12 @@ import { clsx } from 'clsx';
 import type { CSSPropertiesVars, MouseEvent } from 'react';
 import { Menu, MenuItem, Stack } from '@mui/material';
 import { MapCharTask } from '../../../../../types/MapChar';
-import usePatternStore from '../../../stores/patternStore';
 import useGridStore from '../../../stores/gridStore';
 import useSettingsStore from '../../../stores/settingsStore';
 import useRomStore from '../../../stores/romStore';
 import useTileMapsStore from '../../../stores/tileMapsStore';
 import RenderChar from '../RenderChar';
+import type { FoundInfo } from '../RenderChar';
 import RomPagination from '../RomPagination';
 import RenderGridOptions from '../RenderGridOptions';
 import { useSearch } from '../../../hooks/useSearch';
@@ -23,8 +23,6 @@ import './index.scss';
 
 function Render() {
   const styles: CSSPropertiesVars = {};
-
-  const { rawPattern } = usePatternStore();
 
   const { renderTextGrid, charStyle } = useSettingsStore();
 
@@ -42,7 +40,7 @@ function Render() {
 
   const { tilesOffset, mapOffset } = useTileMap();
 
-  const { found, currentFound } = useSearch();
+  const { found, currentFound, searchLength } = useSearch();
   const { setEditLocation } = usePatch();
   const { patchedPage } = useDataContext();
 
@@ -51,8 +49,13 @@ function Render() {
   styles['--grid'] = grid;
 
   let loopClass = 'norm';
-  let loopFound = 0;
-  let loopFoundExtra = false;
+
+  const loopFound: FoundInfo = {
+    isFound: false,
+    isCurrentFound: false,
+    foundIndex: searchLength,
+    currentFoundIndex: searchLength,
+  };
 
   const {
     contextMenu,
@@ -134,24 +137,33 @@ function Render() {
                 loopClass = 'norm';
               }
 
-              const foundTest = found.findIndex((location) => location === pageOffset + index);
-              if (foundTest > -1) {
-                loopFound = rawPattern.byteLength;
-                if (foundTest === currentFound) {
-                  loopFoundExtra = true;
-                }
-              } else {
-                loopFound = Math.max(loopFound - 1, 0);
-                if (loopFound === 0) {
-                  loopFoundExtra = false;
+              const foundIndex = found.findIndex((location) => location === pageOffset + index);
+
+              if (foundIndex > -1) {
+                loopFound.isFound = true;
+                loopFound.foundIndex = 0;
+
+                if (foundIndex === currentFound) {
+                  loopFound.isCurrentFound = true;
+                  loopFound.currentFoundIndex = 0;
                 }
               }
+
+              if (loopFound.currentFoundIndex === searchLength) {
+                loopFound.isCurrentFound = false;
+              }
+
+              if (loopFound.foundIndex === searchLength) {
+                loopFound.isFound = false;
+              }
+
+              loopFound.currentFoundIndex = Math.min(loopFound.currentFoundIndex + 1, searchLength);
+              loopFound.foundIndex = Math.min(loopFound.foundIndex + 1, searchLength);
 
               return (
                 <RenderChar
                   key={pageOffset + index}
-                  highlight={loopFound > 0}
-                  highlightCurrent={loopFoundExtra}
+                  found={{ ...loopFound }}
                   globalOffset={pageOffset + index}
                   pageOffset={index}
                   char={char}
