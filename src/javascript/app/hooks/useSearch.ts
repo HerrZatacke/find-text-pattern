@@ -35,8 +35,8 @@ export const useSearch = (): UseSearch => {
     const maxIndex = found.length - 1;
     const gotoIndex = Math.min(Math.max(index, 0), maxIndex);
     storeSetCurrentFound(gotoIndex);
-    gotoLocation(found[gotoIndex]);
     navigateTo('/romview');
+    gotoLocation(found[gotoIndex]);
   };
 
   const clearSearch = () => {

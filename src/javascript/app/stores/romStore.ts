@@ -92,7 +92,7 @@ const useRomStore = create(
         setRomPage(Math.floor(location / pageSize));
 
         window.setTimeout(() => {
-          const hl = document.querySelectorAll('.render-char__highlight-current');
+          const hl = document.querySelectorAll('.render-char--highlight-current');
 
           const visibleNode = ([...hl] as HTMLElement[]).find((domNode) => (
             domNode.getBoundingClientRect().width &&
