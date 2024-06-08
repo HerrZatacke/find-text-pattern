@@ -1,6 +1,7 @@
-import type { FuzzySearchResult } from '../../workers/fuzzySearch.worker';
+import type { FuzzySearchResult, FuzzySearchQuery } from '../../workers/fuzzySearch.worker';
 import useProgressStore from '../stores/progressStore';
 import { useDataContext } from './useDataContext';
+
 
 interface UseFuzzySearch {
   findClosest: (term: Uint8Array, progressId: string) => Promise<FuzzySearchResult>, // number[],
@@ -14,7 +15,9 @@ export const useFuzzySearch = (): UseFuzzySearch => {
   const findClosest = async (term: Uint8Array, progressId: string): Promise<FuzzySearchResult> => {
     const worker = new Worker('./worker.js');
 
-    worker.postMessage({ term, haystack: romContentArray, progressId });
+    const query: FuzzySearchQuery = { term, haystack: romContentArray, progressId };
+
+    worker.postMessage(query);
 
     return new Promise((resolve) => {
       worker.onmessage = ({ data: { result, progress } }) => {
@@ -26,7 +29,14 @@ export const useFuzzySearch = (): UseFuzzySearch => {
         }
 
         if (result) {
-          resolve(result);
+          worker.terminate();
+          window.setTimeout(() => {
+            setProgress({
+              id: progressId,
+              value: 1,
+            });
+            resolve(result);
+          }, 50);
         }
       };
     });

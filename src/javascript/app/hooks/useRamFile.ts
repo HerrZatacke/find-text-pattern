@@ -1,7 +1,14 @@
 import type { ChangeEvent } from 'react';
 import useNotificationsStore from '../stores/notificationsStore';
 import useTileMapsStore from '../stores/tileMapsStore';
-import { TILEMAP_SIZE, TILEMAP_SN1_OFFSET, VRAM_SIZE, VRAM_SN1_OFFSET } from '../../../constants/ram';
+import {
+  TILEMAP_SIZE,
+  TILEMAP_SN1_OFFSET,
+  VRAM_SIZE,
+  VRAM_SIZE_REDUCED,
+  VRAM_SN1_OFFSET,
+  VRAM_SN1_OFFSET_REDUCED,
+} from '../../../constants/ram';
 import { useFuzzySearch } from './useFuzzySearch';
 import { useDataContext } from './useDataContext';
 
@@ -40,13 +47,18 @@ export const useRamFile = (): UseRamFile => {
 
       const tileMap = new Uint8Array(fileContent.slice(TILEMAP_SN1_OFFSET, TILEMAP_SN1_OFFSET + TILEMAP_SIZE));
       const vramContent = new Uint8Array(fileContent.slice(VRAM_SN1_OFFSET, VRAM_SN1_OFFSET + VRAM_SIZE));
+      const vramContentReduced = new Uint8Array(
+        fileContent.slice(VRAM_SN1_OFFSET_REDUCED, VRAM_SN1_OFFSET_REDUCED + VRAM_SIZE_REDUCED),
+      );
 
       const [
         tileMapResult,
         vramTilesResult,
+        vramTilesResultReduced,
       ] = await Promise.all([
         findClosest(tileMap, 'tileMap'),
         findClosest(vramContent, 'vramTiles'),
+        findClosest(vramContentReduced, 'vramTilesOff'),
       ]);
 
       if (vramTilesResult.pos && tileMapResult.pos) {
@@ -57,9 +69,17 @@ export const useRamFile = (): UseRamFile => {
           ));
 
         addTileMap({
-          title: `${file.name} | VRAM score:${vramTilesResult.score} | Tilemap score:${tileMapResult.score}`,
+          title: `${file.name} | VRAM (full) score:${vramTilesResult.score} | Tilemap score:${tileMapResult.score}`,
           internalMapping,
           vramOffset: vramTilesResult.pos,
+          width: 32,
+          height: 32,
+        });
+
+        addTileMap({
+          title: `${file.name} | VRAM (reduced) score:${vramTilesResult.score} | Tilemap score:${tileMapResult.score}`,
+          internalMapping,
+          vramOffset: vramTilesResultReduced.pos - (VRAM_SIZE - VRAM_SIZE_REDUCED),
           width: 32,
           height: 32,
         });
