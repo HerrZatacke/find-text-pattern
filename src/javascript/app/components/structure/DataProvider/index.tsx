@@ -92,8 +92,8 @@ function DataProvider({ children }: PropsWithChildren) {
 
     return (
       tileMap.map((tileIndex) => {
-        const mapOffset = tileIndex < 0x80 ? tileIndex + 0x100 : tileIndex;
-        const totalOffset = (mapOffset * 0x10) + tilesOffset;
+        const offset = tileIndex < 0x80 ? tileIndex + 0x100 : tileIndex;
+        const totalOffset = (offset * 0x10) + tilesOffset;
         return getPatchedRange(romContentArray, patches, totalOffset, 16)
           .map(((code) => hexPadSimple(code)))
           .join(' ');

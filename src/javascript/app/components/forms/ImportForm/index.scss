@@ -1,0 +1,30 @@
+.import-form {
+  &__vram-preview {
+    display: block;
+    width: 256px;
+    height: 384px;
+    background-color: #f0f0f0;
+    padding: 64px 32px;
+  }
+
+  &__steps-container {
+    --num-items: 1;
+    --active-item: 0;
+    overflow-x: hidden;
+    margin: 0 -24px;
+  }
+
+  &__steps-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(var(--num-items), 100%);
+    gap: 0;
+    transition: margin ease-in-out 250ms;
+    margin-left: calc(var(--active-item) * -100%);
+  }
+
+  &__step {
+    width: 100%;
+    padding: 0 24px;
+  }
+}

@@ -52,6 +52,7 @@ const useTileMapsStore = create(
 
         set({
           tileMaps: [...tileMaps, newTilemap],
+          activeMap: newTilemap.id,
         });
       },
 

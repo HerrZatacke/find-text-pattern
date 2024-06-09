@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom';
 import PatchEdit from '../../content/PatchEdit';
 import Notifications from '../../content/Notifications';
 import Navigation from '../Navigation';
+import ImportForm from '../../forms/ImportForm';
 import { useCharMapImageURI } from '../../../hooks/useCharMapImageURI';
 
 function Layout() {
@@ -17,6 +18,7 @@ function Layout() {
   return (
     <div style={styles}>
       <Navigation />
+      <ImportForm />
       <Outlet />
       <Notifications />
       <PatchEdit />

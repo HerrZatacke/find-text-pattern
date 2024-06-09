@@ -8,12 +8,16 @@ const INITIAL_PRECISION = 128;
 export interface FuzzySearchQuery {
   haystack: Uint8Array,
   term: Uint8Array,
-  progressId: string,
 }
 
 export interface FuzzySearchResult {
   score: number,
   pos: number,
+}
+
+export interface FuzzySearchResponse {
+  result?: FuzzySearchResult,
+  progress?: number,
 }
 
 const dummyResult: () => FuzzySearchResult = () => ({
@@ -67,7 +71,6 @@ const findClosestStep = (
 const findClosest = (
   haystack: Uint8Array,
   term: Uint8Array,
-  progressId: string,
   bankIndex: number,
 ): FuzzySearchResult => {
   const termStr = uInt8ArrayToString(term);
@@ -78,12 +81,17 @@ const findClosest = (
   const logProgress = throttle((progress: number) => {
     const bankValue = (result.score >= termLength) ? (progress * 0.7) : (0.7 + (progress * 0.3));
     const value = (bankIndex + bankValue) / 64;
-    self.postMessage({ progress: { progressId, value } });
+    const response: FuzzySearchResponse = { progress: value };
+    self.postMessage(response);
   }, 250);
 
   const findClosestStepInHaystack = findClosestStep(termStr, haystack, bankIndex, logProgress);
 
-  result = findClosestStepInHaystack(INITIAL_PRECISION, 0, (haystack.byteLength - termLength) / INITIAL_PRECISION);
+  result = findClosestStepInHaystack(
+    INITIAL_PRECISION,
+    0,
+    Math.ceil((haystack.byteLength - termLength) / INITIAL_PRECISION),
+  );
 
   if (result.score > 0) {
     result = findClosestStepInHaystack(1, result.pos - INITIAL_PRECISION, INITIAL_PRECISION * 2);
@@ -95,7 +103,7 @@ const findClosest = (
 
 
 self.onmessage = async (event: MessageEvent<FuzzySearchQuery>) => {
-  const { progressId, term, haystack } = event.data;
+  const { term, haystack } = event.data;
 
   const banks = chunk(haystack, MEMORY_BANK_SIZE); // GameBoy ROM memory bank size
   const haybales = banks.map((ns) => new Uint8Array(ns));
@@ -111,13 +119,14 @@ self.onmessage = async (event: MessageEvent<FuzzySearchQuery>) => {
       return acc;
     }
 
-    const found = findClosest(haybale, term, progressId, bankIndex);
+    const found = findClosest(haybale, term, bankIndex);
 
     return found.score < acc.score ? found : acc;
   }, dummyResult());
 
   // eslint-disable-next-line no-console
-  console.log(`${progressId} - done after ${Date.now() - start}ms`);
+  console.log(`done after ${Date.now() - start}ms`);
 
-  self.postMessage({ result });
+  const response: FuzzySearchResponse = { result };
+  self.postMessage(response);
 };

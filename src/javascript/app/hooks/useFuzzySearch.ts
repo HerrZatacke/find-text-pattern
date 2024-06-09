@@ -1,40 +1,39 @@
-import type { FuzzySearchResult, FuzzySearchQuery } from '../../workers/fuzzySearch.worker';
-import useProgressStore from '../stores/progressStore';
+import { useState } from 'react';
+import type { FuzzySearchResult, FuzzySearchQuery, FuzzySearchResponse } from '../../workers/fuzzySearch.worker';
 import { useDataContext } from './useDataContext';
 
 
 interface UseFuzzySearch {
-  findClosest: (term: Uint8Array, progressId: string) => Promise<FuzzySearchResult>, // number[],
+  findClosest: (term: Uint8Array) => Promise<FuzzySearchResult>, // number[],
+  busy: boolean,
+  progress: number,
 }
 
 export const useFuzzySearch = (): UseFuzzySearch => {
   const { romContentArray } = useDataContext();
+  const [busy, setBusy] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
 
-  const { setProgress } = useProgressStore();
-
-  const findClosest = async (term: Uint8Array, progressId: string): Promise<FuzzySearchResult> => {
+  const findClosest = async (term: Uint8Array): Promise<FuzzySearchResult> => {
+    setBusy(true);
     const worker = new Worker('./worker.js');
 
-    const query: FuzzySearchQuery = { term, haystack: romContentArray, progressId };
+    const query: FuzzySearchQuery = { term, haystack: romContentArray };
 
     worker.postMessage(query);
 
     return new Promise((resolve) => {
-      worker.onmessage = ({ data: { result, progress } }) => {
-        if (progress) {
-          setProgress({
-            id: progress.progressId,
-            value: progress.value,
-          });
+      worker.onmessage = ({ data }: MessageEvent<FuzzySearchResponse>) => {
+        if (typeof data.progress === 'number') {
+          setProgress(data.progress);
         }
 
-        if (result) {
+        if (data.result) {
+          const result = data.result;
           worker.terminate();
           window.setTimeout(() => {
-            setProgress({
-              id: progressId,
-              value: 1,
-            });
+            setProgress(1);
+            setBusy(false);
             resolve(result);
           }, 50);
         }
@@ -44,5 +43,7 @@ export const useFuzzySearch = (): UseFuzzySearch => {
 
   return {
     findClosest,
+    busy,
+    progress,
   };
 };
