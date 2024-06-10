@@ -164,6 +164,7 @@ function Step1({
         label="VRAM Offset"
         fullWidth
         variant="standard"
+        disabled={busy}
         error={Boolean(!busy && errors.vramOffset)}
         helperText={!busy && errors.vramOffset?.message}
         InputProps={{
