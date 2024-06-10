@@ -100,9 +100,9 @@ function Step1({
             onChange={(_, value) => setCustomStartPadding(value as number)}
           />
           <Slider
-            min={0x0000}
+            min={0x0100}
             max={0x0400}
-            step={0x0010}
+            step={0x0100}
             value={customSize}
             onChange={(_, value) => setCustomSize(value as number)}
           />
