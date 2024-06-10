@@ -48,9 +48,12 @@ function ImportForm() {
     handleSubmit,
     getFieldState,
     formState: {
-      isValid,
+      errors,
     },
   } = form;
+
+  // https://discord.com/channels/754891658327359538/1249289002012381215/1249289002012381215
+  const isValid = Boolean(Object.keys(errors || {}).length);
 
   const vramOffsetField = register('vramOffset', {
     validate: validateHexDigit(0, romContentArray.length - VRAM_SIZE),
