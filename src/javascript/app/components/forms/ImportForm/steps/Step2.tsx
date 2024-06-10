@@ -48,17 +48,17 @@ function Step2({
   const { tilesFromTileMap } = useTilesFromTileMap();
 
   const [screenCutOut, setScreenCutOut] = useState<ScreenCutOut>({
-    width: 32,
-    height: 18,
     xOffset: 0,
     yOffset: 0,
+    width: 32,
+    height: 18,
   });
 
   const screenCutOutSliders: SliderData[] = [
-    { min: 1, max: 32, key: 'width' },
-    { min: 1, max: 32, key: 'height' },
     { min: 0, max: 31, key: 'xOffset' },
     { min: 0, max: 31, key: 'yOffset' },
+    { min: 1, max: 32, key: 'width' },
+    { min: 1, max: 32, key: 'height' },
   ];
 
   const {

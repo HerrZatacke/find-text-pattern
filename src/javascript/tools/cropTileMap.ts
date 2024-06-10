@@ -1,10 +1,10 @@
 import chunk from 'chunk';
 
 export interface ScreenCutOut {
-  width: number,
-  height: number,
   xOffset: number,
   yOffset: number,
+  width: number,
+  height: number,
 }
 
 
