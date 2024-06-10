@@ -25,6 +25,7 @@ function Step3({ form, cancel }: Props) {
     const {
       vramOffset: vramOffsetFieldVBalue,
       tileMapOffset: tileMapOffsetFieldValue,
+      tileMapUseLowerVRAM: useLowerVRAM,
     } = getValues();
 
     const vramOffset = vramOffsetFieldVBalue === '' || !!errors.vramOffset ? null : parseInt(vramOffsetFieldVBalue, 16);
@@ -36,9 +37,7 @@ function Step3({ form, cancel }: Props) {
 
     const internalMapping = Array(32 * 32)
       .fill('')
-      .map((_, index: number) => (
-        tileMapOffset + index
-      ));
+      .map((_, index: number) => (tileMapOffset + index));
 
     addTileMap({
       title: fileName || '',
@@ -46,6 +45,7 @@ function Step3({ form, cancel }: Props) {
       vramOffset,
       width: 32,
       height: 32,
+      useLowerVRAM,
     });
 
     cancel();

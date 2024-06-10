@@ -1,7 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import type { UseFormRegisterReturn, UseFormReturn } from 'react-hook-form';
-import { Button, ButtonGroup, DialogContentText, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  ButtonGroup,
+  DialogContentText,
+  InputAdornment,
+  Slider,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import DoubleArrow from '@mui/icons-material/DoubleArrow';
 import TilesDisplay from '../../../content/TilesDisplay';
 import useImportStore from '../../../../stores/importStore';
@@ -10,6 +19,7 @@ import { toTiles } from '../../../../../tools/toTiles';
 import { VRAM_SIZE } from '../../../../../../constants/ram';
 import type { FuzzySearchResult } from '../../../../../workers/fuzzySearch.worker';
 import type { ImportFormData, VRAMButton } from '../types';
+import { hexPad } from '../../../../../tools/hexPad';
 
 
 interface Props {
@@ -27,29 +37,33 @@ function Step1({
 }: Props) {
   const { vramContent, fileName } = useImportStore();
   const { romContentArray } = useDataContext();
+  const [customStartPadding, setCustomStartPadding] = useState<number>(0x0800);
+  const [customSize, setCustomSize] = useState<number>(0x0100);
 
-  const vramButtons = useMemo<VRAMButton[]>(() => (
-    vramContent?.length === 0x1800 ? [
-      {
-        title: '0x8000 - 0x87FF',
-        vramPadding: 0,
-        data: vramContent.subarray(0, 0x0800),
-        tiles: toTiles(vramContent.subarray(0, 0x0800)),
-      },
-      {
-        title: '0x8800 - 0x8FFF',
-        vramPadding: 0x0800,
-        data: vramContent.subarray(0x0800, 0x1000),
-        tiles: toTiles(vramContent.subarray(0x0800, 0x1000)),
-      },
-      {
-        title: '0x9000 - 0x97FF',
-        vramPadding: 0x1000,
-        data: vramContent.subarray(0x1000, 0x1800),
-        tiles: toTiles(vramContent.subarray(0x1000, 0x1800)),
-      },
-    ] : []
-  ), [vramContent]);
+  const vramButtons = useMemo<VRAMButton[]>(() => {
+    if (vramContent?.length !== 0x1800) {
+      return [];
+    }
+
+    return [
+      { pad: customStartPadding, size: customSize },
+      { pad: 0x0000, size: 0x0800 },
+      { pad: 0x0800, size: 0x0800 },
+      { pad: 0x1000, size: 0x0800 },
+    ]
+      .map(({ pad, size }): VRAMButton => {
+        const addr = pad + 0x8000;
+        const title = `${hexPad(addr, 4)} - ${hexPad(addr + size - 1, 4)}`;
+        const data = vramContent.subarray(pad, pad + size);
+
+        return {
+          title,
+          vramPadding: pad,
+          data,
+          tiles: toTiles(data),
+        };
+      });
+  }, [customStartPadding, customSize, vramContent]);
 
   const {
     setValue,
@@ -76,35 +90,51 @@ function Step1({
       <DialogContentText>
         { `Select which part of the snapshot VRAM from "${fileName}" should be matched against currently loaded ROM?` }
       </DialogContentText>
-      <Stack direction="row" useFlexGap spacing={4} justifyContent="space-between" alignItems="center">
-        <ButtonGroup orientation="vertical">
-          {
-            vramButtons.map(({ tiles, title, data, vramPadding }, index) => (
-              <Button
-                key={index}
-                size="large"
-                disabled={busy}
-                onClick={async () => {
-                  setValue('vramOffset', '', { shouldTouch: true, shouldValidate: true });
-                  const { pos } = await findClosest(data);
-                  setValue('vramOffset', (pos - vramPadding).toString(16), { shouldTouch: true, shouldValidate: true });
-                  // trigger('vramOffset');
-                }}
-              >
-                <Stack direction="column" useFlexGap spacing={1}>
-                  <Typography variant="body2">
-                    {title}
-                  </Typography>
-                  <TilesDisplay
-                    zoom={1}
-                    tiles={tiles}
-                    tilesPerLine={16}
-                  />
-                </Stack>
-              </Button>
-            ))
-          }
-        </ButtonGroup>
+      <Stack direction="row" useFlexGap spacing={4} justifyContent="center" alignItems="center">
+        <Stack direction="column" useFlexGap spacing={2}>
+          <Slider
+            min={0x0000}
+            max={0x1700}
+            step={0x0100}
+            value={customStartPadding}
+            onChange={(_, value) => setCustomStartPadding(value as number)}
+          />
+          <Slider
+            min={0x0000}
+            max={0x0400}
+            step={0x0010}
+            value={customSize}
+            onChange={(_, value) => setCustomSize(value as number)}
+          />
+          <ButtonGroup orientation="vertical">
+            {
+              vramButtons.map(({ tiles, title, data, vramPadding }, index) => (
+                <Button
+                  key={index}
+                  size="large"
+                  disabled={busy}
+                  onClick={async () => {
+                    setValue('vramOffset', '', { shouldTouch: true, shouldValidate: true });
+                    const { pos } = await findClosest(data);
+                    setValue('vramOffset', (pos - vramPadding).toString(16), { shouldTouch: true, shouldValidate: true });
+                    // trigger('vramOffset');
+                  }}
+                >
+                  <Stack direction="column" useFlexGap spacing={1}>
+                    <Typography variant="body2">
+                      {title}
+                    </Typography>
+                    <TilesDisplay
+                      zoom={1}
+                      tiles={tiles}
+                      tilesPerLine={Math.min(16, tiles.length)}
+                    />
+                  </Stack>
+                </Button>
+              ))
+            }
+          </ButtonGroup>
+        </Stack>
         <DoubleArrow />
         {
           romContentVRAMTiles.length ? (

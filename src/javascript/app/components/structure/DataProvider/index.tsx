@@ -7,8 +7,8 @@ import usePatchStore from '../../../stores/patchStore';
 import { getPatchedChar } from '../../../../tools/getPatchedChar';
 import { getPatchedRange } from '../../../../tools/getPatchedRange';
 import { toTiles } from '../../../../tools/toTiles';
-import { hexPadSimple } from '../../../../tools/hexPad';
 import { useTileMap } from '../../../hooks/useTileMap';
+import { useTilesFromTileMap } from '../../../hooks/useTilesFromTileMap';
 
 export interface GlobalData {
   romContentArray: Uint8Array,
@@ -35,7 +35,8 @@ export const dataContext: Context<GlobalData> = createContext<GlobalData>(defaul
 function DataProvider({ children }: PropsWithChildren) {
   const { romContent, pageSize, romPage } = useRomStore();
   const { patches } = usePatchStore();
-  const { tilesOffset, mapOffset } = useTileMap();
+  const { tilesOffset, mapOffset, useLowerVRAM } = useTileMap();
+  const { tilesFromTileMap } = useTilesFromTileMap();
 
   const pageOffset = romPage * pageSize;
 
@@ -90,16 +91,10 @@ function DataProvider({ children }: PropsWithChildren) {
       return [];
     }
 
-    return (
-      tileMap.map((tileIndex) => {
-        const offset = tileIndex < 0x80 ? tileIndex + 0x100 : tileIndex;
-        const totalOffset = (offset * 0x10) + tilesOffset;
-        return getPatchedRange(romContentArray, patches, totalOffset, 16)
-          .map(((code) => hexPadSimple(code)))
-          .join(' ');
-      })
-    );
-  }, [patches, romContentArray, tileMap, tilesOffset]);
+    // console.log(tileMap, tilesOffset);
+
+    return tilesFromTileMap(tileMap, tilesOffset, romContentArray, useLowerVRAM);
+  }, [romContentArray, tileMap, tilesFromTileMap, tilesOffset, useLowerVRAM]);
 
   const value = useMemo<GlobalData>(() => ({
     romContentArray,

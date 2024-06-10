@@ -1,27 +1,42 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useMemo } from 'react';
 import type { UseFormRegisterReturn, UseFormReturn } from 'react-hook-form';
-import { Button, ButtonGroup, DialogContentText, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  ButtonGroup,
+  DialogContentText,
+  FormControlLabel,
+  InputAdornment,
+  Stack, Switch,
+  TextField,
+  Typography,
+} from '@mui/material';
+import DoubleArrow from '@mui/icons-material/DoubleArrow';
 import type { FuzzySearchResult } from '../../../../../workers/fuzzySearch.worker';
 import type { ImportFormData } from '../types';
 import useImportStore from '../../../../stores/importStore';
-import { getPatchedRange } from '../../../../../tools/getPatchedRange';
-import { hexPadSimple } from '../../../../../tools/hexPad';
-import usePatchStore from '../../../../stores/patchStore';
 import { useDataContext } from '../../../../hooks/useDataContext';
 import TilesDisplay from '../../../content/TilesDisplay';
+import { useTilesFromTileMap } from '../../../../hooks/useTilesFromTileMap';
 
 interface Props {
-  tileMapOffsetField: UseFormRegisterReturn<'tileMapOffset'>
+  tileMapOffsetField: UseFormRegisterReturn<'tileMapOffset'>,
+  tileMapUseLowerVRAMField: UseFormRegisterReturn<'tileMapUseLowerVRAM'>,
   busy: boolean,
   findClosest: (term: Uint8Array) => Promise<FuzzySearchResult>,
-  form: UseFormReturn<ImportFormData>
+  form: UseFormReturn<ImportFormData>,
 }
 
-function Step2({ tileMapOffsetField, busy, findClosest, form }: Props) {
+function Step2({
+  tileMapOffsetField,
+  tileMapUseLowerVRAMField,
+  busy,
+  findClosest,
+  form,
+}: Props) {
   const { tileMap, fileName } = useImportStore();
-  const { patches } = usePatchStore();
   const { romContentArray } = useDataContext();
+  const { tilesFromTileMap } = useTilesFromTileMap();
 
   const {
     setValue,
@@ -34,28 +49,39 @@ function Step2({ tileMapOffsetField, busy, findClosest, form }: Props) {
   const vramOffsetFieldValue = watch('vramOffset');
   const vramOffset = vramOffsetFieldValue === '' || !!errors.vramOffset ? null : parseInt(vramOffsetFieldValue, 16);
 
+  const tileMapOffsetFieldValue = watch('tileMapOffset');
+  const tileMapOffset = tileMapOffsetFieldValue === '' || !!errors.tileMapOffset ? null : parseInt(tileMapOffsetFieldValue, 16);
+
+  const useLowerVRAM = watch('tileMapUseLowerVRAM');
+
   const snapshotTileMapTiles = useMemo<string[]>(() => {
-    if (!tileMap || !vramOffset) {
+    if (!tileMap || vramOffset === null) {
       return [];
     }
 
-    return (
-      [...tileMap].map((tileIndex) => {
-        const offset = tileIndex < 0x80 ? tileIndex + 0x100 : tileIndex;
-        const totalOffset = (offset * 0x10) + vramOffset;
-        return getPatchedRange(romContentArray, patches, totalOffset, 16)
-          .map(((code) => hexPadSimple(code)))
-          .join(' ');
-      })
-    );
-  }, [patches, romContentArray, tileMap, vramOffset]);
+    return tilesFromTileMap(tileMap, vramOffset, romContentArray, useLowerVRAM);
+  }, [romContentArray, tileMap, tilesFromTileMap, useLowerVRAM, vramOffset]);
+
+  const romContentTileMap = useMemo<string[]>(() => {
+    if (tileMapOffset === null || vramOffset === null) {
+      return [];
+    }
+
+    // For a preview mapping the addresses are loaded directly from the rom based on tileMapOffset
+    // ToDo: maybe create a function to create such an initial mapping for further editing?
+    const previewMapping = Array(32 * 32)
+      .fill('')
+      .map((_, index: number) => (romContentArray[tileMapOffset + index]));
+
+    return tilesFromTileMap(previewMapping, vramOffset, romContentArray, useLowerVRAM);
+  }, [romContentArray, tileMapOffset, tilesFromTileMap, useLowerVRAM, vramOffset]);
 
   return (
     <Stack direction="column" useFlexGap spacing={2}>
       <DialogContentText>
         { `How should the snapshot TileMap from "${fileName}" be matched against currently loaded ROM?` }
       </DialogContentText>
-      <Stack direction="row" useFlexGap spacing={4} justifyContent="space-between" alignItems="center">
+      <Stack direction="row" useFlexGap spacing={4} justifyContent="center" alignItems="center">
         <ButtonGroup orientation="vertical">
           <Button
             size="large"
@@ -107,8 +133,34 @@ function Step2({ tileMapOffsetField, busy, findClosest, form }: Props) {
             </Stack>
           </Button>
         </ButtonGroup>
-
+        <DoubleArrow />
+        {
+          romContentTileMap.length ? (
+            <TilesDisplay
+              zoom={1}
+              tiles={romContentTileMap}
+              tilesPerLine={32}
+            />
+          ) : (
+            <Typography
+              className="import-form__tilemap-preview"
+              variant="body2"
+              align="center"
+            >
+              {
+                busy ?
+                  'Searching ROM...' :
+                  'Try to find the VRAM offset by searching for one of the options to the left.'
+              }
+            </Typography>
+          )
+        }
       </Stack>
+      <FormControlLabel
+        control={<Switch {...tileMapUseLowerVRAMField} />}
+        label="Use lower part of VRAM for tiles"
+        labelPlacement="end"
+      />
       <TextField
         {...tileMapOffsetField}
         margin="dense"

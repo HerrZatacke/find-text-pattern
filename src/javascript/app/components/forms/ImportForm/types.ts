@@ -1,6 +1,7 @@
 export interface ImportFormData {
   vramOffset: string,
   tileMapOffset: string,
+  tileMapUseLowerVRAM: boolean,
 }
 
 export interface VRAMButton {

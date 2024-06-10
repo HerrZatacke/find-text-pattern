@@ -7,6 +7,7 @@ import type { TileMap } from '../stores/tileMapsStore';
 interface UseTileMap {
   activeMapItem: TileMap | null,
   tilesOffset: number | null,
+  useLowerVRAM: boolean,
   mapOffset: number | null,
   downloadTileMaps: () => void,
   onChangeTileMapFile: (ev: ChangeEvent<HTMLInputElement>) => Promise<void>,
@@ -20,6 +21,7 @@ export const useTileMap = (): UseTileMap => {
 
   const tilesOffset = activeMapItem?.vramOffset || null;
   const mapOffset = activeMapItem?.internalMapping[0] || null;
+  const useLowerVRAM = activeMapItem?.useLowerVRAM || false;
 
   const downloadTileMaps = () => {
     const tileMapsJson = JSON.stringify({ tileMaps }, null, 2);
@@ -58,6 +60,7 @@ export const useTileMap = (): UseTileMap => {
     activeMapItem,
     tilesOffset,
     mapOffset,
+    useLowerVRAM,
     downloadTileMaps,
     onChangeTileMapFile,
   };

@@ -33,10 +33,11 @@ function ImportForm() {
   const [activeStep, setActiveStep] = useState<number>(0);
   const open = Boolean(tileMap?.length && vramContent?.length && fileName);
 
-  const form = useForm({
+  const form = useForm<ImportFormData>({
     defaultValues: {
       vramOffset: '',
       tileMapOffset: '',
+      tileMapUseLowerVRAM: false,
     },
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -63,6 +64,8 @@ function ImportForm() {
     validate: validateHexDigit(0, romContentArray.length - TILEMAP_SIZE),
   });
 
+  const tileMapUseLowerVRAMField = register('tileMapUseLowerVRAM');
+
   const onSubmit: SubmitHandler<ImportFormData> = (d) => {
     // eslint-disable-next-line no-console
     console.log(d);
@@ -88,6 +91,8 @@ function ImportForm() {
     <Dialog
       open={open}
       onClose={cancel}
+      maxWidth="md"
+      fullWidth
     >
       <DialogTitle>Create new TileMap from BGB snapshot</DialogTitle>
       <LinearProgress
@@ -141,6 +146,7 @@ function ImportForm() {
                 <Step2
                   form={form}
                   tileMapOffsetField={tileMapOffsetField}
+                  tileMapUseLowerVRAMField={tileMapUseLowerVRAMField}
                   findClosest={findClosest}
                   busy={busy}
                 />

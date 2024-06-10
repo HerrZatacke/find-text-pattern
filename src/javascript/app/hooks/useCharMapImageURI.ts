@@ -1,47 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Decoder, ExportFrameMode } from 'gb-image-decoder';
-import usePatchStore from '../stores/patchStore';
 import useSettingsStore, { CharRender } from '../stores/settingsStore';
-import { getPatchedRange } from '../../tools/getPatchedRange';
-import { hexPadSimple } from '../../tools/hexPad';
 import { decoderBaseOptions } from '../../../constants/decoderBaseOptions';
 import { useDataContext } from './useDataContext';
 import { useTileMap } from './useTileMap';
+import { useTilesFromTileMap } from './useTilesFromTileMap';
 
 interface UseCharMapImageURI {
   charMapImageURI: string | null,
 }
 
+const charMapTileMap = Array(256)
+  .fill('')
+  .map((_, index: number) => index);
+
 export const useCharMapImageURI = (): UseCharMapImageURI => {
   const [charMapImageURI, setCharMapImageURI] = useState<string | null>(null);
 
-  const { tilesOffset, mapOffset } = useTileMap();
+  const { tilesOffset, mapOffset, useLowerVRAM } = useTileMap();
   const { romContentArray } = useDataContext();
-  const { patches } = usePatchStore();
   const { setCharStyle } = useSettingsStore();
+  const { tilesFromTileMap } = useTilesFromTileMap();
+
+  const charMapTiles = useMemo<string[]>(() => {
+    if (tilesOffset === null) {
+      return [];
+    }
+
+    return tilesFromTileMap(charMapTileMap, tilesOffset, romContentArray, useLowerVRAM);
+  }, [romContentArray, tilesFromTileMap, tilesOffset, useLowerVRAM]);
 
   useEffect(() => {
-    if (tilesOffset === null) {
+    if (!charMapTiles.length) {
       setCharMapImageURI(null);
       return;
     }
-
-    const tiles = Array(256)
-      .fill('')
-      .map((_, index: number) => {
-        const pageOffset = index < 0x80 ? index + 0x100 : index;
-        const totalOffset = (pageOffset * 0x10) + tilesOffset;
-        return getPatchedRange(romContentArray, patches, totalOffset, 16)
-          .map(((code) => hexPadSimple(code)))
-          .join(' ');
-      });
 
     const decoder = new Decoder({ tilesPerLine: 16 });
 
     decoder.update({
       ...decoderBaseOptions,
       canvas: null,
-      tiles,
+      tiles: charMapTiles,
     });
 
     const canvas = decoder.getScaledCanvas(1, ExportFrameMode.FRAMEMODE_KEEP);
@@ -51,7 +51,7 @@ export const useCharMapImageURI = (): UseCharMapImageURI => {
         setCharMapImageURI(URL.createObjectURL(blob));
       }
     });
-  }, [patches, romContentArray, tilesOffset]);
+  }, [charMapTiles, romContentArray, tilesFromTileMap, tilesOffset]);
 
   useEffect(() => {
     if (tilesOffset === null || mapOffset === null) {

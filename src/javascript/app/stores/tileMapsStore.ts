@@ -10,6 +10,7 @@ export interface PartialTileMap {
   width: number,
   height: number,
   internalMapping: number[],
+  useLowerVRAM: boolean,
   // internalVRAM: number[], // could be used for varying vram tiles
   vramOffset: number,
 }

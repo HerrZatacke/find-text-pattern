@@ -6,6 +6,8 @@ import StarBorder from '@mui/icons-material/StarBorder';
 import Delete from '@mui/icons-material/Delete';
 import ContentCopy from '@mui/icons-material/ContentCopy';
 import Edit from '@mui/icons-material/Edit';
+import FileUpload from '@mui/icons-material/FileUpload';
+import FileDownload from '@mui/icons-material/FileDownload';
 import TilesDisplay from '../../content/TilesDisplay';
 import Visual from '../../content/Visual';
 import { useDataContext } from '../../../hooks/useDataContext';
@@ -90,6 +92,7 @@ function Tilemap() {
                     height: tileMap.height,
                     internalMapping: [...tileMap.internalMapping],
                     vramOffset: tileMap.vramOffset,
+                    useLowerVRAM: tileMap.useLowerVRAM,
                   })}
                 >
                   <ContentCopy />
@@ -108,6 +111,16 @@ function Tilemap() {
                   }}
                 >
                   <Edit />
+                </ListItemButton>
+                <ListItemButton
+                  onClick={() => {
+                    updateTileMap({
+                      ...tileMap,
+                      useLowerVRAM: !tileMap.useLowerVRAM,
+                    });
+                  }}
+                >
+                  { tileMap.useLowerVRAM ? (<FileDownload />) : (<FileUpload />) }
                 </ListItemButton>
                 <p>
                   { tileMap.title }
