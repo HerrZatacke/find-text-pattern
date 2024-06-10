@@ -3,7 +3,7 @@ import throttle from 'throttleit';
 import chunk from 'chunk';
 
 const MEMORY_BANK_SIZE = 0x4000;
-const INITIAL_PRECISION = 128;
+const INITIAL_PRECISION = 16;
 
 export interface FuzzySearchQuery {
   haystack: Uint8Array,
