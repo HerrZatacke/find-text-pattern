@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import type { UseFormRegisterReturn, UseFormReturn } from 'react-hook-form';
 import {
   Button,
   ButtonGroup,
   DialogContentText,
   FormControlLabel,
-  InputAdornment,
+  InputAdornment, Slider,
   Stack, Switch,
   TextField,
   Typography,
@@ -14,10 +14,12 @@ import {
 import DoubleArrow from '@mui/icons-material/DoubleArrow';
 import type { FuzzySearchResult } from '../../../../../workers/fuzzySearch.worker';
 import type { ImportFormData } from '../types';
+import type { ScreenCutOut } from '../../../../../tools/cropTileMap';
 import useImportStore from '../../../../stores/importStore';
-import { useDataContext } from '../../../../hooks/useDataContext';
 import TilesDisplay from '../../../content/TilesDisplay';
+import { useDataContext } from '../../../../hooks/useDataContext';
 import { useTilesFromTileMap } from '../../../../hooks/useTilesFromTileMap';
+import { cropTileMap } from '../../../../../tools/cropTileMap';
 
 interface Props {
   tileMapOffsetField: UseFormRegisterReturn<'tileMapOffset'>,
@@ -37,6 +39,13 @@ function Step2({
   const { tileMap, fileName } = useImportStore();
   const { romContentArray } = useDataContext();
   const { tilesFromTileMap } = useTilesFromTileMap();
+
+  const [screenCutOut, setScreenCutOut] = useState<ScreenCutOut>({
+    width: 32,
+    height: 18,
+    xOffset: 0,
+    yOffset: 0,
+  });
 
   const {
     setValue,
@@ -59,8 +68,9 @@ function Step2({
       return [];
     }
 
-    return tilesFromTileMap(tileMap, vramOffset, romContentArray, useLowerVRAM);
-  }, [romContentArray, tileMap, tilesFromTileMap, useLowerVRAM, vramOffset]);
+    const croppedTilemap = cropTileMap(tileMap, screenCutOut);
+    return tilesFromTileMap(croppedTilemap, vramOffset, romContentArray, useLowerVRAM);
+  }, [romContentArray, screenCutOut, tileMap, tilesFromTileMap, useLowerVRAM, vramOffset]);
 
   const romContentTileMap = useMemo<string[]>(() => {
     if (tileMapOffset === null || vramOffset === null) {
@@ -82,64 +92,89 @@ function Step2({
         { `How should the snapshot TileMap from "${fileName}" be matched against currently loaded ROM?` }
       </DialogContentText>
       <Stack direction="row" useFlexGap spacing={4} justifyContent="center" alignItems="center">
-        <ButtonGroup orientation="vertical">
-          <Button
-            size="large"
-            disabled={busy || !tileMap}
-            onClick={async () => {
-              if (!tileMap) {
-                return;
-              }
-
-              setValue('tileMapOffset', '', { shouldTouch: true, shouldValidate: true });
-              const { pos } = await findClosest(tileMap);
-              setValue('tileMapOffset', pos.toString(16), { shouldTouch: true, shouldValidate: true });
+        <Stack direction="column" useFlexGap spacing={2}>
+          <Slider
+            min={1}
+            max={32}
+            step={1}
+            value={screenCutOut.width}
+            onChange={(_, width) => {
+              setScreenCutOut((currentValue) => ({
+                ...currentValue,
+                width: width as number,
+              }));
             }}
-          >
-            <Stack direction="column" useFlexGap spacing={1}>
-              <Typography variant="body2">
-                Search for whole tilemap
-              </Typography>
-              <TilesDisplay
-                zoom={1}
-                tiles={snapshotTileMapTiles}
-                tilesPerLine={32}
-              />
-            </Stack>
-          </Button>
-
-          <Button
-            size="large"
-            disabled={busy || !tileMap}
-            onClick={async () => {
-              if (!tileMap) {
-                return;
-              }
-
-              setValue('tileMapOffset', '', { shouldTouch: true, shouldValidate: true });
-              const { pos } = await findClosest(tileMap.subarray(0, 20));
-              setValue('tileMapOffset', pos.toString(16), { shouldTouch: true, shouldValidate: true });
+          />
+          <Slider
+            min={1}
+            max={32}
+            step={1}
+            value={screenCutOut.height}
+            onChange={(_, height) => {
+              setScreenCutOut((currentValue) => ({
+                ...currentValue,
+                height: height as number,
+              }));
             }}
-          >
-            <Stack direction="column" useFlexGap spacing={1}>
-              <Typography variant="body2">
-                Search for first line of TileMap
-              </Typography>
-              <TilesDisplay
-                zoom={1}
-                tiles={snapshotTileMapTiles.slice(0, 20)}
-                tilesPerLine={20}
-              />
-            </Stack>
-          </Button>
-        </ButtonGroup>
+          />
+          <Slider
+            min={0}
+            max={31}
+            step={1}
+            value={screenCutOut.xOffset}
+            onChange={(_, xOffset) => {
+              setScreenCutOut((currentValue) => ({
+                ...currentValue,
+                xOffset: xOffset as number,
+              }));
+            }}
+          />
+          <Slider
+            min={0}
+            max={31}
+            step={1}
+            value={screenCutOut.yOffset}
+            onChange={(_, yOffset) => {
+              setScreenCutOut((currentValue) => ({
+                ...currentValue,
+                yOffset: yOffset as number,
+              }));
+            }}
+          />
+          <ButtonGroup orientation="vertical">
+            <Button
+              size="large"
+              disabled={busy || !tileMap}
+              onClick={async () => {
+                if (!tileMap) {
+                  return;
+                }
+
+                setValue('tileMapOffset', '', { shouldTouch: true, shouldValidate: true });
+                const { pos } = await findClosest(tileMap);
+                setValue('tileMapOffset', pos.toString(16), { shouldTouch: true, shouldValidate: true });
+              }}
+            >
+              <Stack direction="column" useFlexGap spacing={1}>
+                <Typography variant="body2">
+                  Search for whole tilemap
+                </Typography>
+                <TilesDisplay
+                  zoom={1}
+                  tiles={snapshotTileMapTiles}
+                  tilesPerLine={screenCutOut.width}
+                />
+              </Stack>
+            </Button>
+          </ButtonGroup>
+        </Stack>
         <DoubleArrow />
         {
           romContentTileMap.length ? (
             <TilesDisplay
               zoom={1}
               tiles={romContentTileMap}
-              tilesPerLine={32}
+              tilesPerLine={screenCutOut.width}
             />
           ) : (
             <Typography
